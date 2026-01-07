@@ -1,0 +1,67 @@
+{% extends "website/base.html" %}
+{% block content %}
+
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid md:grid-cols-12 gap-10 items-start">
+    <div class="md:col-span-7">
+      <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">About TradeGate</h1>
+      <p class="mt-4 text-slate-700 text-lg leading-relaxed">
+        TradeGate supports international SMEs and institutions to build a credible, practical presence in Germany and across the EU —
+        through representation, market access, and relationship management.
+      </p>
+
+      <div class="mt-8 space-y-6">
+        <div class="rounded-2xl border bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold">What we do</h2>
+          <p class="mt-2 text-slate-600 leading-relaxed">
+            We represent your brand at trade fairs, scout partners, follow up leads, and keep momentum alive —
+            so opportunities don’t die after the first handshake.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border bg-slate-50 p-6">
+          <h2 class="text-xl font-semibold">How we work</h2>
+          <ul class="mt-3 grid gap-2 text-slate-700">
+            <li>• Professional documentation &amp; reporting</li>
+            <li>• Clear deliverables and timelines</li>
+            <li>• Cultural + communication alignment (DE/EN)</li>
+            <li>• Lean, scalable engagement models</li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold">Who we serve</h2>
+          <p class="mt-2 text-slate-600 leading-relaxed">
+            SMEs from Africa, the Middle East, and Asia; manufacturers and exporters; tourism boards; and startups testing EU demand.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-10">
+        <a href="{% url 'contact' %}"
+           class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-brand-primary text-white hover:opacity-95 transition font-semibold">
+          Contact us
+        </a>
+      </div>
+    </div>
+
+    <div class="md:col-span-5">
+      <div class="rounded-2xl bg-brand-primary text-white p-8 shadow-sm">
+        <div class="text-brand-accent font-semibold text-sm">Positioning</div>
+        <div class="mt-2 text-2xl font-semibold">EU Market Representative</div>
+        <p class="mt-3 text-slate-200 leading-relaxed">
+          A local EU presence without the heavy overhead — focused on trust, consistency, and results.
+        </p>
+
+        <div class="mt-6 grid gap-3 text-sm">
+          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Trade fairs &amp; events</div>
+          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Market entry scouting</div>
+          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Local meetings support</div>
+          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Relationship management</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!--{# -----------------------------
+     Safe site title handling
+     (avoids VariableDoesNotExist when site is None)
+     ----------------------------- #} -->
+
+  {% if site and site.site_name %}
+    {% with SITE_TITLE=site.site_name %}
+      <title>
+        {% if page_meta.title %}
+          {{ page_meta.title }} | Consultants
+        {% else %}
+          {{ SITE_TITLE }} | Consultants
+        {% endif %}
+      </title>
+
+      {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
+      {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
+
+      <!-- Open Graph -->
+      <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} | Consultants{% else %}{{ SITE_TITLE }} | Consultants{% endif %}">
+      {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
+      {% if page_meta.og_image %}<meta property="og:image" content="{{ page_meta.og_image }}">{% endif %}
+    {% endwith %}
+  {% else %}
+    <title>
+      {% if page_meta.title %}
+        {{ page_meta.title }} | Consultants
+      {% else %}
+        TradeGate | Consultants
+      {% endif %}
+    </title>
+
+    {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
+    {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} | Consultants{% else %}TradeGate | Consultants{% endif %}">
+    {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
+    {% if page_meta.og_image %}<meta property="og:image" content="{{ page_meta.og_image }}">{% endif %}
+  {% endif %}
+
+  <!-- Favicon: simple TG badge as inline SVG (no files needed) -->
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230B1220'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='none' stroke='%23FFFFFF' stroke-opacity='.12'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='26' font-weight='800' fill='%23C6A15B'%3ETG%3C/text%3E%3C/svg%3E" />
+
+  <!-- Tailwind CDN (fast start) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Brand color tokens from SiteSettings (fallbacks included) -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: "{% if site and site.brand_primary %}{{ site.brand_primary }}{% else %}#0B1220{% endif %}",
+              accent: "{% if site and site.brand_accent %}{{ site.brand_accent }}{% else %}#C6A15B{% endif %}",
+              muted: "{% if site and site.brand_muted %}{{ site.brand_muted }}{% else %}#94A3B8{% endif %}"
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+  <!-- Top Nav -->
+  <header class="bg-brand-primary text-white border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 flex items-center justify-between">
+
+      <!-- Brand -->
+      <a href="/" class="flex items-center gap-3 font-semibold tracking-tight">
+        <span class="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-white/10 border border-white/10">
+          <span class="text-brand-accent font-extrabold text-3xl sm:text-4xl leading-none tracking-tight">TG</span>
+        </span>
+
+        <span class="text-lg md:text-xl">
+          {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %}
+          <span class="text-white/70 font-medium">| Consultants</span>
+        </span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a class="hover:text-brand-accent transition" href="/#pillars">Pillars</a>
+        <a class="hover:text-brand-accent transition" href="/#services">Services</a>
+        <a class="hover:text-brand-accent transition" href="/#process">Process</a>
+        <a class="hover:text-brand-accent transition" href="{% url 'faq' %}">FAQs</a>
+        <a class="hover:text-brand-accent transition" href="{% url 'contact' %}">Contact</a>
+        <a class="hover:text-brand-accent transition" href="{% url 'about' %}">About</a>
+
+        <a href="{% url 'contact' %}"
+           class="ml-2 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition shadow-sm">
+          Book a call
+        </a>
+      </nav>
+
+      <!-- Mobile Nav Toggle -->
+      <div class="md:hidden">
+        <button id="navToggle"
+                class="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15 transition"
+                aria-label="Open menu">
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Panel -->
+    <div id="mobileNav" class="md:hidden hidden border-t border-white/10 bg-brand-primary/95 backdrop-blur">
+      <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 flex flex-col gap-2 text-sm">
+        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#pillars">Pillars</a>
+        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#services">Services</a>
+        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#process">Process</a>
+        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'faq' %}">FAQs</a>
+        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'contact' %}">Contact</a>
+        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'about' %}">About</a>
+
+        <a href="{% url 'contact' %}"
+           class="mt-2 inline-flex items-center justify-center px-4 py-3 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition">
+          Book a call
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bg-white border-t">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-10 text-sm text-slate-600 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+      <div>
+        <div class="font-medium text-slate-800">
+          {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %} | Consultants
+        </div>
+        <div class="text-slate-600">
+          {% if site and site.tagline %}{{ site.tagline }}{% else %}Strategy. Execution. Growth.{% endif %}
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-4 items-center">
+        <a class="hover:text-slate-900" href="{% url 'faq' %}">FAQs</a>
+        <a class="hover:text-slate-900" href="{% url 'legal_page' key='impressum' %}">Impressum</a>
+        <a class="hover:text-slate-900" href="{% url 'legal_page' key='datenschutz' %}">Datenschutz</a>
+        <span class="text-slate-300">|</span>
+        <a class="hover:text-slate-900" href="{% url 'contact' %}">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("navToggle");
+      const panel = document.getElementById("mobileNav");
+      if (!btn || !panel) return;
+
+      btn.addEventListener("click", () => {
+        panel.classList.toggle("hidden");
+      });
+    })();
+  </script>
+</body>
+</html>
+

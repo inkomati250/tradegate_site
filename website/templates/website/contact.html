@@ -1,0 +1,223 @@
+{% extends "website/base.html" %}
+{% block content %}
+
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-12 gap-10 items-start">
+
+    <!-- LEFT: Form -->
+    <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm">
+        <span class="h-2 w-2 rounded-full bg-brand-accent"></span>
+        <span class="text-slate-700">Contact • Proposals • Market access</span>
+      </div>
+
+      <h1 class="mt-4 text-3xl md:text-4xl font-semibold tracking-tight">Let’s talk</h1>
+      <p class="text-slate-600 mt-3 text-lg">
+         Share your objective and timeline. We’ll respond with a clear scope, deliverables, and next steps.
+      </p>
+
+      {% if sent %}
+        <div class="mt-6 rounded-2xl border bg-green-50 p-5 text-green-900">
+          <div class="font-semibold">Message received ✅</div>
+          <div class="mt-1 text-sm text-green-800">
+            Thanks — we’ll respond within 24–48 hours.
+          </div>
+        </div>
+      {% endif %}
+
+      <form method="post" class="mt-8 bg-white rounded-2xl border p-6 md:p-7 shadow-sm">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="mb-4 rounded-xl border bg-red-50 p-4 text-red-800">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <!-- Contact basics -->
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium">Full name</label>
+            <div class="mt-1">{{ form.full_name }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.full_name.errors }}</div>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Email</label>
+            <div class="mt-1">{{ form.email }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.email.errors }}</div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="text-sm font-medium">Company (optional)</label>
+            <div class="mt-1">{{ form.company_name }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.company_name.errors }}</div>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Website (optional)</label>
+            <div class="mt-1">{{ form.website }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.website.errors }}</div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="text-sm font-medium">Country / Region (optional)</label>
+            <div class="mt-1">{{ form.country }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.country.errors }}</div>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">What do you need?</label>
+            <div class="mt-1">{{ form.service_interest }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.service_interest.errors }}</div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="text-sm font-medium">Timeline (optional)</label>
+            <div class="mt-1">{{ form.timeline }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.timeline.errors }}</div>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Budget range (optional)</label>
+            <div class="mt-1">{{ form.budget_range }}</div>
+            <div class="text-sm text-red-600 mt-1">{{ form.budget_range.errors }}</div>
+          </div>
+        </div>
+
+        <!-- Preferred contact -->
+        <div class="mt-6">
+          <label class="text-sm font-medium">Preferred contact method (optional)</label>
+          <div class="mt-2 rounded-xl border bg-slate-50 p-4">
+            <div class="grid sm:grid-cols-3 gap-2 text-sm">
+              {{ form.contact_method }}
+            </div>
+          </div>
+          <div class="text-sm text-red-600 mt-1">{{ form.contact_method.errors }}</div>
+        </div>
+
+        <div class="mt-4">
+          <label class="text-sm font-medium">Phone / WhatsApp (optional)</label>
+          <div class="mt-1">{{ form.phone }}</div>
+          <div class="text-sm text-red-600 mt-1">{{ form.phone.errors }}</div>
+        </div>
+
+        <!-- Message -->
+        <div class="mt-6">
+          <label class="text-sm font-medium">Subject</label>
+          <div class="mt-1">{{ form.subject }}</div>
+          <div class="text-sm text-red-600 mt-1">{{ form.subject.errors }}</div>
+        </div>
+
+        <div class="mt-4">
+          <label class="text-sm font-medium">Project details</label>
+          <div class="mt-1">{{ form.message }}</div>
+          <div class="text-sm text-red-600 mt-1">{{ form.message.errors }}</div>
+          <div class="text-xs text-slate-500 mt-2">
+            Tip: mention your product/service, target buyers, and any upcoming trade fairs or meetings.
+          </div>
+        </div>
+
+        <!-- Consent -->
+        <div class="mt-6">
+          <div class="flex items-start gap-3 rounded-xl border bg-slate-50 p-4">
+            <div class="pt-0.5">{{ form.consent }}</div>
+            <div class="text-sm">
+              <div class="font-medium">Consent (required)</div>
+              <div class="text-slate-600">
+                {{ form.consent.label }}
+              </div>
+              <div class="text-sm text-red-600 mt-1">{{ form.consent.errors }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
+          <button type="submit"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-brand-primary text-white hover:opacity-95 transition font-semibold shadow-sm">
+            Send message
+          </button>
+
+          <span class="text-sm text-slate-500">
+            We reply within <span class="font-semibold text-slate-700">24–48 hours</span>.
+          </span>
+        </div>
+      </form>
+    </div>
+
+    <!-- RIGHT: Professional helper panel -->
+    <aside class="lg:col-span-5 space-y-6">
+      <div class="rounded-2xl bg-brand-primary text-white p-7 shadow-sm">
+        <div class="text-brand-accent text-sm font-semibold">What happens next</div>
+        <h2 class="mt-2 text-xl font-semibold">A practical plan — not vague marketing</h2>
+        <p class="mt-3 text-slate-200 text-sm">
+          After you submit, we review your request and reply with:
+        </p>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200">
+          <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Clarifying questions (if needed)</li>
+          <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Recommended starting service (event vs scouting)</li>
+          <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Deliverables + timeline</li>
+          <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Proposal & next steps</li>
+        </ul>
+
+        <div class="mt-6 rounded-xl border border-white/15 bg-white/5 p-4 text-sm text-slate-200">
+          <div class="font-semibold text-white">Fastest entry point</div>
+          <div class="mt-1">Trade fair representation → prove value → scale to scouting & follow-up cycles.</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border bg-white p-7">
+        <h3 class="text-lg font-semibold">What to include (best results)</h3>
+        <div class="mt-3 grid gap-3 text-sm text-slate-600">
+          <div class="rounded-xl border bg-slate-50 p-4">Your offer (product/service) + target buyers</div>
+          <div class="rounded-xl border bg-slate-50 p-4">Which EU markets you want (Germany only or wider EU)</div>
+          <div class="rounded-xl border bg-slate-50 p-4">Upcoming trade fairs / meetings (if any)</div>
+          <div class="rounded-xl border bg-slate-50 p-4">What “success” looks like (leads, partners, distributors)</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border bg-slate-50 p-7">
+        <h3 class="text-lg font-semibold">Privacy</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          We only store your message to respond to your request and keep project communication organized.
+          You can request deletion anytime.
+        </p>
+        <div class="mt-4 text-sm">
+          <a class="font-semibold text-brand-primary hover:underline" href="{% url 'legal_page' key='datenschutz' %}">Read Datenschutz</a>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<style>
+  /* Make Django widgets Tailwind-friendly (kept) */
+  input, textarea, select {
+    width: 100%;
+    border: 1px solid rgb(226 232 240);
+    border-radius: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    outline: none;
+    background: #fff;
+  }
+  textarea { min-height: 160px; }
+  input:focus, textarea:focus, select:focus {
+    border-color: rgb(148 163 184);
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.25);
+  }
+
+  /* RadioSelect renders as UL — make it neat */
+  ul { margin: 0; padding: 0; list-style: none; }
+  ul li label { display: inline-flex; gap: .5rem; align-items: center; cursor: pointer; }
+  ul li input[type="radio"] { width: auto; }
+  input[type="checkbox"] { width: auto; }
+</style>
+
+{% endblock %}
