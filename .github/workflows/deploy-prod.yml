@@ -10,34 +10,43 @@ jobs:
     runs-on: [self-hosted, tradegate, prod]
 
     steps:
-      - name: Deploy on VPS
+      - name: Update code on VPS
         shell: bash
         run: |
           set -euo pipefail
-
-          APP_DIR="/srv/tradegate/app"
-          ENV_FILE="/srv/tradegate/.env"
-          VENV_ACT="/srv/tradegate/venv/bin/activate"
-
-          cd "$APP_DIR"
-
-          # Update code to match GitHub main exactly
+          cd /srv/tradegate/app
           git fetch --all
           git reset --hard origin/main
 
-          # Activate venv + load env vars
-          source "$VENV_ACT"
-          set -a; source "$ENV_FILE"; set +a
-
-          # Install dependencies
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          source /srv/tradegate/venv/bin/activate
+          cd /srv/tradegate/app
           pip install -r requirements.txt
 
-          # DB + static
+      - name: Django migrate & collectstatic
+        shell: bash
+        run: |
+          set -euo pipefail
+          source /srv/tradegate/venv/bin/activate
+          set -a; source /srv/tradegate/.env; set +a
+          cd /srv/tradegate/app
           python manage.py migrate --noinput
           python manage.py collectstatic --noinput
 
-          # Restart services
-          sudo /bin/systemctl restart tradegate
-          sudo /bin/systemctl reload nginx
+      - name: Restart services
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo -n /bin/systemctl restart tradegate
+          sudo -n /bin/systemctl reload nginx
 
-          echo "✅ Deploy complete"
+      - name: Show status (only if something fails)
+        if: failure()
+        shell: bash
+        run: |
+          sudo -n /bin/systemctl status tradegate --no-pager || true
+          sudo -n /bin/systemctl status nginx --no-pager || true
+
