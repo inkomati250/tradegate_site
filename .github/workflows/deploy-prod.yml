@@ -1,0 +1,43 @@
+name: Deploy TradeGate (Prod)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, tradegate, prod]
+
+    steps:
+      - name: Deploy on VPS
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          APP_DIR="/srv/tradegate/app"
+          ENV_FILE="/srv/tradegate/.env"
+          VENV_ACT="/srv/tradegate/venv/bin/activate"
+
+          cd "$APP_DIR"
+
+          # Update code to match GitHub main exactly
+          git fetch --all
+          git reset --hard origin/main
+
+          # Activate venv + load env vars
+          source "$VENV_ACT"
+          set -a; source "$ENV_FILE"; set +a
+
+          # Install dependencies
+          pip install -r requirements.txt
+
+          # DB + static
+          python manage.py migrate --noinput
+          python manage.py collectstatic --noinput
+
+          # Restart services
+          sudo /bin/systemctl restart tradegate
+          sudo /bin/systemctl reload nginx
+
+          echo "✅ Deploy complete"
