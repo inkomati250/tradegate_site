@@ -24,8 +24,6 @@ def home(request):
     steps = ProcessStep.objects.all().order_by("order")
 
     context = {
-        "site": site,
-        "site_name": _site_name(site),
         "services": services,
         "industries": industries,
         "steps": steps,
@@ -44,8 +42,6 @@ def legal_page(request, key):
     site = _get_settings()
 
     context = {
-        "site": site,
-        "site_name": _site_name(site),
         "page": page,
         "page_meta": {
             "title": page.meta_title or page.title,
@@ -122,8 +118,6 @@ def contact(request):
         form = InquiryForm()
 
     context = {
-        "site": site,
-        "site_name": _site_name(site),
         "form": form,
         "sent": request.GET.get("sent") == "1",
         "page_meta": {
@@ -136,10 +130,7 @@ def contact(request):
 
 
 def about(request):
-    site = _get_settings()
     context = {
-        "site": site,
-        "site_name": _site_name(site),
         "page_meta": {
             "title": "About",
             "description": "Learn about TradeGate and our EU business representation services.",
@@ -150,17 +141,13 @@ def about(request):
 
 
 def faq(request):
-    site = _get_settings()
     page_meta = {
         "title": "FAQs",
         "description": "Frequently asked questions about TradeGate Consultants: EU representation, trade fairs, market entry, and deliverables.",
         "canonical": request.build_absolute_uri(),
     }
-    return render(
-        request,
-        "website/faq.html",
-        {"site": site, "site_name": _site_name(site), "page_meta": page_meta},
-    )
+    return render(request, "website/faq.html", {"page_meta": page_meta})
+
 
 
 

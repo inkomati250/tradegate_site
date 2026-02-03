@@ -4,11 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!--{# -----------------------------
-     Safe site title handling
-     (avoids VariableDoesNotExist when site is None)
-     ----------------------------- #} -->
-
   {% if site and site.site_name %}
     {% with SITE_TITLE=site.site_name %}
       <title>
@@ -22,7 +17,6 @@
       {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
       {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
 
-      <!-- Open Graph -->
       <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} | Consultants{% else %}{{ SITE_TITLE }} | Consultants{% endif %}">
       {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
       {% if page_meta.og_image %}<meta property="og:image" content="{{ page_meta.og_image }}">{% endif %}
@@ -39,20 +33,16 @@
     {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
     {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
 
-    <!-- Open Graph -->
     <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} | Consultants{% else %}TradeGate | Consultants{% endif %}">
     {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
     {% if page_meta.og_image %}<meta property="og:image" content="{{ page_meta.og_image }}">{% endif %}
   {% endif %}
 
-  <!-- Favicon: simple TG badge as inline SVG (no files needed) -->
   <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230B1220'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='none' stroke='%23FFFFFF' stroke-opacity='.12'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='26' font-weight='800' fill='%23C6A15B'%3ETG%3C/text%3E%3C/svg%3E" />
 
-  <!-- Tailwind CDN (fast start) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Brand color tokens from SiteSettings (fallbacks included) -->
   <script>
     tailwind.config = {
       theme: {
@@ -78,7 +68,6 @@
   <!-- Top Nav -->
   <header class="bg-brand-primary text-white border-b border-white/10">
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 flex items-center justify-between">
-
       <!-- Brand -->
       <a href="/" class="flex items-center gap-3 font-semibold tracking-tight">
         <span class="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-white/10 border border-white/10">
@@ -91,19 +80,33 @@
         </span>
       </a>
 
-      <!-- Desktop Nav -->
+      <!-- Desktop Nav (CMS-driven) -->
       <nav class="hidden md:flex items-center gap-6 text-sm">
-        <a class="hover:text-brand-accent transition" href="/#pillars">Pillars</a>
-        <a class="hover:text-brand-accent transition" href="/#services">Services</a>
-        <a class="hover:text-brand-accent transition" href="/#process">Process</a>
-        <a class="hover:text-brand-accent transition" href="{% url 'faq' %}">FAQs</a>
-        <a class="hover:text-brand-accent transition" href="{% url 'contact' %}">Contact</a>
-        <a class="hover:text-brand-accent transition" href="{% url 'about' %}">About</a>
-
-        <a href="{% url 'contact' %}"
-           class="ml-2 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition shadow-sm">
-          Book a call
-        </a>
+        {% if nav_items and nav_items|length %}
+          {% for item in nav_items %}
+            {% if item.is_cta %}
+              <a href="{{ item.get_href }}"
+                 class="ml-2 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition shadow-sm">
+                {{ item.label }}
+              </a>
+            {% else %}
+              <a class="hover:text-brand-accent transition" href="{{ item.get_href }}">
+                {{ item.label }}
+              </a>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <!-- Safe fallback -->
+          <a class="hover:text-brand-accent transition" href="/#pillars">Pillars</a>
+          <a class="hover:text-brand-accent transition" href="/#services">Services</a>
+          <a class="hover:text-brand-accent transition" href="/#process">Process</a>
+          <a class="hover:text-brand-accent transition" href="{% url 'faq' %}">FAQs</a>
+          <a class="hover:text-brand-accent transition" href="{% url 'contact' %}">Contact</a>
+          <a href="{% url 'contact' %}"
+             class="ml-2 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition shadow-sm">
+            Book a call
+          </a>
+        {% endif %}
       </nav>
 
       <!-- Mobile Nav Toggle -->
@@ -116,20 +119,33 @@
       </div>
     </div>
 
-    <!-- Mobile Menu Panel -->
+    <!-- Mobile Menu Panel (CMS-driven) -->
     <div id="mobileNav" class="md:hidden hidden border-t border-white/10 bg-brand-primary/95 backdrop-blur">
       <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 flex flex-col gap-2 text-sm">
-        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#pillars">Pillars</a>
-        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#services">Services</a>
-        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#process">Process</a>
-        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'faq' %}">FAQs</a>
-        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'contact' %}">Contact</a>
-        <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'about' %}">About</a>
-
-        <a href="{% url 'contact' %}"
-           class="mt-2 inline-flex items-center justify-center px-4 py-3 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition">
-          Book a call
-        </a>
+        {% if nav_items and nav_items|length %}
+          {% for item in nav_items %}
+            {% if item.is_cta %}
+              <a href="{{ item.get_href }}"
+                 class="mt-2 inline-flex items-center justify-center px-4 py-3 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition">
+                {{ item.label }}
+              </a>
+            {% else %}
+              <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{{ item.get_href }}">
+                {{ item.label }}
+              </a>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#pillars">Pillars</a>
+          <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#services">Services</a>
+          <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="/#process">Process</a>
+          <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'faq' %}">FAQs</a>
+          <a class="py-2 px-2 rounded-lg hover:bg-white/10 transition" href="{% url 'contact' %}">Contact</a>
+          <a href="{% url 'contact' %}"
+             class="mt-2 inline-flex items-center justify-center px-4 py-3 rounded-xl bg-brand-accent text-brand-primary font-semibold hover:opacity-95 transition">
+            Book a call
+          </a>
+        {% endif %}
       </div>
     </div>
   </header>
@@ -138,26 +154,114 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="bg-white border-t">
-    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-10 text-sm text-slate-600 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
-      <div>
-        <div class="font-medium text-slate-800">
-          {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %} | Consultants
-        </div>
-        <div class="text-slate-600">
-          {% if site and site.tagline %}{{ site.tagline }}{% else %}Strategy. Execution. Growth.{% endif %}
-        </div>
+ <!-- Footer (Option A: Email + WhatsApp + Socials only) -->
+<footer class="bg-white border-t">
+  <div class="max-w-7xl mx-auto px-3 sm:px-4 py-12 grid gap-10 md:grid-cols-12 text-sm">
+    <!-- Brand -->
+    <div class="md:col-span-5">
+      <div class="font-semibold text-slate-900 text-base">
+        {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %} | Consultants
+      </div>
+      <div class="text-slate-600 mt-2">
+        {% if site and site.tagline %}{{ site.tagline }}{% else %}Strategy. Execution. Growth.{% endif %}
       </div>
 
-      <div class="flex flex-wrap gap-4 items-center">
+      <!-- Optional: show only city/country (not full street) -->
+      {% if site and site.city %}
+        <div class="mt-4 text-slate-600">
+          {{ site.city }}{% if site.country %}, {{ site.country }}{% endif %}
+        </div>
+      {% else %}
+        <div class="mt-4 text-slate-600">Leipzig, Germany</div>
+      {% endif %}
+    </div>
+
+    <!-- Links -->
+    <div class="md:col-span-3">
+      <div class="font-semibold text-slate-900">Links</div>
+      <div class="mt-3 grid gap-2 text-slate-600">
         <a class="hover:text-slate-900" href="{% url 'faq' %}">FAQs</a>
-        <a class="hover:text-slate-900" href="{% url 'legal_page' key='impressum' %}">Impressum</a>
-        <a class="hover:text-slate-900" href="{% url 'legal_page' key='datenschutz' %}">Datenschutz</a>
-        <span class="text-slate-300">|</span>
+        <a class="hover:text-slate-900" href="{% url 'about' %}">About</a>
         <a class="hover:text-slate-900" href="{% url 'contact' %}">Contact</a>
+        <a class="hover:text-slate-900" href="{% url 'legal_page' key='impressum' %}">Imprint (Impressum)</a>
+        <a class="hover:text-slate-900" href="{% url 'legal_page' key='datenschutz' %}">Privacy Policy (Datenschutzerklärung)</a>
       </div>
     </div>
-  </footer>
+
+    <!-- Contact + Social -->
+    <div class="md:col-span-4">
+      <div class="font-semibold text-slate-900">Contact</div>
+
+      <div class="mt-3 grid gap-2 text-slate-600">
+        {% if site and site.primary_email %}
+          <a class="hover:text-slate-900" href="mailto:{{ site.primary_email }}">{{ site.primary_email }}</a>
+        {% endif %}
+
+        {% if site and site.whatsapp_url %}
+          <a class="hover:text-slate-900 inline-flex items-center gap-2"
+             href="{{ site.whatsapp_url }}" target="_blank" rel="noopener">
+            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg border bg-white">
+              <!-- WhatsApp icon -->
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.5 11.9a8.5 8.5 0 0 1-12.9 7.3L3.5 20.5l1.4-4A8.5 8.5 0 1 1 20.5 11.9Z"></path>
+                <path d="M9.2 9.3c.2-.3.4-.3.6-.3h.5c.2 0 .4.1.5.4l.7 1.8c.1.2.1.4 0 .6l-.3.4c-.1.2-.1.4 0 .6.4.8 1.2 1.6 2 2 .2.1.4.1.6 0l.4-.3c.2-.1.4-.1.6 0l1.8.7c.3.1.4.3.4.5v.5c0 .2 0 .4-.3.6-.4.4-1 .6-1.6.5-1.2-.2-2.6-.9-3.8-2.1-1.2-1.2-1.9-2.6-2.1-3.8-.1-.6.1-1.2.5-1.6Z"></path>
+              </svg>
+            </span>
+            WhatsApp (fast channel)
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Social icons -->
+      <div class="mt-5 flex flex-wrap gap-3">
+        {% if site and site.facebook_url %}
+          <a class="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-slate-700 hover:text-slate-900 hover:border-slate-300 transition"
+             href="{{ site.facebook_url }}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor">
+              <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H8v-3h2.4V9.7c0-2.4 1.4-3.7 3.6-3.7 1 0 2 .2 2 .2v2.2H15c-1.2 0-1.6.7-1.6 1.5V12H16l-.4 3h-2.2v7A10 10 0 0 0 22 12z"/>
+            </svg>
+            Facebook
+          </a>
+        {% endif %}
+
+        {% if site and site.instagram_url %}
+          <a class="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-slate-700 hover:text-slate-900 hover:border-slate-300 transition"
+             href="{{ site.instagram_url }}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M17.5 6.5h.01"></path>
+            </svg>
+            Instagram
+          </a>
+        {% endif %}
+
+        {% if site and site.x_url %}
+          <a class="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-slate-700 hover:text-slate-900 hover:border-slate-300 transition"
+             href="{{ site.x_url }}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor">
+              <path d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.2L6.6 22H3.5l7.3-8.4L1 2h6.4l4.4 5.7L18.9 2z"/>
+            </svg>
+            X
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Optional “phone on request” note -->
+      <div class="mt-4 text-xs text-slate-500">
+        Phone available on request.
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-6 text-xs text-slate-500 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+      <div>© {% now "Y" %} {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %}. All rights reserved.</div>
+      <div class="text-slate-400">Germany • EU representation & market access</div>
+    </div>
+  </div>
+</footer>
+
 
   <script>
     (function () {
@@ -172,4 +276,6 @@
   </script>
 </body>
 </html>
+
+
 

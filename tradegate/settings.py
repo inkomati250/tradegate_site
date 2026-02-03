@@ -23,8 +23,10 @@ try:
 except Exception:
     pass
 
+
 def env(key: str, default: str = "") -> str:
     return os.getenv(key, default)
+
 
 def env_bool(key: str, default: bool = False) -> bool:
     val = os.getenv(key)
@@ -32,25 +34,33 @@ def env_bool(key: str, default: bool = False) -> bool:
         return default
     return val.strip().lower() in ("1", "true", "yes", "on")
 
+
 def env_list(key: str, default: str = "") -> list[str]:
     raw = os.getenv(key, default)
     return [x.strip() for x in raw.split(",") if x.strip()]
+
 
 # =========================
 # 3) Core security settings
 # =========================
 # In production, you MUST set DJANGO_SECRET_KEY in /srv/tradegate/.env
 SECRET_KEY = env("DJANGO_SECRET_KEY", "unsafe-dev-secret-key-change-me")
+
 DEBUG = env_bool("DJANGO_DEBUG", True)
 
 # Hosts allowed to serve the site.
 # Production example:
-# DJANGO_ALLOWED_HOSTS=31.97.76.102,tradegate.yourdomain.com
+# DJANGO_ALLOWED_HOSTS=31.97.76.102,tradegateconsultants.com,www.tradegateconsultants.com
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
 
 # If you set HTTPS later, add:
-# DJANGO_CSRF_TRUSTED_ORIGINS=https://tradegate.yourdomain.com
+# DJANGO_CSRF_TRUSTED_ORIGINS=https://tradegateconsultants.com,https://www.tradegateconsultants.com
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "")
+
+# If you are behind Nginx/reverse proxy, set:
+# DJANGO_SECURE_PROXY_SSL_HEADER=true
+# and configure Nginx to send: X-Forwarded-Proto https
+# Handled below in production section.
 
 # =========================
 # 4) Application definition
@@ -63,7 +73,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # Needed because you use it
     "django.contrib.sites",
+
+    # SEO: sitemap.xml support
+    "django.contrib.sitemaps",
 
     "website",
 ]
@@ -82,6 +96,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "tradegate.urls"
+WSGI_APPLICATION = "tradegate.wsgi.application"
 
 # =========================
 # 5) Templates
@@ -96,12 +111,15 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+
+                # IMPORTANT:
+                # This must exist: website/context_processors.py -> site_settings()
+                # It prevents base.html from breaking if a view forgets to pass "site".
+                "website.context_processors.site_settings",
             ],
         },
     },
 ]
-
-WSGI_APPLICATION = "tradegate.wsgi.application"
 
 # =========================
 # 6) Database
@@ -118,6 +136,8 @@ if DB_NAME:
             "PASSWORD": env("DB_PASSWORD", ""),
             "HOST": env("DB_HOST", "127.0.0.1"),
             "PORT": env("DB_PORT", "5432"),
+            # Keeps DB connections open for performance (safe default)
+            "CONN_MAX_AGE": int(env("DB_CONN_MAX_AGE", "60")),
         }
     }
 else:
@@ -142,14 +162,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # 8) Internationalization
 # =========================
 LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", "en-us")
-TIME_ZONE = env("DJANGO_TIME_ZONE", "UTC")
+
+# Good default for Germany-based operations
+TIME_ZONE = env("DJANGO_TIME_ZONE", "Europe/Berlin")
+
 USE_I18N = True
 USE_TZ = True
 
 # =========================
 # 9) Static & Media
 # =========================
-# Nginx will serve /static/ and /media/ in production
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 
@@ -157,11 +179,17 @@ MEDIA_URL = "/media/"
 STATICFILES_DIRS = [BASE_DIR / "website" / "static"]
 
 # Prod: collected static output
-# Matches our VPS folder design: /srv/tradegate/staticfiles
+# Matches VPS folder design: /srv/tradegate/staticfiles
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", "/srv/tradegate/staticfiles")
 
 # Prod: uploaded media
 MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", "/srv/tradegate/media")
+
+# Optional but useful: ensures Django can find static files consistently
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
 # =========================
 # 10) Sites framework
@@ -172,10 +200,10 @@ SITE_ID = int(env("DJANGO_SITE_ID", "1"))
 # 11) Production hardening (only when DEBUG=False)
 # =========================
 if not DEBUG:
-    # Turn these on once you have HTTPS working (Certbot)
+    # Force HTTPS only after Certbot/SSL works
     SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", False)
 
-    # HSTS (only set when HTTPS is confirmed)
+    # HSTS (set only when HTTPS is confirmed)
     SECURE_HSTS_SECONDS = int(env("DJANGO_SECURE_HSTS_SECONDS", "0"))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
     SECURE_HSTS_PRELOAD = env_bool("DJANGO_SECURE_HSTS_PRELOAD", False)
@@ -183,10 +211,13 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = env_bool("DJANGO_SESSION_COOKIE_SECURE", False)
     CSRF_COOKIE_SECURE = env_bool("DJANGO_CSRF_COOKIE_SECURE", False)
 
+    # Sensible security headers
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 
-    # If HTTPS terminates at Nginx and Nginx passes X-Forwarded-Proto
+    # If HTTPS terminates at Nginx and Nginx sends X-Forwarded-Proto=https
     if env_bool("DJANGO_SECURE_PROXY_SSL_HEADER", False):
         SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -207,15 +238,26 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # =========================
-# 14) Email (optional placeholders)
+# 14) Email (production-ready via env vars)
 # =========================
-# DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "no-reply@tradegate.local")
-# CONTACT_RECEIVER_EMAIL = env("CONTACT_RECEIVER_EMAIL", "you@example.com")
-# EMAIL_BACKEND = env("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
-# EMAIL_HOST = env("EMAIL_HOST", "")
-# EMAIL_PORT = int(env("EMAIL_PORT", "587"))
-# EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
-# EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
-# EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+# Works with Google Workspace, SMTP providers, etc.
+# In dev you can set:
+# EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "no-reply@tradegateconsultants.com")
+CONTACT_RECEIVER_EMAIL = env("CONTACT_RECEIVER_EMAIL", "")
+
+EMAIL_BACKEND = env("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", "")
+EMAIL_PORT = int(env("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
+EMAIL_TIMEOUT = int(env("EMAIL_TIMEOUT", "20"))
+
+# If you use SSL (465) set EMAIL_USE_SSL=true and EMAIL_USE_TLS=false in .env
+
+
 
 

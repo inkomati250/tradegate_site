@@ -49,3 +49,9 @@ EOF
 # GitHub / CI
 .coverage
 htmlcov/
+
+# SSH keys
+*_gh_actions
+*_gh_actions.pub
+*.pem
+*.key

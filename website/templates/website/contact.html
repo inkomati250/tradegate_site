@@ -159,7 +159,7 @@
         <p class="mt-3 text-slate-200 text-sm">
           After you submit, we review your request and reply with:
         </p>
-        <ul class="mt-4 space-y-2 text-sm text-slate-200">
+        <ul class="mt-4 space-y-2 text-sm text-slate-200 contact-radios">
           <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Clarifying questions (if needed)</li>
           <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Recommended starting service (event vs scouting)</li>
           <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Deliverables + timeline</li>
@@ -189,7 +189,10 @@
           You can request deletion anytime.
         </p>
         <div class="mt-4 text-sm">
-          <a class="font-semibold text-brand-primary hover:underline" href="{% url 'legal_page' key='datenschutz' %}">Read Datenschutz</a>
+          <a class="font-semibold text-brand-primary hover:underline"
+             href="{% url 'legal_page' key='datenschutz' %}">
+            Privacy Policy (Datenschutzerklärung)
+          </a>
         </div>
       </div>
     </aside>
@@ -198,7 +201,7 @@
 </section>
 
 <style>
-  /* Make Django widgets Tailwind-friendly (kept) */
+  /* Make Django widgets Tailwind-friendly */
   input, textarea, select {
     width: 100%;
     border: 1px solid rgb(226 232 240);
@@ -213,10 +216,10 @@
     box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.25);
   }
 
-  /* RadioSelect renders as UL — make it neat */
-  ul { margin: 0; padding: 0; list-style: none; }
-  ul li label { display: inline-flex; gap: .5rem; align-items: center; cursor: pointer; }
-  ul li input[type="radio"] { width: auto; }
+  /* Only style the radio widget list (avoid global UL override) */
+  .contact-radios { margin: 0; padding: 0; list-style: none; }
+  .contact-radios li label { display: inline-flex; gap: .5rem; align-items: center; cursor: pointer; }
+  .contact-radios li input[type="radio"] { width: auto; }
   input[type="checkbox"] { width: auto; }
 </style>
 
