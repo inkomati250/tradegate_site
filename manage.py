@@ -6,7 +6,10 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tradegate.settings")
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE",
+        os.getenv("DJANGO_SETTINGS_MODULE", "tradegate.settings.dev"),
+    )
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -20,3 +23,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+# tradegate/settings/__init__.py

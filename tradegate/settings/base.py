@@ -1,10 +1,20 @@
 from pathlib import Path
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent  # note: settings/ is one level deeper
+# settings/ is one level deeper than the project root
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Optional: load .env locally (prod loads env via systemd EnvironmentFile)
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv(BASE_DIR / ".env")
+except Exception:
+    pass
+
 
 def env(key: str, default: str = "") -> str:
     return os.getenv(key, default)
+
 
 def env_bool(key: str, default: bool = False) -> bool:
     val = os.getenv(key)
@@ -12,16 +22,24 @@ def env_bool(key: str, default: bool = False) -> bool:
         return default
     return val.strip().lower() in ("1", "true", "yes", "on")
 
+
 def env_list(key: str, default: str = "") -> list[str]:
     raw = os.getenv(key, default)
     return [x.strip() for x in raw.split(",") if x.strip()]
 
+
+# =========================
+# Core security
+# =========================
 SECRET_KEY = env("DJANGO_SECRET_KEY", "unsafe-dev-secret-key-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", True)
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "")
 
+# =========================
+# Apps & middleware
+# =========================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -29,10 +47,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "django.contrib.sites",
     "django.contrib.sitemaps",
-
     "website",
 ]
 
@@ -48,7 +64,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "tradegate.urls"
 WSGI_APPLICATION = "tradegate.wsgi.application"
+ASGI_APPLICATION = "tradegate.asgi.application"
+APPEND_SLASH = True
 
+# =========================
+# Templates
+# =========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -65,6 +86,9 @@ TEMPLATES = [
     },
 ]
 
+# =========================
+# Database
+# =========================
 DB_NAME = env("DB_NAME", "")
 if DB_NAME:
     DATABASES = {
@@ -86,6 +110,9 @@ else:
         }
     }
 
+# =========================
+# Password validation
+# =========================
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -93,21 +120,42 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+# =========================
+# i18n / tz
+# =========================
 LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", "en-us")
 TIME_ZONE = env("DJANGO_TIME_ZONE", "Europe/Berlin")
 USE_I18N = True
 USE_TZ = True
 
+# =========================
+# Static & Media
+# =========================
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
+
 STATICFILES_DIRS = [BASE_DIR / "website" / "static"]
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", "/srv/tradegate/staticfiles")
 MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", "/srv/tradegate/media")
 
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
+# =========================
+# Sites framework
+# =========================
 SITE_ID = int(env("DJANGO_SITE_ID", "1"))
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Email
+# =========================
+# Email (defaults; dev/prod override as needed)
+# =========================
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "no-reply@tradegateconsultants.com")
+CONTACT_RECIPIENT_EMAIL = env("CONTACT_RECIPIENT_EMAIL", "")
+
 EMAIL_BACKEND = env("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = env("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(env("EMAIL_PORT", "587"))
@@ -117,5 +165,13 @@ EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
 EMAIL_TIMEOUT = int(env("EMAIL_TIMEOUT", "20"))
 
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "webmaster@localhost")
-CONTACT_RECIPIENT_EMAIL = env("CONTACT_RECIPIENT_EMAIL", "")
+# =========================
+# Logging (base defaults; prod can override)
+# =========================
+LOG_LEVEL = env("DJANGO_LOG_LEVEL", "INFO")
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": LOG_LEVEL},
+}
