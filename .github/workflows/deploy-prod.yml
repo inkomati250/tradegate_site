@@ -22,19 +22,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          source /srv/tradegate/venv/bin/activate
-          cd /srv/tradegate/app
-          pip install -r requirements.txt
+          /srv/tradegate/venv/bin/pip install -r /srv/tradegate/app/requirements.txt
 
-      - name: Django migrate & collectstatic
+      - name: Django checks, migrate & collectstatic
         shell: bash
         run: |
           set -euo pipefail
-          source /srv/tradegate/venv/bin/activate
           set -a; source /srv/tradegate/.env; set +a
           cd /srv/tradegate/app
-          python manage.py migrate --noinput
-          python manage.py collectstatic --noinput
+          /srv/tradegate/venv/bin/python manage.py check --deploy
+          /srv/tradegate/venv/bin/python manage.py migrate --noinput
+          /srv/tradegate/venv/bin/python manage.py collectstatic --noinput
 
       - name: Restart services
         shell: bash
@@ -49,4 +47,5 @@ jobs:
         run: |
           sudo -n /bin/systemctl status tradegate --no-pager || true
           sudo -n /bin/systemctl status nginx --no-pager || true
-
+          sudo journalctl -u tradegate -n 120 --no-pager || true
+          sudo tail -n 120 /var/log/nginx/error.log || true
