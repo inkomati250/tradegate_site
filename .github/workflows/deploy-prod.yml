@@ -5,17 +5,33 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+# Important for private repos / least-privilege
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: [self-hosted, tradegate, prod]
 
     steps:
+      - name: Configure git auth (HTTPS + GITHUB_TOKEN)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /srv/tradegate/app
+
+          # Force HTTPS remote with token (avoids SSH key issues)
+          git remote set-url origin "https://x-access-token:${{ github.token }}@github.com/inkomati250/tradegate_site.git"
+
+          # Optional sanity output (doesn't print token)
+          git remote -v | sed -E 's#https://x-access-token:.*@github.com/#https://github.com/#'
+
       - name: Update code on VPS
         shell: bash
         run: |
           set -euo pipefail
           cd /srv/tradegate/app
-          git fetch --all
+          git fetch --all --prune
           git reset --hard origin/main
 
       - name: Install dependencies
@@ -49,3 +65,4 @@ jobs:
           sudo -n /bin/systemctl status nginx --no-pager || true
           sudo journalctl -u tradegate -n 120 --no-pager || true
           sudo tail -n 120 /var/log/nginx/error.log || true
+
