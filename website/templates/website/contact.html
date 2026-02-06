@@ -16,17 +16,35 @@
          Share your objective and timeline. We’ll respond with a clear scope, deliverables, and next steps.
       </p>
 
-      {% if sent %}
-        <div class="mt-6 rounded-2xl border bg-green-50 p-5 text-green-900">
-          <div class="font-semibold">Message received ✅</div>
-          <div class="mt-1 text-sm text-green-800">
-            Thanks — we’ll respond within 24–48 hours.
-          </div>
+      {% if messages %}
+        <div class="mt-6 space-y-3">
+          {% for message in messages %}
+            <div class="rounded-2xl border p-5
+              {% if message.tags == 'success' %} bg-green-50 text-green-900 border-green-200
+              {% elif message.tags == 'error' %} bg-red-50 text-red-900 border-red-200
+              {% else %} bg-amber-50 text-amber-900 border-amber-200 {% endif %}">
+              <div class="font-semibold">{{ message }}</div>
+            </div>
+          {% endfor %}
         </div>
       {% endif %}
 
-      <form method="post" class="mt-8 bg-white rounded-2xl border p-6 md:p-7 shadow-sm">
+      <form id="contact-form" method="post" class="mt-8 bg-white rounded-2xl border p-6 md:p-7 shadow-sm">
         {% csrf_token %}
+
+        <!-- Hidden honeypot (bots fill it, humans won't) -->
+        <div class="hidden">
+          {{ form.website_url }}
+        </div>
+
+        {% if form.errors %}
+          <div class="mb-4 rounded-xl border bg-red-50 p-4 text-red-800">
+            <div class="font-semibold">Please fix the highlighted fields.</div>
+            <div class="mt-1 text-sm text-red-700">
+              Some required information is missing or invalid.
+            </div>
+          </div>
+        {% endif %}
 
         {% if form.non_field_errors %}
           <div class="mb-4 rounded-xl border bg-red-50 p-4 text-red-800">
@@ -95,7 +113,7 @@
         <div class="mt-6">
           <label class="text-sm font-medium">Preferred contact method (optional)</label>
           <div class="mt-2 rounded-xl border bg-slate-50 p-4">
-            <div class="grid sm:grid-cols-3 gap-2 text-sm">
+            <div class="grid sm:grid-cols-3 gap-2 text-sm contact-radios">
               {{ form.contact_method }}
             </div>
           </div>
@@ -159,7 +177,7 @@
         <p class="mt-3 text-slate-200 text-sm">
           After you submit, we review your request and reply with:
         </p>
-        <ul class="mt-4 space-y-2 text-sm text-slate-200 contact-radios">
+        <ul class="mt-4 space-y-2 text-sm text-slate-200">
           <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Clarifying questions (if needed)</li>
           <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Recommended starting service (event vs scouting)</li>
           <li class="flex gap-2"><span class="text-brand-accent font-bold">✓</span> Deliverables + timeline</li>
@@ -216,11 +234,12 @@
     box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.25);
   }
 
-  /* Only style the radio widget list (avoid global UL override) */
-  .contact-radios { margin: 0; padding: 0; list-style: none; }
+  /* Radio widget list */
+  .contact-radios ul { margin: 0; padding: 0; list-style: none; }
   .contact-radios li label { display: inline-flex; gap: .5rem; align-items: center; cursor: pointer; }
   .contact-radios li input[type="radio"] { width: auto; }
   input[type="checkbox"] { width: auto; }
 </style>
 
 {% endblock %}
+

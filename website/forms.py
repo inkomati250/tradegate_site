@@ -30,27 +30,40 @@ CONTACT_METHOD_CHOICES = [
     ("video", "Video call"),
 ]
 
+
 class InquiryForm(forms.Form):
+    # ---------------------------
+    # Anti-spam honeypot
+    # (hidden field that humans won't fill)
+    # ---------------------------
+    website_url = forms.CharField(required=False, widget=forms.TextInput(attrs={"autocomplete": "off"}))
+
+    # ---------------------------
+    # Required contact fields
+    # ---------------------------
     full_name = forms.CharField(
         label="Full name",
         max_length=120,
-        widget=forms.TextInput(attrs={"placeholder": "Your name"})
+        widget=forms.TextInput(attrs={"placeholder": "Your name", "autocomplete": "name"})
     )
     email = forms.EmailField(
         label="Email",
-        widget=forms.EmailInput(attrs={"placeholder": "you@company.com"})
+        widget=forms.EmailInput(attrs={"placeholder": "you@company.com", "autocomplete": "email"})
     )
 
+    # ---------------------------
+    # Optional details
+    # ---------------------------
     company_name = forms.CharField(
         label="Company (optional)",
         required=False,
         max_length=160,
-        widget=forms.TextInput(attrs={"placeholder": "Company / Organization"})
+        widget=forms.TextInput(attrs={"placeholder": "Company / Organization", "autocomplete": "organization"})
     )
     website = forms.URLField(
         label="Website (optional)",
         required=False,
-        widget=forms.URLInput(attrs={"placeholder": "https://…"})
+        widget=forms.URLInput(attrs={"placeholder": "https://…", "autocomplete": "url"})
     )
 
     country = forms.CharField(
@@ -67,7 +80,7 @@ class InquiryForm(forms.Form):
     )
 
     timeline = forms.ChoiceField(
-        label="Timeline",
+        label="Timeline (optional)",
         choices=TIMELINE_CHOICES,
         widget=forms.Select(),
         required=False,
@@ -81,7 +94,7 @@ class InquiryForm(forms.Form):
     )
 
     contact_method = forms.ChoiceField(
-        label="Preferred contact method",
+        label="Preferred contact method (optional)",
         choices=CONTACT_METHOD_CHOICES,
         widget=forms.RadioSelect(),
         required=False,
@@ -92,9 +105,12 @@ class InquiryForm(forms.Form):
         label="Phone / WhatsApp (optional)",
         required=False,
         max_length=40,
-        widget=forms.TextInput(attrs={"placeholder": "+49 …"})
+        widget=forms.TextInput(attrs={"placeholder": "+49 …", "autocomplete": "tel"})
     )
 
+    # ---------------------------
+    # Message (required)
+    # ---------------------------
     subject = forms.CharField(
         label="Subject",
         max_length=140,
@@ -109,16 +125,39 @@ class InquiryForm(forms.Form):
         })
     )
 
+    # ---------------------------
+    # Consent (required)
+    # ---------------------------
     consent = forms.BooleanField(
         label="I agree that TradeGate may store my message to respond to my request (GDPR).",
-        required=True
+        required=True,
+        error_messages={"required": "Consent is required to submit this form."}
     )
+
+    # ---------------------------
+    # Validation
+    # ---------------------------
+    def clean_website_url(self):
+        # Honeypot should stay empty
+        val = (self.cleaned_data.get("website_url") or "").strip()
+        if val:
+            raise forms.ValidationError("Spam detected.")
+        return val
+
+    def clean_message(self):
+        msg = (self.cleaned_data.get("message") or "").strip()
+        if len(msg) < 10:
+            raise forms.ValidationError("Please provide a little more detail (at least 10 characters).")
+        return msg
 
     def clean(self):
         cleaned = super().clean()
-        # If they pick phone/whatsapp but provide no phone, nudge them.
+
         method = cleaned.get("contact_method")
         phone = (cleaned.get("phone") or "").strip()
+
+        # If they pick phone, require number
         if method == "phone" and not phone:
             self.add_error("phone", "Please add a phone/WhatsApp number, or choose Email/Video call.")
+
         return cleaned

@@ -1,11 +1,16 @@
+import logging
+
 from django.conf import settings
-from django.core.mail import send_mail
+from django.contrib import messages
+from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .forms import InquiryForm
 from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry
+
+logger = logging.getLogger(__name__)
 
 
 def _get_settings():
@@ -59,9 +64,11 @@ def contact(request):
 
     if request.method == "POST":
         form = InquiryForm(request.POST)
+
         if form.is_valid():
             cd = form.cleaned_data
 
+            # Save inquiry to DB (single source of truth)
             inquiry = Inquiry.objects.create(
                 full_name=cd["full_name"],
                 email=cd["email"],
@@ -82,44 +89,56 @@ def contact(request):
                 user_agent=(request.META.get("HTTP_USER_AGENT") or "")[:255],
             )
 
-            receiver = getattr(settings, "CONTACT_RECEIVER_EMAIL", None) or (site.primary_email if site else None)
+            receiver = getattr(settings, "CONTACT_RECEIVER_EMAIL", None) or "contact@tradegateconsultants.com"
 
-            if receiver:
-                subject = f"[{_site_name(site)}] New inquiry: {inquiry.subject}"
+            subject = f"[{_site_name(site)}] New inquiry: {inquiry.subject}"
+            body = (
+                "New inquiry received\n\n"
+                f"Name: {inquiry.full_name}\n"
+                f"Email: {inquiry.email}\n"
+                f"Company: {inquiry.company_name}\n"
+                f"Website: {inquiry.website}\n"
+                f"Country/Region: {inquiry.country}\n\n"
+                f"Service interest: {inquiry.service_interest}\n"
+                f"Timeline: {inquiry.timeline}\n"
+                f"Budget range: {inquiry.budget_range}\n"
+                f"Preferred contact method: {inquiry.contact_method}\n"
+                f"Phone/WhatsApp: {inquiry.phone}\n\n"
+                f"Subject: {inquiry.subject}\n\n"
+                "Message:\n"
+                f"{inquiry.message}\n\n"
+                f"IP: {inquiry.ip_address}\n"
+            )
 
-                body = (
-                    "New inquiry received\n\n"
-                    f"Name: {inquiry.full_name}\n"
-                    f"Email: {inquiry.email}\n"
-                    f"Company: {inquiry.company_name}\n"
-                    f"Website: {inquiry.website}\n"
-                    f"Country/Region: {inquiry.country}\n\n"
-                    f"Service interest: {inquiry.service_interest}\n"
-                    f"Timeline: {inquiry.timeline}\n"
-                    f"Budget range: {inquiry.budget_range}\n"
-                    f"Preferred contact method: {inquiry.contact_method}\n"
-                    f"Phone/WhatsApp: {inquiry.phone}\n\n"
-                    f"Subject: {inquiry.subject}\n\n"
-                    "Message:\n"
-                    f"{inquiry.message}\n\n"
-                    f"IP: {inquiry.ip_address}\n"
-                )
-
-                send_mail(
+            # Email notification: do not fail silently; log instead.
+            try:
+                msg = EmailMessage(
                     subject=subject,
-                    message=body,
+                    body=body,
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[receiver],
-                    fail_silently=True,
+                    to=[receiver],
+                    reply_to=[inquiry.email],  # replying goes to the sender
+                )
+                msg.send(fail_silently=False)
+            except Exception:
+                logger.exception("Contact email failed for inquiry_id=%s", inquiry.id)
+                messages.warning(
+                    request,
+                    "Your message was received, but our email notification had a temporary issue. "
+                    "We will still respond within 24–48 hours."
                 )
 
-            return redirect(reverse("contact") + "?sent=1")
+            messages.success(request, "Message received ✅ Thanks — we’ll respond within 24–48 hours.")
+            return redirect(reverse("contact") + "#contact-form")
+
+        # Invalid form: show clear banner; field errors already render below each field.
+        messages.error(request, "Please fix the highlighted fields and try again.")
+
     else:
         form = InquiryForm()
 
     context = {
         "form": form,
-        "sent": request.GET.get("sent") == "1",
         "page_meta": {
             "title": "Contact",
             "description": "Get in touch with TradeGate Consultants.",
@@ -147,6 +166,7 @@ def faq(request):
         "canonical": request.build_absolute_uri(),
     }
     return render(request, "website/faq.html", {"page_meta": page_meta})
+
 
 
 
