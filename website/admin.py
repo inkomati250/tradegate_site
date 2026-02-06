@@ -130,6 +130,9 @@ class LegalPageAdmin(admin.ModelAdmin):
     search_fields = ("key", "title", "content")
     ordering = ("key",)
 
+    # ✅ add this
+    readonly_fields = ("created_at", "updated_at")
+
     fieldsets = (
         ("Identity", {"fields": ("key", "title")}),
         ("Content", {"fields": ("content",)}),
@@ -141,6 +144,7 @@ class LegalPageAdmin(admin.ModelAdmin):
         if not change and LegalPage.objects.filter(key=obj.key).exists():
             raise ValidationError("This legal page key already exists. Please edit the existing page.")
         super().save_model(request, obj, form, change)
+
 
 
 # =========================
