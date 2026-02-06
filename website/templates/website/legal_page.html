@@ -1,9 +1,18 @@
 {% extends "website/base.html" %}
 {% block content %}
 
-<section class="max-w-3xl mx-auto px-4 py-12">
-  <div class="rounded-2xl border bg-white p-6 md:p-8 shadow-sm">
-    <h1 class="text-3xl font-semibold tracking-tight">{{ page.title }}</h1>
+<section class="mx-auto w-full max-w-5xl px-4 py-10">
+  <div class="rounded-2xl border bg-white p-5 md:p-6 shadow-sm">
+    <header class="border-b pb-4">
+      <h1 class="text-3xl font-semibold tracking-tight text-slate-900">
+        {{ page.title }}
+      </h1>
+      {% if page.updated_at %}
+        <p class="mt-1 text-sm text-slate-500">
+          Last updated: {{ page.updated_at|date:"F j, Y" }}
+        </p>
+      {% endif %}
+    </header>
 
     <div class="mt-6 text-slate-700 leading-relaxed whitespace-pre-line">
       {{ page.content }}
@@ -12,3 +21,4 @@
 </section>
 
 {% endblock %}
+
