@@ -5,7 +5,6 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
-# Important for private repos / least-privilege
 permissions:
   contents: read
 
@@ -14,48 +13,61 @@ jobs:
     runs-on: [self-hosted, tradegate, prod]
 
     steps:
-      - name: Update code on VPS (auth only for fetch)
+      - name: Deploy (git/pip/django as deploy)
         shell: bash
         env:
           DEPLOY_PAT: ${{ secrets.DEPLOY_PAT }}
         run: |
           set -euo pipefail
-          cd /srv/tradegate/app
 
-          # Use token only for this fetch; do NOT store it in .git/config
-          git -c http.extraheader="AUTHORIZATION: basic $(printf x-access-token:%s "$DEPLOY_PAT" | base64 -w0)" fetch --all --prune
+          # Everything repo-related runs as deploy (repo owner)
+          sudo -n -u deploy bash -lc '
+            set -euo pipefail
+            cd /srv/tradegate/app
 
-          git reset --hard origin/main
+            # prevent "dubious ownership"
+            git config --global --add safe.directory /srv/tradegate/app || true
 
-      - name: Install dependencies
-        shell: bash
-        run: |
-          set -euo pipefail
-          /srv/tradegate/venv/bin/pip install -r /srv/tradegate/app/requirements.txt
+            # Fetch using PAT only for this command (no token stored in config)
+            git -c http.extraheader="AUTHORIZATION: basic $(printf x-access-token:%s "$DEPLOY_PAT" | base64 -w0)" fetch --all --prune
 
-      - name: Django checks, migrate & collectstatic
-        shell: bash
-        run: |
-          set -euo pipefail
-          set -a; source /srv/tradegate/.env; set +a
-          cd /srv/tradegate/app
-          /srv/tradegate/venv/bin/python manage.py check --deploy
-          /srv/tradegate/venv/bin/python manage.py migrate --noinput
-          /srv/tradegate/venv/bin/python manage.py collectstatic --noinput
+            # Force exact match to origin/main and remove local drift
+            git reset --hard origin/main
+            git clean -fd
+          '
 
-      - name: Restart services
-        shell: bash
-        run: |
-          set -euo pipefail
+          # Dependencies + Django tasks also as deploy (keeps perms consistent)
+          sudo -n -u deploy /srv/tradegate/venv/bin/pip install -r /srv/tradegate/app/requirements.txt
+
+          sudo -n -u deploy bash -lc '
+            set -euo pipefail
+            cd /srv/tradegate/app
+
+            # Fail deploy if migrations were not committed
+            /srv/tradegate/venv/bin/python manage.py makemigrations --check --dry-run
+
+            /srv/tradegate/venv/bin/python manage.py check --deploy
+            /srv/tradegate/venv/bin/python manage.py migrate --noinput
+            /srv/tradegate/venv/bin/python manage.py collectstatic --noinput
+          '
+
+          # Restart services (root)
           sudo -n /bin/systemctl restart tradegate
           sudo -n /bin/systemctl reload nginx
 
-      - name: Show status (only if something fails)
+      - name: Diagnostics (only on failure)
         if: failure()
         shell: bash
         run: |
+          set -euo pipefail
+          echo "=== whoami ==="
+          whoami || true
+          echo "=== perms ==="
+          ls -ld /srv/tradegate/app /srv/tradegate/app/.git || true
+          echo "=== git as deploy ==="
+          sudo -n -u deploy bash -lc 'cd /srv/tradegate/app && git status && git remote -v' || true
+          echo "=== systemd ==="
           sudo -n /bin/systemctl status tradegate --no-pager || true
           sudo -n /bin/systemctl status nginx --no-pager || true
-          sudo journalctl -u tradegate -n 120 --no-pager || true
-          sudo tail -n 120 /var/log/nginx/error.log || true
-
+          sudo journalctl -u tradegate -n 200 --no-pager || true
+          sudo tail -n 200 /var/log/nginx/error.log || true
