@@ -21,25 +21,26 @@ jobs:
           set -euo pipefail
 
           # Everything repo-related runs as deploy (repo owner)
-          sudo -n -u deploy bash -lc '
+          sudo -n -u deploy /bin/bash -lc '
             set -euo pipefail
             cd /srv/tradegate/app
 
             # prevent "dubious ownership"
-            git config --global --add safe.directory /srv/tradegate/app || true
+            /usr/bin/git config --global --add safe.directory /srv/tradegate/app || true
 
             # Fetch using PAT only for this command (no token stored in config)
-            git -c http.extraheader="AUTHORIZATION: basic $(printf x-access-token:%s "$DEPLOY_PAT" | base64 -w0)" fetch --all --prune
+            AUTH=$(printf x-access-token:%s "$DEPLOY_PAT" | base64 | tr -d "\n")
+            /usr/bin/git -c http.extraheader="AUTHORIZATION: basic $AUTH" fetch --all --prune
 
             # Force exact match to origin/main and remove local drift
-            git reset --hard origin/main
-            git clean -fd
+            /usr/bin/git reset --hard origin/main
+            /usr/bin/git clean -fd
           '
 
           # Dependencies + Django tasks also as deploy (keeps perms consistent)
           sudo -n -u deploy /srv/tradegate/venv/bin/pip install -r /srv/tradegate/app/requirements.txt
 
-          sudo -n -u deploy bash -lc '
+          sudo -n -u deploy /bin/bash -lc '
             set -euo pipefail
             cd /srv/tradegate/app
 
@@ -65,9 +66,9 @@ jobs:
           echo "=== perms ==="
           ls -ld /srv/tradegate/app /srv/tradegate/app/.git || true
           echo "=== git as deploy ==="
-          sudo -n -u deploy bash -lc 'cd /srv/tradegate/app && git status && git remote -v' || true
+          sudo -n -u deploy /bin/bash -lc 'cd /srv/tradegate/app && /usr/bin/git status && /usr/bin/git remote -v' || true
           echo "=== systemd ==="
           sudo -n /bin/systemctl status tradegate --no-pager || true
           sudo -n /bin/systemctl status nginx --no-pager || true
-          sudo journalctl -u tradegate -n 200 --no-pager || true
-          sudo tail -n 200 /var/log/nginx/error.log || true
+          sudo -n /usr/bin/journalctl -u tradegate -n 200 --no-pager || true
+          sudo -n /usr/bin/tail -n 200 /var/log/nginx/error.log || true
