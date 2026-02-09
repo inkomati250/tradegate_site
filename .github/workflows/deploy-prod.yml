@@ -13,48 +13,32 @@ jobs:
     runs-on: [self-hosted, tradegate, prod]
 
     steps:
-      - name: Update code on VPS (auth only for fetch) - run as deploy
+      - name: Update code on VPS (SSH fetch) as deploy
         shell: bash
-        env:
-          DEPLOY_PAT: ${{ secrets.DEPLOY_PAT }}
         run: |
           set -euo pipefail
-
-          # fail clearly if secret not present
-          : "${DEPLOY_PAT:?Missing secret DEPLOY_PAT in GitHub Actions secrets (repo or environment).}"
-
           sudo -n -u deploy /bin/bash -lc '
             set -euo pipefail
-            DEPLOY_PAT="$1"
             cd /srv/tradegate/app
-
-            /usr/bin/git config --global --add safe.directory /srv/tradegate/app || true
-
-            # Token only for this fetch; do NOT store it in .git/config
-            AUTH=$(printf x-access-token:%s "$DEPLOY_PAT" | base64 | tr -d "\n")
-            /usr/bin/git -c http.extraheader="AUTHORIZATION: basic $AUTH" fetch --all --prune
-
+            /usr/bin/git fetch --all --prune
             /usr/bin/git reset --hard origin/main
             /usr/bin/git clean -fd
-          ' -- "$DEPLOY_PAT"
+          '
 
-      - name: Install dependencies (run as deploy)
+      - name: Install dependencies (as deploy)
         shell: bash
         run: |
           set -euo pipefail
           sudo -n -u deploy /srv/tradegate/venv/bin/pip install -r /srv/tradegate/app/requirements.txt
 
-      - name: Django checks, migrate & collectstatic (run as deploy)
+      - name: Django checks, migrate & collectstatic (as deploy)
         shell: bash
         run: |
           set -euo pipefail
           sudo -n -u deploy /bin/bash -lc '
             set -euo pipefail
             cd /srv/tradegate/app
-
-            # Guard: ensure migrations are committed
             /srv/tradegate/venv/bin/python manage.py makemigrations --check --dry-run
-
             /srv/tradegate/venv/bin/python manage.py check --deploy
             /srv/tradegate/venv/bin/python manage.py migrate --noinput
             /srv/tradegate/venv/bin/python manage.py collectstatic --noinput
