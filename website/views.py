@@ -33,11 +33,11 @@ def home(request):
         "industries": industries,
         "steps": steps,
         "page_meta": {
-            "title": (site.meta_title if site and site.meta_title else _site_name(site)),
-            "description": (site.meta_description if site else ""),
-            "og_image": (site.og_image_url if site else ""),
+            "title": site.meta_title if site and site.meta_title else _site_name(site),
+            "description": site.meta_description if site else "",
+            "og_image": site.og_image_url if site else "",
             "canonical": request.build_absolute_uri("/"),
-        }
+        },
     }
     return render(request, "website/home.html", context)
 
@@ -51,9 +51,9 @@ def legal_page(request, key):
         "page_meta": {
             "title": page.meta_title or page.title,
             "description": page.meta_description or (site.meta_description if site else ""),
-            "og_image": (site.og_image_url if site else ""),
+            "og_image": site.og_image_url if site else "",
             "canonical": request.build_absolute_uri(page.get_absolute_url()),
-        }
+        },
     }
     return render(request, "website/legal_page.html", context)
 
@@ -68,13 +68,11 @@ def contact(request):
         if form.is_valid():
             cd = form.cleaned_data
 
-            # Save inquiry to DB (single source of truth)
             inquiry = Inquiry.objects.create(
                 full_name=cd["full_name"],
                 email=cd["email"],
                 subject=cd["subject"],
                 message=cd["message"],
-
                 company_name=cd.get("company_name", "") or "",
                 website=cd.get("website", "") or "",
                 country=cd.get("country", "") or "",
@@ -84,15 +82,15 @@ def contact(request):
                 contact_method=cd.get("contact_method", "") or "",
                 phone=cd.get("phone", "") or "",
                 consent=cd.get("consent", False),
-
                 ip_address=request.META.get("REMOTE_ADDR"),
                 user_agent=(request.META.get("HTTP_USER_AGENT") or "")[:255],
             )
 
-            receiver = getattr(settings, "CONTACT_RECEIVER_EMAIL", None) or "contact@tradegateconsultants.com"
+            receiver = getattr(settings, "CONTACT_RECIPIENT_EMAIL", "") or "contact@tradegateconsultants.com"
+            from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "") or "no-reply@tradegateconsultants.com"
 
-            subject = f"[{_site_name(site)}] New inquiry: {inquiry.subject}"
-            body = (
+            email_subject = f"[{_site_name(site)}] New inquiry: {inquiry.subject}"
+            email_body = (
                 "New inquiry received\n\n"
                 f"Name: {inquiry.full_name}\n"
                 f"Email: {inquiry.email}\n"
@@ -108,31 +106,44 @@ def contact(request):
                 "Message:\n"
                 f"{inquiry.message}\n\n"
                 f"IP: {inquiry.ip_address}\n"
+                f"User-Agent: {inquiry.user_agent}\n"
             )
 
-            # Email notification: do not fail silently; log instead.
+            email_sent = False
+
             try:
                 msg = EmailMessage(
-                    subject=subject,
-                    body=body,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    subject=email_subject,
+                    body=email_body,
+                    from_email=from_email,
                     to=[receiver],
-                    reply_to=[inquiry.email],  # replying goes to the sender
+                    reply_to=[inquiry.email],
                 )
                 msg.send(fail_silently=False)
+                email_sent = True
+                logger.info(
+                    "Contact email sent successfully for inquiry_id=%s to=%s",
+                    inquiry.id,
+                    receiver,
+                )
             except Exception:
                 logger.exception("Contact email failed for inquiry_id=%s", inquiry.id)
+
+            if email_sent:
+                messages.success(
+                    request,
+                    "Thanks — your message has been sent successfully. We’ll respond within 24–48 hours.",
+                )
+            else:
                 messages.warning(
                     request,
-                    "Your message was received, but our email notification had a temporary issue. "
-                    "We will still respond within 24–48 hours."
+                    "Your message was received successfully, but our email notification had a temporary issue. We will still respond within 24–48 hours.",
                 )
 
-            messages.success(request, "Message received ✅ Thanks — we’ll respond within 24–48 hours.")
             return redirect(reverse("contact") + "#contact-form")
 
-        # Invalid form: show clear banner; field errors already render below each field.
-        messages.error(request, "Please fix the highlighted fields and try again.")
+        logger.warning("Contact form invalid: %s", form.errors.as_json())
+        messages.error(request, "Please correct the highlighted fields and try again.")
 
     else:
         form = InquiryForm()
@@ -143,7 +154,7 @@ def contact(request):
             "title": "Contact",
             "description": "Get in touch with TradeGate Consultants.",
             "canonical": request.build_absolute_uri("/contact/"),
-        }
+        },
     }
     return render(request, "website/contact.html", context)
 
@@ -166,7 +177,6 @@ def faq(request):
         "canonical": request.build_absolute_uri(),
     }
     return render(request, "website/faq.html", {"page_meta": page_meta})
-
 
 
 

@@ -4,7 +4,6 @@
 <section class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-12 gap-10 items-start">
 
-    <!-- LEFT: Form -->
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm">
         <span class="h-2 w-2 rounded-full bg-brand-accent"></span>
@@ -13,32 +12,37 @@
 
       <h1 class="mt-4 text-3xl md:text-4xl font-semibold tracking-tight">Let’s talk</h1>
       <p class="text-slate-600 mt-3 text-lg">
-         Share your objective and timeline. We’ll respond with a clear scope, deliverables, and next steps.
+        Share your objective and timeline. We’ll respond with a clear scope, deliverables, and next steps.
       </p>
 
       {% if messages %}
-        <div class="mt-6 space-y-3">
+        <div class="mt-6 space-y-3" id="contact-feedback">
           {% for message in messages %}
             <div class="rounded-2xl border p-5
-              {% if message.tags == 'success' %} bg-green-50 text-green-900 border-green-200
-              {% elif message.tags == 'error' %} bg-red-50 text-red-900 border-red-200
-              {% else %} bg-amber-50 text-amber-900 border-amber-200 {% endif %}">
+              {% if 'success' in message.tags %}
+                bg-green-50 text-green-900 border-green-200
+              {% elif 'error' in message.tags %}
+                bg-red-50 text-red-900 border-red-200
+              {% elif 'warning' in message.tags %}
+                bg-amber-50 text-amber-900 border-amber-200
+              {% else %}
+                bg-slate-50 text-slate-900 border-slate-200
+              {% endif %}">
               <div class="font-semibold">{{ message }}</div>
             </div>
           {% endfor %}
         </div>
       {% endif %}
 
-      <form id="contact-form" method="post" class="mt-8 bg-white rounded-2xl border p-6 md:p-7 shadow-sm">
+      <form id="contact-form" method="post" novalidate class="mt-8 bg-white rounded-2xl border p-6 md:p-7 shadow-sm">
         {% csrf_token %}
 
-        <!-- Hidden honeypot (bots fill it, humans won't) -->
-        <div class="hidden">
+        <div class="hidden" aria-hidden="true">
           {{ form.website_url }}
         </div>
 
         {% if form.errors %}
-          <div class="mb-4 rounded-xl border bg-red-50 p-4 text-red-800">
+          <div class="mb-6 rounded-xl border bg-red-50 p-4 text-red-800">
             <div class="font-semibold">Please fix the highlighted fields.</div>
             <div class="mt-1 text-sm text-red-700">
               Some required information is missing or invalid.
@@ -47,72 +51,70 @@
         {% endif %}
 
         {% if form.non_field_errors %}
-          <div class="mb-4 rounded-xl border bg-red-50 p-4 text-red-800">
+          <div class="mb-6 rounded-xl border bg-red-50 p-4 text-red-800">
             {{ form.non_field_errors }}
           </div>
         {% endif %}
 
-        <!-- Contact basics -->
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="text-sm font-medium">Full name</label>
-            <div class="mt-1">{{ form.full_name }}</div>
+            <label class="text-sm font-medium" for="{{ form.full_name.id_for_label }}">Full name</label>
+            <div class="mt-1 field-wrap {% if form.full_name.errors %}has-error{% endif %}">{{ form.full_name }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.full_name.errors }}</div>
           </div>
 
           <div>
-            <label class="text-sm font-medium">Email</label>
-            <div class="mt-1">{{ form.email }}</div>
+            <label class="text-sm font-medium" for="{{ form.email.id_for_label }}">Email</label>
+            <div class="mt-1 field-wrap {% if form.email.errors %}has-error{% endif %}">{{ form.email }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.email.errors }}</div>
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div>
-            <label class="text-sm font-medium">Company (optional)</label>
-            <div class="mt-1">{{ form.company_name }}</div>
+            <label class="text-sm font-medium" for="{{ form.company_name.id_for_label }}">Company (optional)</label>
+            <div class="mt-1 field-wrap {% if form.company_name.errors %}has-error{% endif %}">{{ form.company_name }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.company_name.errors }}</div>
           </div>
 
           <div>
-            <label class="text-sm font-medium">Website (optional)</label>
-            <div class="mt-1">{{ form.website }}</div>
+            <label class="text-sm font-medium" for="{{ form.website.id_for_label }}">Website (optional)</label>
+            <div class="mt-1 field-wrap {% if form.website.errors %}has-error{% endif %}">{{ form.website }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.website.errors }}</div>
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div>
-            <label class="text-sm font-medium">Country / Region (optional)</label>
-            <div class="mt-1">{{ form.country }}</div>
+            <label class="text-sm font-medium" for="{{ form.country.id_for_label }}">Country / Region (optional)</label>
+            <div class="mt-1 field-wrap {% if form.country.errors %}has-error{% endif %}">{{ form.country }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.country.errors }}</div>
           </div>
 
           <div>
-            <label class="text-sm font-medium">What do you need?</label>
-            <div class="mt-1">{{ form.service_interest }}</div>
+            <label class="text-sm font-medium" for="{{ form.service_interest.id_for_label }}">What do you need?</label>
+            <div class="mt-1 field-wrap {% if form.service_interest.errors %}has-error{% endif %}">{{ form.service_interest }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.service_interest.errors }}</div>
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div>
-            <label class="text-sm font-medium">Timeline (optional)</label>
-            <div class="mt-1">{{ form.timeline }}</div>
+            <label class="text-sm font-medium" for="{{ form.timeline.id_for_label }}">Timeline (optional)</label>
+            <div class="mt-1 field-wrap {% if form.timeline.errors %}has-error{% endif %}">{{ form.timeline }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.timeline.errors }}</div>
           </div>
 
           <div>
-            <label class="text-sm font-medium">Budget range (optional)</label>
-            <div class="mt-1">{{ form.budget_range }}</div>
+            <label class="text-sm font-medium" for="{{ form.budget_range.id_for_label }}">Budget range (optional)</label>
+            <div class="mt-1 field-wrap {% if form.budget_range.errors %}has-error{% endif %}">{{ form.budget_range }}</div>
             <div class="text-sm text-red-600 mt-1">{{ form.budget_range.errors }}</div>
           </div>
         </div>
 
-        <!-- Preferred contact -->
         <div class="mt-6">
           <label class="text-sm font-medium">Preferred contact method (optional)</label>
-          <div class="mt-2 rounded-xl border bg-slate-50 p-4">
+          <div class="mt-2 rounded-xl border bg-slate-50 p-4 {% if form.contact_method.errors %}border-red-300 bg-red-50{% endif %}">
             <div class="grid sm:grid-cols-3 gap-2 text-sm contact-radios">
               {{ form.contact_method }}
             </div>
@@ -121,30 +123,28 @@
         </div>
 
         <div class="mt-4">
-          <label class="text-sm font-medium">Phone / WhatsApp (optional)</label>
-          <div class="mt-1">{{ form.phone }}</div>
+          <label class="text-sm font-medium" for="{{ form.phone.id_for_label }}">Phone / WhatsApp (optional)</label>
+          <div class="mt-1 field-wrap {% if form.phone.errors %}has-error{% endif %}">{{ form.phone }}</div>
           <div class="text-sm text-red-600 mt-1">{{ form.phone.errors }}</div>
         </div>
 
-        <!-- Message -->
         <div class="mt-6">
-          <label class="text-sm font-medium">Subject</label>
-          <div class="mt-1">{{ form.subject }}</div>
+          <label class="text-sm font-medium" for="{{ form.subject.id_for_label }}">Subject</label>
+          <div class="mt-1 field-wrap {% if form.subject.errors %}has-error{% endif %}">{{ form.subject }}</div>
           <div class="text-sm text-red-600 mt-1">{{ form.subject.errors }}</div>
         </div>
 
         <div class="mt-4">
-          <label class="text-sm font-medium">Project details</label>
-          <div class="mt-1">{{ form.message }}</div>
+          <label class="text-sm font-medium" for="{{ form.message.id_for_label }}">Project details</label>
+          <div class="mt-1 field-wrap {% if form.message.errors %}has-error{% endif %}">{{ form.message }}</div>
           <div class="text-sm text-red-600 mt-1">{{ form.message.errors }}</div>
           <div class="text-xs text-slate-500 mt-2">
-            Tip: mention your product/service, target buyers, and any upcoming trade fairs or meetings.
+            Tip: mention your product or service, target buyers, and any upcoming trade fairs or meetings.
           </div>
         </div>
 
-        <!-- Consent -->
         <div class="mt-6">
-          <div class="flex items-start gap-3 rounded-xl border bg-slate-50 p-4">
+          <div class="flex items-start gap-3 rounded-xl border bg-slate-50 p-4 {% if form.consent.errors %}border-red-300 bg-red-50{% endif %}">
             <div class="pt-0.5">{{ form.consent }}</div>
             <div class="text-sm">
               <div class="font-medium">Consent (required)</div>
@@ -157,8 +157,11 @@
         </div>
 
         <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-          <button type="submit"
-            class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-brand-primary text-white hover:opacity-95 transition font-semibold shadow-sm">
+          <button
+            id="contact-submit-btn"
+            type="submit"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-brand-primary text-white hover:opacity-95 transition font-semibold shadow-sm"
+          >
             Send message
           </button>
 
@@ -169,7 +172,6 @@
       </form>
     </div>
 
-    <!-- RIGHT: Professional helper panel -->
     <aside class="lg:col-span-5 space-y-6">
       <div class="rounded-2xl bg-brand-primary text-white p-7 shadow-sm">
         <div class="text-brand-accent text-sm font-semibold">What happens next</div>
@@ -193,9 +195,9 @@
       <div class="rounded-2xl border bg-white p-7">
         <h3 class="text-lg font-semibold">What to include (best results)</h3>
         <div class="mt-3 grid gap-3 text-sm text-slate-600">
-          <div class="rounded-xl border bg-slate-50 p-4">Your offer (product/service) + target buyers</div>
+          <div class="rounded-xl border bg-slate-50 p-4">Your offer (product or service) + target buyers</div>
           <div class="rounded-xl border bg-slate-50 p-4">Which EU markets you want (Germany only or wider EU)</div>
-          <div class="rounded-xl border bg-slate-50 p-4">Upcoming trade fairs / meetings (if any)</div>
+          <div class="rounded-xl border bg-slate-50 p-4">Upcoming trade fairs or meetings (if any)</div>
           <div class="rounded-xl border bg-slate-50 p-4">What “success” looks like (leads, partners, distributors)</div>
         </div>
       </div>
@@ -219,7 +221,6 @@
 </section>
 
 <style>
-  /* Make Django widgets Tailwind-friendly */
   input, textarea, select {
     width: 100%;
     border: 1px solid rgb(226 232 240);
@@ -227,19 +228,69 @@
     padding: 0.75rem 0.9rem;
     outline: none;
     background: #fff;
+    transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
   }
-  textarea { min-height: 160px; }
+
+  textarea {
+    min-height: 160px;
+  }
+
   input:focus, textarea:focus, select:focus {
     border-color: rgb(148 163 184);
     box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.25);
   }
 
-  /* Radio widget list */
-  .contact-radios ul { margin: 0; padding: 0; list-style: none; }
-  .contact-radios li label { display: inline-flex; gap: .5rem; align-items: center; cursor: pointer; }
-  .contact-radios li input[type="radio"] { width: auto; }
-  input[type="checkbox"] { width: auto; }
+  .field-wrap.has-error input,
+  .field-wrap.has-error textarea,
+  .field-wrap.has-error select {
+    border-color: rgb(252 165 165);
+    box-shadow: 0 0 0 3px rgba(252, 165, 165, 0.18);
+    background: rgb(254 242 242);
+  }
+
+  .contact-radios ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-radios li label {
+    display: inline-flex;
+    gap: .5rem;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .contact-radios li input[type="radio"] {
+    width: auto;
+  }
+
+  input[type="checkbox"] {
+    width: auto;
+  }
 </style>
 
-{% endblock %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("contact-form");
+    const submitBtn = document.getElementById("contact-submit-btn");
 
+    if (form && submitBtn) {
+      form.addEventListener("submit", function () {
+        submitBtn.disabled = true;
+        submitBtn.dataset.originalText = submitBtn.textContent;
+        submitBtn.textContent = "Sending...";
+        submitBtn.classList.add("opacity-75", "cursor-not-allowed");
+      });
+    }
+
+    if (window.location.hash === "#contact-form") {
+      const feedback = document.getElementById("contact-feedback");
+      if (feedback) {
+        feedback.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  });
+</script>
+
+{% endblock %}
