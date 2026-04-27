@@ -1,176 +1,160 @@
 {% extends "website/base.html" %}
 {% block content %}
 
-<section class="max-w-7xl mx-auto px-4 py-14 md:py-20">
-  <div class="grid md:grid-cols-12 gap-10 items-start">
-
-    <div class="md:col-span-7">
-      <div class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-1.5 text-sm font-medium text-slate-700">
-        About TradeGate Consultants
-      </div>
-
-      <h1 class="mt-5 text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 leading-tight">
-        Your trusted market access and business representation partner in Germany and the EU
+<!-- HERO -->
+<section class="bg-[#0B1220] text-white relative overflow-hidden grain">
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute top-0 right-0 h-80 w-80 rounded-full bg-brand-accent/5 blur-3xl"></div>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-20">
+    <div class="max-w-3xl reveal">
+      <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-4">About us</span>
+      <h1 class="font-display text-4xl md:text-5xl font-semibold leading-tight tracking-tight">
+        Your trusted market access partner in Germany and the EU
       </h1>
-
-      <p class="mt-6 text-lg leading-relaxed text-slate-700 max-w-3xl">
-        TradeGate Consultants helps international businesses build a credible, practical, and commercially
-        relevant presence in Germany and across the European Union. We support companies that want to explore
-        market opportunities, attend trade fairs, identify business partners, and maintain professional follow-up
-        without the immediate cost and complexity of opening a local office.
+      <p class="mt-5 text-white/60 text-lg leading-relaxed">
+        TradeGate Consultants helps international businesses build a credible, practical, and commercially relevant presence in Germany and across the European Union.
       </p>
+    </div>
+  </div>
+  <div class="absolute bottom-0 inset-x-0 translate-y-px">
+    <svg viewBox="0 0 1440 40" class="w-full h-auto text-stone-50" preserveAspectRatio="none">
+      <path fill="currentColor" d="M0,20 C480,40 960,0 1440,20 L1440,40 L0,40 Z"/>
+    </svg>
+  </div>
+</section>
 
-      <p class="mt-4 text-lg leading-relaxed text-slate-700 max-w-3xl">
-        Our approach is lean, hands-on, and execution-focused. We do not simply advise from a distance — we help
-        you show up, connect with the right people, follow through consistently, and turn early conversations into
-        structured business momentum.
-      </p>
+<!-- CONTENT -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-20">
+  <div class="grid lg:grid-cols-12 gap-12 items-start">
 
-      <div class="mt-10 grid gap-6">
-        <div class="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-          <h2 class="text-xl font-semibold text-slate-900">What we do</h2>
-          <p class="mt-3 text-slate-600 leading-relaxed">
-            We represent your business at trade fairs and industry events, support market entry activities,
-            identify relevant contacts, and help maintain continuity after first meetings. Our goal is to ensure
-            that opportunities do not end with a single introduction, but continue through structured follow-up,
-            local coordination, and practical support.
-          </p>
-        </div>
+    <!-- Left -->
+    <div class="lg:col-span-7 space-y-6">
 
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-7">
-          <h2 class="text-xl font-semibold text-slate-900">How we work</h2>
-          <p class="mt-3 text-slate-600 leading-relaxed">
-            We work with clarity, professionalism, and accountability. Every engagement is designed to provide
-            visible support on the ground and clear next steps for our clients.
-          </p>
-          <ul class="mt-4 grid gap-3 text-slate-700">
-            <li>• Trade fair and event representation</li>
-            <li>• Partner and distributor scouting</li>
-            <li>• Meeting coordination and local follow-up</li>
-            <li>• Professional documentation and reporting</li>
-            <li>• German-English communication support</li>
-            <li>• Lean and scalable engagement models</li>
-          </ul>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-          <h2 class="text-xl font-semibold text-slate-900">Who we serve</h2>
-          <p class="mt-3 text-slate-600 leading-relaxed">
-            We support international SMEs, exporters, manufacturers, trade promotion organizations,
-            tourism-related institutions, and growth-oriented businesses looking to test, enter, or strengthen
-            their position in Germany and the wider EU market.
-          </p>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-7">
-          <h2 class="text-xl font-semibold text-slate-900">Why TradeGate</h2>
-          <p class="mt-3 text-slate-600 leading-relaxed">
-            Entering a new market requires more than information. It requires presence, trust, responsiveness,
-            and consistency. TradeGate Consultants helps bridge that gap by acting as a reliable local partner
-            who understands the importance of relationship-building, communication quality, and structured
-            market engagement.
-          </p>
-        </div>
-
-        {% if site %}
-          {% if site.primary_email or site.whatsapp_url %}
-          <div class="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h2 class="text-xl font-semibold text-slate-900">Contact</h2>
-            <p class="mt-3 text-slate-600 leading-relaxed">
-              For business inquiries, partnership discussions, or representation requests, contact us by email
-              or WhatsApp. Direct calls can be arranged where appropriate.
-            </p>
-
-            <div class="mt-4 space-y-3 text-slate-700">
-              {% if site.primary_email %}
-                <div>
-                  <span class="font-medium">Email:</span>
-                  <a class="text-brand-primary font-semibold hover:underline"
-                     href="mailto:{{ site.primary_email }}">
-                    {{ site.primary_email }}
-                  </a>
-                </div>
-              {% endif %}
-
-              {% if site.whatsapp_url %}
-                <div>
-                  <span class="font-medium">WhatsApp:</span>
-                  <a class="text-brand-primary font-semibold hover:underline"
-                     href="{{ site.whatsapp_url }}"
-                     target="_blank" rel="noopener">
-                    Start a conversation
-                  </a>
-                </div>
-              {% endif %}
-            </div>
-          </div>
-          {% endif %}
-        {% endif %}
+      <div class="rounded-2xl border bg-white p-7 shadow-sm reveal">
+        <h2 class="font-display text-xl font-semibold mb-3">What we do</h2>
+        <p class="text-slate-600 leading-relaxed">
+          We represent your business at trade fairs and industry events, support market entry activities, identify relevant contacts, and help maintain continuity after first meetings. Our goal is to ensure that opportunities do not end with a single introduction, but continue through structured follow-up, local coordination, and practical support.
+        </p>
       </div>
 
-      <div class="mt-10 flex flex-wrap gap-4">
+      <div class="rounded-2xl border bg-stone-50 p-7 reveal">
+        <h2 class="font-display text-xl font-semibold mb-3">How we work</h2>
+        <p class="text-slate-600 leading-relaxed mb-5">
+          We work with clarity, professionalism, and accountability. Every engagement is designed to provide visible support on the ground and clear next steps for our clients.
+        </p>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="flex items-center gap-2.5 text-sm text-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Trade fair and event representation</div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Partner and distributor scouting</div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Meeting coordination and local follow-up</div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Professional documentation and reporting</div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>German-English communication support</div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-700"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Lean and scalable engagement models</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border bg-white p-7 shadow-sm reveal">
+        <h2 class="font-display text-xl font-semibold mb-3">Who we serve</h2>
+        <p class="text-slate-600 leading-relaxed">
+          We support international SMEs, exporters, manufacturers, trade promotion organizations, tourism-related institutions, and growth-oriented businesses looking to test, enter, or strengthen their position in Germany and the wider EU market.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇳🇬 Nigeria</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇿🇦 South Africa</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇦🇪 UAE</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇸🇦 Saudi Arabia</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇮🇳 India</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇲🇦 Morocco</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇹🇷 Turkey</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇪🇬 Egypt</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇵🇰 Pakistan</span>
+          <span class="rounded-full border bg-stone-50 px-3 py-1.5 text-xs text-slate-600">🇬🇭 Ghana</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border bg-stone-50 p-7 reveal">
+        <h2 class="font-display text-xl font-semibold mb-3">Why TradeGate</h2>
+        <p class="text-slate-600 leading-relaxed">
+          Entering a new market requires more than information. It requires presence, trust, responsiveness, and consistency. TradeGate Consultants helps bridge that gap by acting as a reliable local partner who understands the importance of relationship-building, communication quality, and structured market engagement.
+        </p>
+      </div>
+
+      <!-- Contact block -->
+      {% if site %}
+        {% if site.primary_email or site.whatsapp_url %}
+        <div class="rounded-2xl border bg-white p-7 shadow-sm reveal">
+          <h2 class="font-display text-xl font-semibold mb-3">Contact</h2>
+          <p class="text-slate-600 leading-relaxed mb-5">For business inquiries, partnership discussions, or representation requests, contact us by email or WhatsApp.</p>
+          <div class="space-y-3">
+            {% if site.primary_email %}
+            <a href="mailto:{{ site.primary_email }}"
+               class="flex items-center gap-3 text-sm font-medium text-[#0B1220] hover:text-brand-accent transition group">
+              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-stone-100 group-hover:bg-brand-accent/10 transition">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </span>
+              {{ site.primary_email }}
+            </a>
+            {% endif %}
+            {% if site.whatsapp_url %}
+            <a href="{{ site.whatsapp_url }}" target="_blank" rel="noopener"
+               class="flex items-center gap-3 text-sm font-medium text-[#0B1220] hover:text-brand-accent transition group">
+              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-stone-100 group-hover:bg-brand-accent/10 transition">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.5 11.9a8.5 8.5 0 0 1-12.9 7.3L3.5 20.5l1.4-4A8.5 8.5 0 1 1 20.5 11.9Z"/></svg>
+              </span>
+              WhatsApp (fastest reply)
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      {% endif %}
+
+      <div class="flex flex-wrap gap-3 reveal">
         <a href="{% url 'contact' %}"
-           class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-brand-primary text-white hover:opacity-95 transition font-semibold shadow-sm">
+           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0B1220] text-white font-semibold hover:bg-[#0B1220]/90 transition text-sm">
           Contact us
         </a>
-
         <a href="/#services"
-           class="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 transition font-semibold">
+           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border bg-white text-slate-700 font-semibold hover:bg-stone-50 transition text-sm">
           Explore services
         </a>
       </div>
     </div>
 
-    <div class="md:col-span-5">
-      <div class="rounded-3xl bg-brand-primary text-white p-8 shadow-sm">
-        <div class="text-brand-accent font-semibold text-sm uppercase tracking-wide">
-          Positioning
-        </div>
-        <div class="mt-3 text-2xl md:text-3xl font-semibold leading-tight">
-          Local EU presence without the heavy overhead
-        </div>
-        <p class="mt-4 text-slate-200 leading-relaxed">
-          We help international companies establish credibility, build relationships, and move
-          opportunities forward in Germany and across the EU through structured, practical representation.
-        </p>
-
-        <div class="mt-7 grid gap-3 text-sm">
-          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Trade fairs &amp; business events</div>
-          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Market entry scouting</div>
-          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Local meetings support</div>
-          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Relationship management</div>
-          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Follow-up coordination</div>
-          <div class="rounded-xl border border-white/15 bg-white/5 p-4">Professional reporting</div>
+    <!-- Right sidebar -->
+    <div class="lg:col-span-5 space-y-5 reveal d1">
+      <div class="rounded-2xl bg-[#0B1220] text-white p-8">
+        <span class="text-xs font-semibold text-brand-accent uppercase tracking-wider">Positioning</span>
+        <h3 class="font-display text-2xl font-semibold mt-3 leading-snug">Local EU presence without the heavy overhead</h3>
+        <p class="mt-4 text-white/55 text-sm leading-relaxed">We help international companies establish credibility, build relationships, and move opportunities forward in Germany and across the EU.</p>
+        <div class="mt-6 space-y-2.5">
+            <div class="flex items-center gap-2.5 text-sm text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Trade fairs &amp; business events</div>
+          <div class="flex items-center gap-2.5 text-sm text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Market entry scouting</div>
+          <div class="flex items-center gap-2.5 text-sm text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Local meetings support</div>
+          <div class="flex items-center gap-2.5 text-sm text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Relationship management</div>
+          <div class="flex items-center gap-2.5 text-sm text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Follow-up coordination</div>
+          <div class="flex items-center gap-2.5 text-sm text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Professional reporting</div>
         </div>
       </div>
 
-      <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h3 class="text-lg font-semibold text-slate-900">Our approach</h3>
-        <div class="mt-5 space-y-5">
+      <div class="rounded-2xl border bg-white p-8 shadow-sm">
+        <h3 class="font-display text-lg font-semibold mb-5">Our approach</h3>
+        <div class="space-y-5">
           <div>
-            <div class="text-sm font-semibold text-slate-900">Practical</div>
-            <p class="mt-1 text-sm leading-relaxed text-slate-600">
-              We focus on actions, meetings, representation, and outcomes — not theory alone.
-            </p>
+            <p class="text-sm font-semibold text-[#0B1220]">Practical</p>
+            <p class="mt-1 text-sm text-slate-500 leading-relaxed">We focus on actions, meetings, representation, and outcomes — not theory alone.</p>
           </div>
-
-          <div>
-            <div class="text-sm font-semibold text-slate-900">Professional</div>
-            <p class="mt-1 text-sm leading-relaxed text-slate-600">
-              We communicate clearly, document properly, and represent your brand with care.
-            </p>
+          <div class="border-t pt-5">
+            <p class="text-sm font-semibold text-[#0B1220]">Professional</p>
+            <p class="mt-1 text-sm text-slate-500 leading-relaxed">We communicate clearly, document properly, and represent your brand with care.</p>
           </div>
-
-          <div>
-            <div class="text-sm font-semibold text-slate-900">Scalable</div>
-            <p class="mt-1 text-sm leading-relaxed text-slate-600">
-              Start lean, validate opportunities, and expand step by step with confidence.
-            </p>
+          <div class="border-t pt-5">
+            <p class="text-sm font-semibold text-[#0B1220]">Scalable</p>
+            <p class="mt-1 text-sm text-slate-500 leading-relaxed">Start lean, validate opportunities, and expand step by step with confidence.</p>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
