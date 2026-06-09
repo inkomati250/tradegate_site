@@ -1,33 +1,25 @@
 {% extends "website/base.html" %}
 {% block content %}
 
-<!-- HERO -->
-<section class="bg-[#0B1220] text-white relative overflow-hidden grain">
+<section class="bg-[#07111F] text-white relative overflow-hidden grain">
   <div class="pointer-events-none absolute inset-0">
-    <div class="absolute top-0 right-0 h-64 w-64 rounded-full bg-brand-accent/5 blur-3xl"></div>
+    <div class="absolute top-0 right-0 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl"></div>
   </div>
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-18">
-    <div class="max-w-xl reveal">
-      <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-4">Get in touch</span>
-      <h1 class="font-display text-4xl md:text-5xl font-semibold tracking-tight leading-tight">Let's talk</h1>
-      <p class="mt-4 text-white/60 text-lg leading-relaxed">
-        Share your objective and timeline. We'll respond with a clear scope, deliverables, and next steps.
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-20">
+    <div class="max-w-3xl reveal">
+      <span class="inline-block text-xs font-bold text-brand-accent uppercase tracking-[0.22em] mb-4">Qualified inquiry</span>
+      <h1 class="font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">Tell us your Germany/EU objective.</h1>
+      <p class="mt-5 text-white/62 text-lg md:text-xl leading-relaxed">
+        Share enough context for a practical reply: your company, sector, target market, timeline and what success should look like.
       </p>
     </div>
   </div>
-  <div class="absolute bottom-0 inset-x-0 translate-y-px">
-    <svg viewBox="0 0 1440 40" class="w-full h-auto text-stone-50" preserveAspectRatio="none">
-      <path fill="currentColor" d="M0,20 C480,40 960,0 1440,20 L1440,40 L0,40 Z"/>
-    </svg>
-  </div>
 </section>
 
-<section class="max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-16">
+<section class="max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-18">
   <div class="grid lg:grid-cols-12 gap-10 items-start">
 
-    <!-- Form col -->
     <div class="lg:col-span-7">
-
       {% if messages %}
       <div class="mb-8 space-y-3" id="contact-feedback">
         {% for message in messages %}
@@ -41,27 +33,31 @@
       </div>
       {% endif %}
 
-      <form id="contact-form" method="post" novalidate class="bg-white rounded-2xl border shadow-sm p-7 md:p-8 reveal">
+      <form id="contact-form" method="post" novalidate class="bg-white rounded-[2rem] border shadow-soft p-7 md:p-8 reveal">
         {% csrf_token %}
-
-        <!-- Honeypot -->
         <div class="hidden" aria-hidden="true">{{ form.website_url }}</div>
+        {{ form.form_started_at }}
 
         {% if form.errors %}
-        <div class="mb-6 rounded-xl border bg-red-50 p-4 text-sm text-red-700">
+        <div class="mb-6 rounded-2xl border bg-red-50 p-4 text-sm text-red-700">
           <p class="font-semibold text-red-800 mb-1">Please fix the highlighted fields.</p>
           Some required information is missing or invalid.
         </div>
         {% endif %}
 
+        <div class="mb-7 rounded-2xl border bg-[#F7F2EA] p-5">
+          <p class="text-sm font-bold text-[#07111F]">For faster qualification, please use a company email and include your website if available.</p>
+          <p class="text-sm text-slate-600 mt-1">This helps us understand your market readiness and respond with a realistic next step instead of a generic answer.</p>
+        </div>
+
         <div class="grid md:grid-cols-2 gap-4">
           <div class="field {% if form.full_name.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.full_name.id_for_label }}">Full name *</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.full_name.id_for_label }}">Full name *</label>
             {{ form.full_name }}
             {% if form.full_name.errors %}<p class="text-xs text-red-600 mt-1">{{ form.full_name.errors|join:", " }}</p>{% endif %}
           </div>
           <div class="field {% if form.email.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.email.id_for_label }}">Email *</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.email.id_for_label }}">Business email *</label>
             {{ form.email }}
             {% if form.email.errors %}<p class="text-xs text-red-600 mt-1">{{ form.email.errors|join:", " }}</p>{% endif %}
           </div>
@@ -69,64 +65,87 @@
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.company_name.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.company_name.id_for_label }}">Company <span class="text-slate-400 font-normal">(optional)</span></label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.company_name.id_for_label }}">Company / Organization</label>
             {{ form.company_name }}
           </div>
+          <div class="field {% if form.role.errors %}err{% endif %}">
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.role.id_for_label }}">Your role <span class="text-slate-400 font-normal">(optional)</span></label>
+            {{ form.role }}
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div class="field {% if form.website.errors %}err{% endif %}">
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.website.id_for_label }}">Company website</label>
+            {{ form.website }}
+            {% if form.website.errors %}<p class="text-xs text-red-600 mt-1">{{ form.website.errors|join:", " }}</p>{% endif %}
+          </div>
           <div class="field {% if form.country.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.country.id_for_label }}">Country / Region <span class="text-slate-400 font-normal">(optional)</span></label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.country.id_for_label }}">Country / Region</label>
             {{ form.country }}
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div class="field {% if form.industry.errors %}err{% endif %}">
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.industry.id_for_label }}">Industry / sector</label>
+            {{ form.industry }}
+          </div>
+          <div class="field {% if form.target_market.errors %}err{% endif %}">
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.target_market.id_for_label }}">Target market</label>
+            {{ form.target_market }}
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.service_interest.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.service_interest.id_for_label }}">What do you need? *</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.service_interest.id_for_label }}">What do you need? *</label>
             {{ form.service_interest }}
             {% if form.service_interest.errors %}<p class="text-xs text-red-600 mt-1">{{ form.service_interest.errors|join:", " }}</p>{% endif %}
           </div>
           <div class="field {% if form.budget_range.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.budget_range.id_for_label }}">Budget range <span class="text-slate-400 font-normal">(optional)</span></label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.budget_range.id_for_label }}">Budget range <span class="text-slate-400 font-normal">(optional)</span></label>
             {{ form.budget_range }}
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.timeline.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.timeline.id_for_label }}">Timeline <span class="text-slate-400 font-normal">(optional)</span></label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.timeline.id_for_label }}">Timeline <span class="text-slate-400 font-normal">(optional)</span></label>
             {{ form.timeline }}
           </div>
           <div class="field {% if form.phone.errors %}err{% endif %}">
-            <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.phone.id_for_label }}">Phone / WhatsApp <span class="text-slate-400 font-normal">(optional)</span></label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.phone.id_for_label }}">Phone / WhatsApp <span class="text-slate-400 font-normal">(optional)</span></label>
             {{ form.phone }}
+            {% if form.phone.errors %}<p class="text-xs text-red-600 mt-1">{{ form.phone.errors|join:", " }}</p>{% endif %}
           </div>
         </div>
 
         <div class="mt-4">
-          <label class="block text-sm font-medium text-slate-700 mb-2">Preferred contact method <span class="text-slate-400 font-normal">(optional)</span></label>
-          <div class="rounded-xl border bg-stone-50 p-4 contact-radios">
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Preferred contact method <span class="text-slate-400 font-normal">(optional)</span></label>
+          <div class="rounded-2xl border bg-[#F7F2EA] p-4 contact-radios">
             <div class="grid sm:grid-cols-3 gap-2 text-sm">{{ form.contact_method }}</div>
           </div>
         </div>
 
         <div class="field mt-4 {% if form.subject.errors %}err{% endif %}">
-          <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.subject.id_for_label }}">Subject *</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.subject.id_for_label }}">Subject *</label>
           {{ form.subject }}
           {% if form.subject.errors %}<p class="text-xs text-red-600 mt-1">{{ form.subject.errors|join:", " }}</p>{% endif %}
         </div>
 
         <div class="field mt-4 {% if form.message.errors %}err{% endif %}">
-          <label class="block text-sm font-medium text-slate-700 mb-1.5" for="{{ form.message.id_for_label }}">Project details *</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.message.id_for_label }}">Project details *</label>
           {{ form.message }}
-          <p class="text-xs text-slate-400 mt-1.5">Tip: mention your product or service, target buyers, and any upcoming trade fairs or meetings.</p>
+          <p class="text-xs text-slate-400 mt-1.5">Tip: mention your product/service, target buyers, planned trade fairs and what would make this project successful.</p>
           {% if form.message.errors %}<p class="text-xs text-red-600 mt-1">{{ form.message.errors|join:", " }}</p>{% endif %}
         </div>
 
-        <!-- Consent -->
-        <div class="mt-5 rounded-xl border bg-stone-50 p-4 {% if form.consent.errors %}border-red-300 bg-red-50{% endif %}">
+        <div class="mt-5 rounded-2xl border bg-[#F7F2EA] p-4 {% if form.consent.errors %}border-red-300 bg-red-50{% endif %}">
           <div class="flex items-start gap-3">
             <div class="pt-0.5">{{ form.consent }}</div>
             <div>
-              <p class="text-sm font-medium text-slate-800">Consent (required)</p>
+              <p class="text-sm font-bold text-slate-800">Consent required</p>
               <p class="text-sm text-slate-500 mt-0.5">{{ form.consent.label }}</p>
               {% if form.consent.errors %}<p class="text-xs text-red-600 mt-1">{{ form.consent.errors|join:", " }}</p>{% endif %}
             </div>
@@ -134,75 +153,56 @@
         </div>
 
         <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-          <button id="contact-submit-btn" type="submit"
-                  class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#0B1220] text-white font-semibold hover:bg-[#0B1220]/90 transition text-sm shadow-sm">
-            Send message
+          <button id="contact-submit-btn" type="submit" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#07111F] text-white font-bold hover:bg-[#07111F]/90 transition text-sm shadow-sm">
+            Send qualified inquiry
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
           </button>
-          <span class="text-sm text-slate-400">We reply within <span class="font-medium text-slate-600">24–48 hours</span>.</span>
+          <span class="text-sm text-slate-400">We reply within <span class="font-semibold text-slate-600">24–48 hours</span>.</span>
         </div>
       </form>
     </div>
 
-    <!-- Sidebar -->
     <aside class="lg:col-span-5 space-y-5 reveal d1">
-
-      <div class="rounded-2xl bg-[#0B1220] text-white p-7">
-        <span class="text-xs font-semibold text-brand-accent uppercase tracking-wider">What happens next</span>
-        <h2 class="font-display text-xl font-semibold mt-2">A practical plan — not vague marketing</h2>
-        <p class="mt-3 text-white/55 text-sm leading-relaxed">After you submit, we review your request and reply with:</p>
-        <ul class="mt-4 space-y-2.5 text-sm">
-            <li class="flex items-start gap-2.5 text-white/70"><span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Clarifying questions (if needed)</li>
-          <li class="flex items-start gap-2.5 text-white/70"><span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Recommended starting service (event vs scouting)</li>
-          <li class="flex items-start gap-2.5 text-white/70"><span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Deliverables + timeline</li>
-          <li class="flex items-start gap-2.5 text-white/70"><span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Proposal &amp; next steps</li>
+      <div class="rounded-[2rem] bg-[#07111F] text-white p-7 shadow-soft">
+        <span class="text-xs font-bold text-brand-accent uppercase tracking-[0.22em]">What happens next</span>
+        <h2 class="font-display text-2xl font-bold mt-2">You get a practical first response.</h2>
+        <p class="mt-3 text-white/58 text-sm leading-relaxed">We review whether your request fits TradeGate’s services and reply with the most realistic starting route.</p>
+        <ul class="mt-5 space-y-3 text-sm">
+          <li class="flex items-start gap-2.5 text-white/75"><span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-3 w-3 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Best-fit service recommendation</li>
+          <li class="flex items-start gap-2.5 text-white/75"><span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-3 w-3 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Expected deliverables and timeline</li>
+          <li class="flex items-start gap-2.5 text-white/75"><span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-3 w-3 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>Whether a trade fair, partner search or local presence model makes sense</li>
         </ul>
-        <div class="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm">
-          <p class="text-white/80 font-medium">Fastest entry point</p>
-          <p class="text-white/50 mt-1">Trade fair representation → prove value → scale to scouting &amp; follow-up cycles. Engagements from €800.</p>
+        <div class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm">
+          <p class="text-white/105 font-bold">Fastest entry point</p>
+          <p class="text-white/50 mt-1">A narrow pilot: one event, one partner-search sprint or one follow-up cycle.</p>
         </div>
       </div>
 
-      <div class="rounded-2xl border bg-white p-7">
-        <h3 class="font-display text-lg font-semibold mb-4">What to include (best results)</h3>
-        <div class="space-y-2.5">
-          <div class="flex items-start gap-2.5 rounded-xl border bg-stone-50 p-3.5 text-sm text-slate-600"><span class="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Your offer (product or service) + target buyers</div>
-          <div class="flex items-start gap-2.5 rounded-xl border bg-stone-50 p-3.5 text-sm text-slate-600"><span class="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Which EU markets you want (Germany only or wider EU)</div>
-          <div class="flex items-start gap-2.5 rounded-xl border bg-stone-50 p-3.5 text-sm text-slate-600"><span class="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>Upcoming trade fairs or meetings (if any)</div>
-          <div class="flex items-start gap-2.5 rounded-xl border bg-stone-50 p-3.5 text-sm text-slate-600"><span class="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-accent shrink-0"></span>What "success" looks like (leads, partners, distributors)</div>
-        </div>
-      </div>
-
-      <!-- Direct contact -->
-      <div class="rounded-2xl border bg-stone-50 p-7">
-        <h3 class="font-display text-lg font-semibold mb-4">Prefer direct contact?</h3>
+      <div class="rounded-[2rem] border bg-white p-7 shadow-soft">
+        <h3 class="font-display text-xl font-bold mb-4">Best inquiries include</h3>
         <div class="space-y-3">
-          <a href="mailto:info@tradegateconsultants.com"
-             class="flex items-center gap-3 text-sm text-slate-700 hover:text-[#0B1220] transition group">
-            <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white border group-hover:border-brand-accent/40 transition shrink-0">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </span>
-            info@tradegateconsultants.com
-          </a>
-          {% if site and site.whatsapp_url %}
-          <a href="{{ site.whatsapp_url }}" target="_blank" rel="noopener"
-             class="flex items-center gap-3 text-sm text-slate-700 hover:text-[#0B1220] transition group">
-            <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white border group-hover:border-brand-accent/40 transition shrink-0">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.5 11.9a8.5 8.5 0 0 1-12.9 7.3L3.5 20.5l1.4-4A8.5 8.5 0 1 1 20.5 11.9Z"/></svg>
-            </span>
-            WhatsApp (fastest reply)
-          </a>
-          {% endif %}
+          <div class="flex items-start gap-3 rounded-2xl border bg-[#F7F2EA] p-4 text-sm text-slate-600"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand-copper shrink-0"></span>Company profile and website</div>
+          <div class="flex items-start gap-3 rounded-2xl border bg-[#F7F2EA] p-4 text-sm text-slate-600"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand-copper shrink-0"></span>Product/service and target buyers</div>
+          <div class="flex items-start gap-3 rounded-2xl border bg-[#F7F2EA] p-4 text-sm text-slate-600"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand-copper shrink-0"></span>Target market: Germany, DACH or wider EU</div>
+          <div class="flex items-start gap-3 rounded-2xl border bg-[#F7F2EA] p-4 text-sm text-slate-600"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand-copper shrink-0"></span>Upcoming trade fair or business deadline</div>
         </div>
-        <p class="mt-5 text-xs text-slate-400">
-          <a href="{% url 'legal_page' key='datenschutz' %}" class="hover:text-slate-600 hover:underline">Privacy Policy</a> — we only store your message to respond to your inquiry.
-        </p>
+      </div>
+
+      <div class="rounded-[2rem] border bg-white p-7 shadow-soft">
+        <h3 class="font-display text-xl font-bold mb-4">Popular starting points</h3>
+        <div class="space-y-2 text-sm">
+          <a href="{% url 'service_landing' slug='trade-fair-representation-germany' %}" class="block rounded-xl border p-3 hover:border-brand-accent hover:bg-[#F7F2EA] transition">Trade Fair Representation in Germany</a>
+          <a href="{% url 'service_landing' slug='find-business-partners-germany' %}" class="block rounded-xl border p-3 hover:border-brand-accent hover:bg-[#F7F2EA] transition">Find Business Partners in Germany</a>
+          <a href="{% url 'service_landing' slug='germany-market-entry-support' %}" class="block rounded-xl border p-3 hover:border-brand-accent hover:bg-[#F7F2EA] transition">Germany Market Entry Support</a>
+        </div>
       </div>
     </aside>
-
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('contact-form');
@@ -215,10 +215,9 @@
       });
     }
     if (window.location.hash === '#contact-form') {
-      const feedback = document.getElementById('contact-feedback');
+      const feedback = document.getElementById('contact-feedback') || document.getElementById('contact-form');
       if (feedback) feedback.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
 </script>
-
 {% endblock %}

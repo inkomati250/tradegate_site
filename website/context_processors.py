@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from .models import SiteSettings
+from .content import SERVICE_NAV
 
 # Navigation model may not exist yet (or migrations not applied yet).
 # We import it safely to avoid breaking the project.
@@ -34,4 +35,5 @@ def site_settings(request) -> dict[str, Any]:
         "site_name": (site.site_name if site and site.site_name else "TradeGate"),
         "nav_items": nav_items,
         "nav_cta": nav_cta,  # NEW: lets base.html render a single CTA button cleanly
+        "global_service_nav": SERVICE_NAV,
     }

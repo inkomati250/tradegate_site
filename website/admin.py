@@ -12,6 +12,7 @@ from .models import (
     Industry,
     ProcessStep,
     LegalPage,
+    TradeFairOpportunity,
     Inquiry,
 )
 
@@ -145,6 +146,29 @@ class LegalPageAdmin(admin.ModelAdmin):
             raise ValidationError("This legal page key already exists. Please edit the existing page.")
         super().save_model(request, obj, form, change)
 
+
+
+# =========================
+# 4b) Trade fair / market opportunity carousel
+# =========================
+@admin.register(TradeFairOpportunity)
+class TradeFairOpportunityAdmin(admin.ModelAdmin):
+    list_display = ("order", "title", "city_country", "industry", "is_active", "updated_at")
+    list_display_links = ("title",)
+    list_editable = ("order", "is_active")
+    list_filter = ("is_active", "industry")
+    search_fields = ("title", "city_country", "industry", "summary")
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("order", "title")
+
+    fieldsets = (
+        ("Opportunity", {"fields": ("title", "slug", "city_country", "date_label", "industry", "summary")}),
+        ("Visual", {"fields": ("image", "image_url", "visual_label")}),
+        ("Call to action", {"fields": ("cta_label", "cta_url")}),
+        ("Display", {"fields": ("order", "is_active")}),
+        ("System", {"fields": ("created_at", "updated_at")}),
+    )
 
 
 # =========================

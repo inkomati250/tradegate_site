@@ -1,0 +1,140 @@
+{% extends "website/base.html" %}
+{% block content %}
+
+<section class="relative overflow-hidden bg-[#07111F] text-white grain">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute -top-28 right-[-120px] h-[560px] w-[560px] rounded-full bg-brand-accent/12 blur-[110px]"></div>
+    <div class="absolute bottom-[-160px] left-[-160px] h-[420px] w-[420px] rounded-full bg-sky-900/25 blur-[100px]"></div>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-8">
+        <span class="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-bold text-white/70 mb-6 reveal">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-accent"></span>{{ page.kicker }}
+        </span>
+        <h1 class="font-display text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight reveal d1">{{ page.title }}</h1>
+        <p class="mt-6 text-lg md:text-xl text-white/62 max-w-3xl leading-relaxed reveal d2">{{ page.subtitle }}</p>
+        <div class="mt-8 flex flex-wrap gap-3 reveal d3">
+          <a href="{% url 'contact' %}?service={{ page.service_code }}#contact-form" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition shadow-glow text-sm">
+            Request consultation
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
+          </a>
+          <a href="#deliverables" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/105">View deliverables</a>
+        </div>
+      </div>
+      <div class="lg:col-span-4 reveal d2">
+        <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
+          <p class="text-xs font-bold text-brand-accent uppercase tracking-[0.2em]">Search intent</p>
+          <p class="font-display text-2xl font-bold mt-4">{{ page.primary_keyword }}</p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            {% for badge in page.hero_badges %}
+              <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/58">{{ badge }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-18 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="grid lg:grid-cols-12 gap-10">
+    <div class="lg:col-span-5 reveal">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Why this matters</span>
+      <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight text-[#07111F]">The challenge we solve</h2>
+    </div>
+    <div class="lg:col-span-7 grid gap-4">
+      {% for point in page.pain_points %}
+        <div class="rounded-3xl border bg-white p-6 shadow-soft reveal">
+          <p class="text-slate-700 leading-relaxed">{{ point }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="deliverables" class="py-18 md:py-20 bg-white border-y">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="max-w-3xl mb-10 reveal">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">What you receive</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Clear deliverables, not vague activity.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for item in page.deliverables %}
+        <div class="rounded-3xl border bg-[#F7F2EA] p-6 reveal">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#07111F] text-brand-accent">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <p class="mt-4 text-sm text-slate-700 leading-relaxed">{{ item }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="py-18 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="max-w-3xl mb-10 reveal">
+    <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Process</span>
+    <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">How the engagement works</h2>
+  </div>
+  <div class="grid md:grid-cols-4 gap-5">
+    {% for title, text in page.process %}
+      <div class="rounded-3xl border bg-white p-6 shadow-soft reveal">
+        <p class="font-display text-brand-copper text-2xl font-bold">0{{ forloop.counter }}</p>
+        <h3 class="font-display text-lg font-bold mt-4">{{ title }}</h3>
+        <p class="mt-2 text-sm text-slate-600 leading-relaxed">{{ text }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="py-18 md:py-20 bg-[#07111F] text-white relative overflow-hidden grain">
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid lg:grid-cols-12 gap-10 items-start">
+      <div class="lg:col-span-5 reveal">
+        <span class="inline-block text-xs font-bold text-brand-accent uppercase tracking-[0.22em] mb-3">FAQs</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Common questions</h2>
+      </div>
+      <div class="lg:col-span-7 space-y-4">
+        {% for question, answer in page.faq %}
+          <details class="rounded-3xl border border-white/10 bg-white/5 p-6 reveal">
+            <summary class="flex items-center justify-between gap-4 cursor-pointer">
+              <span class="font-display font-bold">{{ question }}</span>
+              <svg class="chevron h-4 w-4 text-brand-accent shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <p class="mt-4 text-white/60 text-sm leading-relaxed">{{ answer }}</p>
+          </details>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-18 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="grid lg:grid-cols-12 gap-8 items-center rounded-[2rem] bg-white border shadow-soft p-8 md:p-12 reveal">
+    <div class="lg:col-span-8">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Next step</span>
+      <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight text-[#07111F]">Want to test whether this fits your company?</h2>
+      <p class="text-slate-600 mt-4 text-lg leading-relaxed">Send a short brief with your company, sector, target market and timeline. TradeGate will respond with a realistic starting route.</p>
+    </div>
+    <div class="lg:col-span-4 lg:text-right">
+      <a href="{% url 'contact' %}?service={{ page.service_code }}#contact-form" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition shadow-glow">Start inquiry <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></a>
+    </div>
+  </div>
+
+  {% if related_pages %}
+  <div class="mt-12 reveal">
+    <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-4">Related services</p>
+    <div class="grid md:grid-cols-3 gap-5">
+      {% for related in related_pages %}
+        <a href="{% url 'service_landing' slug=related.slug %}" class="rounded-3xl border bg-white p-6 hover:-translate-y-1 hover:shadow-soft transition">
+          <h3 class="font-display font-bold text-lg text-[#07111F]">{{ related.title }}</h3>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">{{ related.subtitle|truncatechars:135 }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}

@@ -92,7 +92,7 @@ class NavigationItem(TimeStampedModel):
 
     # Keep this list tight to prevent broken layout.
     # Add more anchors only when they exist in home.html.
-    ALLOWED_ANCHORS = ["pillars", "services", "process"]
+    ALLOWED_ANCHORS = ["pillars", "services", "opportunities", "process"]
 
     label = models.CharField(max_length=50)
     kind = models.CharField(max_length=20, choices=KIND_CHOICES, default="anchor")
@@ -223,6 +223,47 @@ class LegalPage(TimeStampedModel):
 
     class Meta:
         ordering = ["key"]
+
+
+class TradeFairOpportunity(TimeStampedModel):
+    """
+    Homepage/admin carousel for trade fair and market-access opportunities.
+
+    It is intentionally lightweight: uploaded images are optional and an
+    external image URL can be used as a fallback. If no records exist yet,
+    views.py shows safe example opportunity cards instead of pretending they
+    are completed TradeGate events.
+    """
+
+    title = models.CharField(max_length=140)
+    slug = models.SlugField(max_length=160, unique=True)
+    city_country = models.CharField(max_length=120, blank=True, default="")
+    date_label = models.CharField(max_length=120, blank=True, default="")
+    industry = models.CharField(max_length=140, blank=True, default="")
+    summary = models.CharField(max_length=260)
+    image = models.FileField(upload_to="event-opportunities/", blank=True, default="")
+    image_url = models.URLField(blank=True, default="", validators=[URLValidator()])
+    visual_label = models.CharField(max_length=20, blank=True, default="")
+    cta_label = models.CharField(max_length=60, default="Request representation")
+    cta_url = models.CharField(max_length=220, default="/contact/?service=trade_fair#contact-form")
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.title
+
+    def display_image_url(self):
+        if self.image:
+            try:
+                return self.image.url
+            except Exception:
+                pass
+        return self.image_url
+
+    class Meta:
+        ordering = ["order", "title"]
+        verbose_name = "Trade Fair / Market Opportunity"
+        verbose_name_plural = "Trade Fair & Market Opportunities"
 
 
 class Inquiry(TimeStampedModel):

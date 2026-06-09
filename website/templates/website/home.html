@@ -1,436 +1,216 @@
 {% extends "website/base.html" %}
 {% block content %}
 
-<!-- ══ HERO ══ -->
-<section class="relative overflow-hidden bg-[#0B1220] text-white grain">
-  <div class="pointer-events-none absolute inset-0">
-    <div class="absolute -top-20 right-0 h-[600px] w-[600px] rounded-full bg-brand-accent/4 blur-[100px]"></div>
-    <div class="absolute bottom-0 -left-40 h-[400px] w-[400px] rounded-full bg-blue-900/20 blur-[80px]"></div>
-    <svg class="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-      <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs>
+<section class="relative overflow-hidden bg-[#07111F] text-white grain">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute -top-28 right-[-120px] h-[620px] w-[620px] rounded-full bg-brand-accent/12 blur-[110px]"></div>
+    <div class="absolute top-1/3 left-[-180px] h-[480px] w-[480px] rounded-full bg-sky-900/25 blur-[100px]"></div>
+    <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M 42 0 L 0 0 0 42" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs>
       <rect width="100%" height="100%" fill="url(#grid)"/>
     </svg>
   </div>
 
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20 md:pt-20 md:pb-24">
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20 md:pt-24 md:pb-28">
     <div class="grid gap-12 lg:grid-cols-12 lg:items-center">
-
-      <!-- Left -->
       <div class="lg:col-span-7">
-        <div class="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/70 mb-6 reveal">
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-semibold text-white/70 mb-6 reveal">
           <span class="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-          EU Business Representation · Market Access · Trade Fairs
+          Leipzig-based bridge into Germany and the EU
         </div>
 
-        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-semibold leading-[1.1] tracking-tight reveal d1">
-          Your trusted presence<br>
-          <span class="text-brand-accent">in Germany</span> 
-          without the cost of an office.
+        <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.02] tracking-tight reveal d1">
+          Your market-entry team <span class="text-brand-accent">on the ground</span> in Germany.
         </h1>
 
-        <p class="mt-6 text-lg text-white/65 max-w-lg leading-relaxed reveal d2">
-          We represent international SMEs at trade fairs, scout partners, and manage follow-ups so your EU market entry stays lean and professional.
+        <p class="mt-6 text-lg md:text-xl text-white/65 max-w-2xl leading-relaxed reveal d2">
+          TradeGate helps international SMEs enter Germany and the EU through trade fair representation, partner search, distributor scouting, local presence and disciplined follow-up.
         </p>
 
         <div class="mt-8 flex flex-wrap gap-3 items-center reveal d3">
           <a href="{% url 'contact' %}"
-             class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-[#0B1220] font-semibold hover:bg-brand-accent/90 transition shadow-lg shadow-brand-accent/20 text-sm">
-            Book a discovery call
+             class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition shadow-glow text-sm">
+            Request a market-entry brief
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
           </a>
-          <a href="#pillars"
-             class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/80">
-            See how it works
+          <a href="{% url 'service_landing' slug='trade-fair-representation-germany' %}"
+             class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/105">
+            Explore trade fair support
           </a>
         </div>
 
-        <!-- Trust badges — hardcoded, no split filter -->
-        <div class="mt-10 flex flex-wrap gap-3 reveal">
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-white/60"><span class="h-1 w-1 rounded-full bg-brand-accent"></span>Germany-based</span>
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-white/60"><span class="h-1 w-1 rounded-full bg-brand-accent"></span>B2B focused</span>
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-white/60"><span class="h-1 w-1 rounded-full bg-brand-accent"></span>Leipzig HQ</span>
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-white/60"><span class="h-1 w-1 rounded-full bg-brand-accent"></span>DE/EN comms</span>
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-white/60"><span class="h-1 w-1 rounded-full bg-brand-accent"></span>Lean model</span>
+        <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl reveal">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="font-display text-2xl font-bold text-brand-accent">EU</p><p class="text-xs text-white/50 mt-1">market access</p></div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="font-display text-2xl font-bold text-brand-accent">B2B</p><p class="text-xs text-white/50 mt-1">qualified leads</p></div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="font-display text-2xl font-bold text-brand-accent">DE</p><p class="text-xs text-white/50 mt-1">local presence</p></div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4"><p class="font-display text-2xl font-bold text-brand-accent">Lean</p><p class="text-xs text-white/50 mt-1">pilot first</p></div>
         </div>
       </div>
 
-      <!-- Right: offer card -->
       <div class="lg:col-span-5 reveal d2">
-        <div class="rounded-2xl border border-white/10 bg-white/4 backdrop-blur p-7 shadow-2xl shadow-black/40">
-          <div class="flex items-center justify-between mb-5">
-            <span class="text-xs text-white/50 font-medium uppercase tracking-wide">Signature Offer</span>
-            <span class="rounded-full bg-brand-accent/15 border border-brand-accent/25 text-brand-accent px-3 py-1 text-xs font-semibold">EU Market Rep</span>
+        <div class="glass rounded-[2rem] p-6 md:p-7 shadow-2xl shadow-black/35">
+          <div class="flex items-center justify-between mb-6">
+            <span class="text-xs text-white/45 font-bold uppercase tracking-[0.18em]">Signature model</span>
+            <span class="rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent px-3 py-1 text-xs font-bold">Market Access Desk</span>
           </div>
-          <p class="font-display text-2xl font-semibold leading-snug">Local presence as a service</p>
-          <p class="mt-2 text-white/60 text-sm leading-relaxed">You stay home — we show up, represent your brand, and deliver measurable outcomes.</p>
-          <ul class="mt-5 space-y-2.5 text-sm">
-            <li class="flex items-start gap-2.5 text-white/75">
-              <span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center">
-                <svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
-              </span>
-              Trade fairs &amp; events representation
-            </li>
-            <li class="flex items-start gap-2.5 text-white/75">
-              <span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center">
-                <svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
-              </span>
-              Market entry &amp; partner scouting
-            </li>
-            <li class="flex items-start gap-2.5 text-white/75">
-              <span class="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center">
-                <svg class="h-2.5 w-2.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
-              </span>
-              Follow-up &amp; trust management
-            </li>
-          </ul>
-          <div class="mt-5 rounded-xl border border-white/8 bg-white/4 p-4 text-xs text-white/50 leading-relaxed">
-            <span class="text-white/80 font-medium">Deliverables:</span> Lead list · Photos/videos · Meeting notes · Post-event report · Next steps
+          <p class="font-display text-2xl md:text-3xl font-bold leading-snug">Representation before you invest in a branch office.</p>
+          <p class="mt-3 text-white/60 text-sm leading-relaxed">Start with a specific event, partner search, or follow-up sprint. Prove demand first, then scale.</p>
+          <div class="mt-6 space-y-3">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-sm font-semibold text-white">Trade fair representation</p>
+              <p class="mt-1 text-xs text-white/50">Attendance, lead capture, photos, notes and report.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-sm font-semibold text-white">Partner & distributor search</p>
+              <p class="mt-1 text-xs text-white/50">Focused shortlist, outreach support and qualification.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-sm font-semibold text-white">Local EU presence</p>
+              <p class="mt-1 text-xs text-white/50">A Germany-based contact point for early-stage validation.</p>
+            </div>
           </div>
-          <div class="mt-4 rounded-xl border border-brand-accent/20 bg-brand-accent/5 p-4 text-xs text-white/60">
-            <span class="text-brand-accent font-semibold">Engagements from €800</span> — start with a single trade fair. No long-term commitment required.
-          </div>
-          <a href="{% url 'contact' %}"
-             class="mt-5 flex items-center justify-center w-full px-5 py-3 rounded-xl bg-white text-[#0B1220] font-semibold hover:bg-white/90 transition text-sm">
-            Request availability
-          </a>
+          <a href="{% url 'contact' %}" class="mt-6 flex items-center justify-center w-full px-5 py-3 rounded-xl bg-white text-[#07111F] font-bold hover:bg-white/90 transition text-sm">Check fit & availability</a>
         </div>
       </div>
-
     </div>
-  </div>
-
-  <div class="absolute bottom-0 inset-x-0 translate-y-px">
-    <svg viewBox="0 0 1440 60" class="w-full h-auto text-stone-50" preserveAspectRatio="none">
-      <path fill="currentColor" d="M0,30 C360,55 720,10 1080,40 C1260,55 1380,45 1440,35 L1440,60 L0,60 Z"/>
-    </svg>
   </div>
 </section>
 
-
-<!-- ══ PILLARS ══ -->
 <section id="pillars" class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
-  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal">
-    <div>
-      <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-3">How we work</span>
-      <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight">EU Business Representation : Our 4 Pillars</h2>
-      <p class="text-slate-500 mt-3 max-w-xl">Don't think <strong>agency</strong>. Think function: an EU presence that helps you enter the market, build trust, and close real deals.</p>
+  <div class="grid lg:grid-cols-12 gap-10 items-end mb-12 reveal">
+    <div class="lg:col-span-8">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Built for serious B2B entry</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">A practical bridge between foreign SMEs and the German market.</h2>
+      <p class="text-slate-600 mt-4 max-w-2xl text-lg leading-relaxed">TradeGate is positioned for companies that already have an offer, need market access, and want a lean local execution partner before opening an office or hiring a full team.</p>
     </div>
-    <a href="{% url 'contact' %}" class="shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-[#0B1220] hover:text-brand-accent transition">
-      Talk to us
-      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
-    </a>
+    <div class="lg:col-span-4 lg:text-right">
+      <a href="{% url 'contact' %}" class="inline-flex items-center gap-2 text-sm font-bold text-[#07111F] hover:text-brand-copper transition">Start with a short brief <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></a>
+    </div>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-5">
-    <div class="group rounded-2xl border bg-white p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 reveal">
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-xs font-bold text-brand-accent uppercase tracking-wider">Strongest entry point</span>
-        <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-[#0B1220]/5 font-display font-bold text-[#0B1220]">01</span>
-      </div>
-      <h3 class="font-display text-xl font-semibold">Trade Fair &amp; Event Representation</h3>
-      <p class="mt-2 text-slate-500 text-sm leading-relaxed">We represent your brand at trade fairs, expos, and showcases — and convert presence into qualified leads.</p>
-      <ul class="mt-4 space-y-1.5 text-sm text-slate-600">
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Attend under your brand</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Staff booth / shared booth</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Capture leads with notes</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Photos/videos + post-event report</li>
-      </ul>
-      <div class="mt-5 pt-4 border-t text-xs text-slate-400 font-medium">Saves travel costs · Low commitment · High credibility</div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="rounded-3xl border bg-white p-6 shadow-soft hover:-translate-y-1 transition reveal">
+      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#07111F] text-brand-accent font-display font-bold">01</span>
+      <h3 class="font-display text-lg font-bold mt-5">Trade fairs & events</h3>
+      <p class="text-slate-600 text-sm mt-2 leading-relaxed">We attend, represent, collect leads and document the opportunity clearly.</p>
     </div>
-
-    <div class="group rounded-2xl border bg-white p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 reveal d1">
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-xs font-bold text-brand-accent uppercase tracking-wider">High value</span>
-        <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-[#0B1220]/5 font-display font-bold text-[#0B1220]">02</span>
-      </div>
-      <h3 class="font-display text-xl font-semibold">Market Entry &amp; Business Scouting</h3>
-      <p class="mt-2 text-slate-500 text-sm leading-relaxed">We help you identify distributors, resellers, sourcing partners — with actionable deliverables.</p>
-      <ul class="mt-4 space-y-1.5 text-sm text-slate-600">
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Partner/distributor identification</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Lead lists + introductions</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Competitor overview</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Cultural/business guidance</li>
-      </ul>
-      <div class="mt-5 pt-4 border-t text-xs text-slate-400 font-medium">Report-ready · Practical · Actionable</div>
+    <div class="rounded-3xl border bg-white p-6 shadow-soft hover:-translate-y-1 transition reveal d1">
+      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#07111F] text-brand-accent font-display font-bold">02</span>
+      <h3 class="font-display text-lg font-bold mt-5">Partner scouting</h3>
+      <p class="text-slate-600 text-sm mt-2 leading-relaxed">We help identify and prioritize distributors, resellers, buyers and strategic contacts.</p>
     </div>
-
-    <div class="group rounded-2xl border bg-white p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 reveal">
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-xs font-bold text-brand-accent uppercase tracking-wider">Clever positioning</span>
-        <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-[#0B1220]/5 font-display font-bold text-[#0B1220]">03</span>
-      </div>
-      <h3 class="font-display text-xl font-semibold">Local Presence Without an Office</h3>
-      <p class="mt-2 text-slate-500 text-sm leading-relaxed">You get an EU contact point for meetings, coordination, and continuity — without the overhead.</p>
-      <ul class="mt-4 space-y-1.5 text-sm text-slate-600">
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Local contact point for partners</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Attend meetings on your behalf</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Accompany you during visits</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Optional soft landing support</li>
-      </ul>
-      <div class="mt-5 pt-4 border-t text-xs text-slate-400 font-medium">Lightweight · Professional · Scalable</div>
+    <div class="rounded-3xl border bg-white p-6 shadow-soft hover:-translate-y-1 transition reveal d2">
+      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#07111F] text-brand-accent font-display font-bold">03</span>
+      <h3 class="font-display text-lg font-bold mt-5">Local presence</h3>
+      <p class="text-slate-600 text-sm mt-2 leading-relaxed">A Germany-based market contact point before you commit to a branch or employee.</p>
     </div>
-
-    <div class="group rounded-2xl border bg-white p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 reveal d1">
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-xs font-bold text-brand-accent uppercase tracking-wider">Underrated advantage</span>
-        <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-[#0B1220]/5 font-display font-bold text-[#0B1220]">04</span>
-      </div>
-      <h3 class="font-display text-xl font-semibold">Relationship &amp; Trust Management</h3>
-      <p class="mt-2 text-slate-500 text-sm leading-relaxed">EU business runs on trust, documentation, and consistent follow-up. We keep leads warm and deal flow moving.</p>
-      <ul class="mt-4 space-y-1.5 text-sm text-slate-600">
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Lead follow-ups (DE/EN)</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Clarify misunderstandings</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Prevent cultural missteps</li>
-        <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Maintain momentum post-event</li>
-      </ul>
-      <div class="mt-5 pt-4 border-t text-xs text-slate-400 font-medium">Consistency · Trust · Conversion</div>
+    <div class="rounded-3xl border bg-white p-6 shadow-soft hover:-translate-y-1 transition reveal d3">
+      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#07111F] text-brand-accent font-display font-bold">04</span>
+      <h3 class="font-display text-lg font-bold mt-5">Follow-up engine</h3>
+      <p class="text-slate-600 text-sm mt-2 leading-relaxed">We turn event conversations and first replies into structured next steps.</p>
     </div>
   </div>
 </section>
 
-
-<!-- ══ SERVICES ══ -->
-<section id="services" class="bg-white border-y border-stone-100 py-20">
+<section id="services" class="py-20 bg-white border-y">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="grid lg:grid-cols-12 gap-12 items-start">
+    <div class="max-w-3xl mb-12 reveal">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Focused services</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Focused routes into the German and EU market.</h2>
+      <p class="text-slate-600 mt-4 text-lg leading-relaxed">Choose the entry route that fits your current objective: representation at a trade fair, partner search, distributor scouting, local EU presence or structured follow-up.</p>
+    </div>
 
-      <div class="lg:col-span-4 reveal">
-        <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-3">What we offer</span>
-        <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight">Services</h2>
-        <p class="text-slate-500 mt-3">Clear services packaged to deliver outcomes, not buzzwords.</p>
-        <div class="mt-8 rounded-2xl bg-stone-50 border p-6">
-          <p class="text-sm font-semibold text-slate-700 mb-3">Typical deliverables</p>
-          <ul class="space-y-2 text-sm text-slate-500">
-            <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Lead lists + introductions</li>
-            <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Meeting notes + follow-up emails</li>
-            <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Market snapshots &amp; competitor checks</li>
-            <li class="flex items-center gap-2"><span class="h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Event report with next steps</li>
-          </ul>
-        </div>
-        <a href="{% url 'contact' %}"
-           class="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0B1220] text-white font-semibold hover:bg-[#0B1220]/90 transition text-sm">
-          Discuss your market
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for label, slug in service_nav %}
+        <a href="{% url 'service_landing' slug=slug %}" class="group rounded-3xl border bg-[#F7F2EA] p-6 hover:bg-[#07111F] hover:text-white hover:-translate-y-1 transition-all duration-300 reveal">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-copper group-hover:text-brand-accent">TradeGate service</p>
+          <h3 class="font-display text-xl font-bold mt-4">{{ label }}</h3>
+          <p class="mt-3 text-sm text-slate-600 group-hover:text-white/60 leading-relaxed">Clear deliverables, practical starting points and a direct route to discuss your Germany/EU market objective.</p>
+          <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#07111F] group-hover:text-brand-accent">Explore service <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></span>
         </a>
-      </div>
-
-      <div class="lg:col-span-8">
-        <div class="grid sm:grid-cols-2 gap-4">
-          <div class="rounded-2xl border bg-white p-6 hover:shadow-md transition reveal">
-            <span class="text-xs font-bold text-brand-accent">What we do</span>
-            <h3 class="mt-2 font-display text-lg font-semibold">Representation &amp; Sales Support</h3>
-            <p class="mt-1.5 text-slate-500 text-sm">Trade fairs, meetings, brand representation, lead capture.</p>
-          </div>
-          <div class="rounded-2xl border bg-white p-6 hover:shadow-md transition reveal d1">
-            <span class="text-xs font-bold text-brand-accent">What we do</span>
-            <h3 class="mt-2 font-display text-lg font-semibold">Partner &amp; Distributor Scouting</h3>
-            <p class="mt-1.5 text-slate-500 text-sm">Lead lists, vetting, introductions, follow-up cycles.</p>
-          </div>
-          <div class="rounded-2xl border bg-white p-6 hover:shadow-md transition reveal">
-            <span class="text-xs font-bold text-brand-accent">Where we work</span>
-            <h3 class="mt-2 font-display text-lg font-semibold">Trade &amp; Logistics</h3>
-            <p class="mt-1.5 text-slate-500 text-sm">Import/export, supply chain, warehousing, freight ecosystems.</p>
-          </div>
-          <div class="rounded-2xl border bg-white p-6 hover:shadow-md transition reveal d1">
-            <span class="text-xs font-bold text-brand-accent">Where we work</span>
-            <h3 class="mt-2 font-display text-lg font-semibold">Manufacturing &amp; Producers</h3>
-            <p class="mt-1.5 text-slate-500 text-sm">OEMs, factories, product brands, exporters seeking EU buyers.</p>
-          </div>
-          <div class="rounded-2xl border bg-white p-6 hover:shadow-md transition reveal">
-            <span class="text-xs font-bold text-brand-accent">Where we work</span>
-            <h3 class="mt-2 font-display text-lg font-semibold">Tourism &amp; Public Institutions</h3>
-            <p class="mt-1.5 text-slate-500 text-sm">Tourism boards, chambers, and investment promotion bodies.</p>
-          </div>
-          <div class="rounded-2xl border bg-white p-6 hover:shadow-md transition reveal d1">
-            <span class="text-xs font-bold text-brand-accent">Where we work</span>
-            <h3 class="mt-2 font-display text-lg font-semibold">SMEs &amp; Export Startups</h3>
-            <p class="mt-1.5 text-slate-500 text-sm">Companies testing EU demand before committing to an office.</p>
-          </div>
-        </div>
-      </div>
+      {% endfor %}
     </div>
   </div>
 </section>
 
-
-<!-- ══ WHO IT'S FOR ══ -->
-<section class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
-  <div class="grid lg:grid-cols-12 gap-12 items-start">
-    <div class="lg:col-span-5 reveal">
-      <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-3">Ideal clients</span>
-      <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight">Who it's for</h2>
-      <p class="text-slate-500 mt-3">We're best for teams that want EU access without EU overhead. We've worked with companies from:</p>
-      <div class="mt-6 flex flex-wrap gap-2">
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇳🇬 Nigeria</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇿🇦 South Africa</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇦🇪 UAE</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇸🇦 Saudi Arabia</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇮🇳 India</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇲🇦 Morocco</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇹🇷 Turkey</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇪🇬 Egypt</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇵🇰 Pakistan</span>
-        <span class="rounded-full border bg-white px-3 py-1.5 text-xs text-slate-600">🇬🇭 Ghana</span>
-      </div>
-      <div class="mt-8 rounded-2xl border bg-stone-50 p-6">
-        <p class="text-sm font-semibold text-slate-700 mb-3">Best fit for</p>
-        <ul class="space-y-2 text-sm text-slate-500">
-          <li class="flex items-start gap-2"><span class="mt-1 h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>SMEs from Africa, Middle East &amp; Asia</li>
-          <li class="flex items-start gap-2"><span class="mt-1 h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Tourism boards &amp; travel companies</li>
-          <li class="flex items-start gap-2"><span class="mt-1 h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Manufacturers, producers &amp; exporters</li>
-          <li class="flex items-start gap-2"><span class="mt-1 h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Export-oriented startups</li>
-          <li class="flex items-start gap-2"><span class="mt-1 h-1 w-1 rounded-full bg-brand-accent shrink-0"></span>Companies not ready for a European office yet</li>
-        </ul>
-      </div>
+<section id="opportunities" class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 reveal">
+    <div class="max-w-3xl">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Trade fair & market opportunities</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Selected opportunities for Germany and EU market access.</h2>
+      <p class="text-slate-600 mt-4 text-lg leading-relaxed">Trade fairs and priority sectors can be powerful entry points for international SMEs. TradeGate can help you validate demand, meet relevant contacts and follow up from Germany.</p>
     </div>
+    <a href="{% url 'contact' %}?service=trade_fair#contact-form" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#07111F] text-white font-bold hover:bg-[#07111F]/90 transition text-sm">Request representation</a>
+  </div>
 
-    <div class="lg:col-span-7 reveal d1">
-      <div class="rounded-2xl bg-[#0B1220] text-white p-8 md:p-10 relative overflow-hidden">
-        <div class="absolute top-0 right-0 h-64 w-64 rounded-full bg-brand-accent/5 blur-3xl pointer-events-none"></div>
-        <h3 class="font-display text-2xl font-semibold relative">Start small. Prove value. Scale up.</h3>
-        <p class="mt-3 text-white/60 text-sm leading-relaxed max-w-md relative">Most clients begin with a trade fair or event representation. Once we prove traction, we expand into market scouting and follow-up cycles.</p>
-        <div class="mt-8 grid grid-cols-3 gap-3 relative">
-          <div class="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div class="text-xs text-white/40 font-medium mb-1">Phase 1</div>
-            <div class="text-sm font-semibold">Event presence</div>
+  <div class="carousel-scroll overflow-x-auto pb-4 -mx-4 px-4">
+    <div class="flex gap-5 min-w-full">
+      {% for item in opportunities %}
+        <article class="carousel-card min-w-[310px] sm:min-w-[380px] max-w-[380px] rounded-[2rem] overflow-hidden border bg-white shadow-soft reveal">
+          {% if item.display_image_url %}
+            <div class="h-48 bg-cover bg-center" style="background-image:url('{{ item.display_image_url }}')"></div>
+          {% else %}
+            <div class="relative h-48 bg-[#07111F] overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-br from-brand-accent/25 via-white/5 to-sky-700/25"></div>
+              <div class="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-brand-accent/20 blur-2xl"></div>
+              <div class="absolute left-6 bottom-6">
+                <p class="font-display text-4xl font-extrabold text-brand-accent">{{ item.visual_label|default:"EU" }}</p>
+                <p class="text-xs text-white/45 uppercase tracking-[0.22em] mt-1">Market access</p>
+              </div>
+            </div>
+          {% endif %}
+          <div class="p-6">
+            <div class="flex items-center justify-between gap-3 text-xs text-slate-400 mb-3">
+              <span>{{ item.city_country }}</span>
+              <span>{{ item.date_label }}</span>
+            </div>
+            <h3 class="font-display text-xl font-bold text-[#07111F]">{{ item.title }}</h3>
+            <p class="mt-2 text-sm font-semibold text-brand-copper">{{ item.industry }}</p>
+            <p class="mt-3 text-sm text-slate-600 leading-relaxed">{{ item.summary }}</p>
+            <a href="{{ item.cta_url }}" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#07111F] hover:text-brand-copper transition">{{ item.cta_label }} <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></a>
           </div>
-          <div class="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div class="text-xs text-white/40 font-medium mb-1">Phase 2</div>
-            <div class="text-sm font-semibold">Partner scouting</div>
-          </div>
-          <div class="rounded-xl border border-brand-accent/25 bg-brand-accent/8 p-4">
-            <div class="text-xs text-brand-accent/70 font-medium mb-1">Phase 3</div>
-            <div class="text-sm font-semibold text-brand-accent">Trust cycles</div>
-          </div>
-        </div>
-        <div class="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative">
-          <a href="{% url 'contact' %}"
-             class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-accent text-[#0B1220] font-semibold hover:bg-brand-accent/90 transition text-sm">
-            Get a proposal
-          </a>
-          <span class="text-sm text-white/40">We reply within 24–48 hours.</span>
-        </div>
-      </div>
+        </article>
+      {% endfor %}
     </div>
   </div>
 </section>
 
-
-<!-- ══ PROCESS ══ -->
-<section id="process" class="bg-white border-y border-stone-100 py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="mb-12 reveal">
-      <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-3">Simple &amp; clear</span>
-      <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight">Process</h2>
-      <p class="text-slate-500 mt-2 max-w-lg">A simple structure that keeps your EU entry controlled and measurable.</p>
+<section id="process" class="py-20 bg-[#07111F] text-white relative overflow-hidden grain">
+  <div class="absolute inset-0 pointer-events-none"><div class="absolute top-0 left-1/2 -translate-x-1/2 h-80 w-80 rounded-full bg-brand-accent/10 blur-3xl"></div></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="max-w-3xl mb-12 reveal">
+      <span class="inline-block text-xs font-bold text-brand-accent uppercase tracking-[0.22em] mb-3">Lean market-entry process</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight">Start small. Learn fast. Scale only when there is signal.</h2>
     </div>
     <div class="grid md:grid-cols-3 gap-5">
-      <div class="rounded-2xl border bg-stone-50 p-7 reveal">
-        <div class="h-10 w-10 rounded-xl bg-[#0B1220] flex items-center justify-center mb-4">
-          <span class="font-display font-bold text-brand-accent text-sm">01</span>
-        </div>
-        <h3 class="font-display font-semibold text-lg">Alignment &amp; Goals</h3>
-        <p class="text-slate-500 text-sm mt-2 leading-relaxed">We clarify your offer, target audience, and what success looks like.</p>
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-7 reveal">
+        <p class="font-display text-brand-accent text-2xl font-bold">01</p>
+        <h3 class="font-display text-xl font-bold mt-4">Clarify fit</h3>
+        <p class="text-white/55 text-sm mt-2 leading-relaxed">We review your offer, target buyers, market readiness and first realistic entry route.</p>
       </div>
-      <div class="rounded-2xl border bg-stone-50 p-7 reveal d1">
-        <div class="h-10 w-10 rounded-xl bg-[#0B1220] flex items-center justify-center mb-4">
-          <span class="font-display font-bold text-brand-accent text-sm">02</span>
-        </div>
-        <h3 class="font-display font-semibold text-lg">Execution in Germany/EU</h3>
-        <p class="text-slate-500 text-sm mt-2 leading-relaxed">We represent, scout, attend meetings, and capture leads professionally.</p>
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-7 reveal d1">
+        <p class="font-display text-brand-accent text-2xl font-bold">02</p>
+        <h3 class="font-display text-xl font-bold mt-4">Execute locally</h3>
+        <p class="text-white/55 text-sm mt-2 leading-relaxed">We represent, scout, attend, contact or follow up according to a defined brief.</p>
       </div>
-      <div class="rounded-2xl border bg-stone-50 p-7 reveal d2">
-        <div class="h-10 w-10 rounded-xl bg-[#0B1220] flex items-center justify-center mb-4">
-          <span class="font-display font-bold text-brand-accent text-sm">03</span>
-        </div>
-        <h3 class="font-display font-semibold text-lg">Reporting &amp; Next Steps</h3>
-        <p class="text-slate-500 text-sm mt-2 leading-relaxed">You receive deliverables, insights, and a plan to convert leads to deals.</p>
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-7 reveal d2">
+        <p class="font-display text-brand-accent text-2xl font-bold">03</p>
+        <h3 class="font-display text-xl font-bold mt-4">Report next steps</h3>
+        <p class="text-white/55 text-sm mt-2 leading-relaxed">You receive structured outcomes, not vague activity: leads, notes, priorities and recommendations.</p>
       </div>
-    </div>
-    <div class="mt-10 reveal">
-      <a href="{% url 'contact' %}"
-         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0B1220] text-white font-semibold hover:bg-[#0B1220]/90 transition text-sm">
-        Let's talk
-      </a>
     </div>
   </div>
 </section>
 
-
-<!-- ══ TESTIMONIALS ══ -->
 <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
-  <div class="mb-12 text-center reveal">
-    <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-3">Trust</span>
-    <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight">What our clients say</h2>
-    <p class="text-slate-500 mt-3 max-w-lg mx-auto">We document outcomes after every completed engagement.</p>
-  </div>
-  <div class="grid md:grid-cols-3 gap-5">
-    <div class="rounded-2xl border bg-white p-7 reveal">
-      <div class="flex gap-0.5 mb-4">
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-      </div>
-      <p class="text-slate-600 text-sm leading-relaxed italic">"TradeGate represented us at Hannover Messe with complete professionalism. We received a detailed lead report within 48 hours of the event."</p>
-      <div class="mt-5 flex items-center gap-3">
-        <div class="h-9 w-9 rounded-full bg-brand-accent/10 flex items-center justify-center text-xs font-bold text-brand-accent">AO</div>
-        <div>
-          <p class="text-sm font-semibold">A. Okafor</p>
-          <p class="text-xs text-slate-400">Manufacturing SME — Nigeria</p>
-        </div>
-      </div>
+  <div class="grid lg:grid-cols-12 gap-8 items-center rounded-[2rem] bg-white border shadow-soft p-8 md:p-12 reveal">
+    <div class="lg:col-span-8">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Start with a clear brief</span>
+      <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight text-[#07111F]">Share your Germany/EU market objective.</h2>
+      <p class="text-slate-600 mt-4 text-lg leading-relaxed">A short structured brief helps us understand your company, target market and timeline before recommending a realistic next step.</p>
     </div>
-
-    <div class="rounded-2xl border bg-white p-7 reveal d1">
-      <div class="flex gap-0.5 mb-4">
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <svg class="h-4 w-4 text-brand-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-      </div>
-      <p class="text-slate-600 text-sm leading-relaxed italic">"The market scouting sprint gave us a shortlist of 12 qualified distributors in Germany. Saved us months of research and at least two expensive trips."</p>
-      <div class="mt-5 flex items-center gap-3">
-        <div class="h-9 w-9 rounded-full bg-brand-accent/10 flex items-center justify-center text-xs font-bold text-brand-accent">RM</div>
-        <div>
-          <p class="text-sm font-semibold">R. Al-Mansouri</p>
-          <p class="text-xs text-slate-400">Export Director — UAE</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="rounded-2xl border border-dashed border-slate-200 bg-stone-50 p-7 flex flex-col items-center justify-center text-center reveal d2">
-      <div class="h-12 w-12 rounded-xl border border-dashed border-slate-300 flex items-center justify-center mb-4">
-        <svg class="h-5 w-5 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
-      </div>
-      <p class="text-sm text-slate-400 max-w-xs leading-relaxed">Your testimonial could be here. We add case studies after each completed engagement.</p>
-      <a href="{% url 'contact' %}" class="mt-4 text-xs font-semibold text-brand-accent hover:underline">Work with us →</a>
-    </div>
-  </div>
-</section>
-
-
-<!-- ══ FINAL CTA ══ -->
-<section class="py-20 bg-[#0B1220] text-white relative overflow-hidden grain">
-  <div class="pointer-events-none absolute inset-0">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 h-64 w-64 rounded-full bg-brand-accent/8 blur-3xl"></div>
-  </div>
-  <div class="relative max-w-3xl mx-auto px-4 sm:px-6 text-center reveal">
-    <span class="inline-block text-xs font-semibold text-brand-accent uppercase tracking-wider mb-4">Ready to enter Germany?</span>
-    <h2 class="font-display text-3xl md:text-5xl font-semibold tracking-tight leading-tight">
-      Start lean.<br>Prove value.<br>Scale with us.
-    </h2>
-    <p class="mt-6 text-white/55 text-lg max-w-xl mx-auto leading-relaxed">
-      Book a free 30-minute discovery call. We'll tell you what's realistic, what the first step looks like, and what it costs.
-    </p>
-    <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="{% url 'contact' %}"
-         class="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-brand-accent text-[#0B1220] font-semibold hover:bg-brand-accent/90 transition shadow-lg shadow-brand-accent/20">
-        Book a discovery call
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
-      </a>
-      <span class="text-white/35 text-sm">No obligation · Reply within 24–48h</span>
+    <div class="lg:col-span-4 lg:text-right">
+      <a href="{% url 'contact' %}" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition shadow-glow">Send your brief <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></a>
     </div>
   </div>
 </section>

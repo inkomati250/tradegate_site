@@ -4,36 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  {% if site and site.site_name %}
-    {% with SITE_TITLE=site.site_name %}
-      <title>{% if page_meta.title %}{{ page_meta.title }} — TradeGate Consultants{% else %}{{ SITE_TITLE }} Consultants — EU Market Access & Representation{% endif %}</title>
-      {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
-      {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
-      <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} — TradeGate Consultants{% else %}{{ SITE_TITLE }} Consultants{% endif %}">
-      {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
-      <meta property="og:image" content="{% if page_meta.og_image %}{{ page_meta.og_image }}{% else %}https://www.tradegateconsultants.com/static/og-default.png{% endif %}">
-      <meta property="og:type" content="website">
-      <meta name="twitter:card" content="summary_large_image">
-    {% endwith %}
-  {% else %}
-    <title>{% if page_meta.title %}{{ page_meta.title }} — TradeGate Consultants{% else %}TradeGate Consultants — EU Market Access & Representation{% endif %}</title>
-    {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
-    {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
-    <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} — TradeGate Consultants{% else %}TradeGate Consultants — EU Market Access & Representation{% endif %}">
-    {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
-    <meta property="og:image" content="{% if page_meta.og_image %}{{ page_meta.og_image }}{% else %}https://www.tradegateconsultants.com/static/og-default.png{% endif %}">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
+  <title>{% if page_meta.title %}{{ page_meta.title }} — TradeGate Consultants{% else %}TradeGate Consultants — Germany & EU Market Entry{% endif %}</title>
+  {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
+  {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
+  <meta property="og:title" content="{% if page_meta.title %}{{ page_meta.title }} — TradeGate Consultants{% else %}TradeGate Consultants — Germany & EU Market Entry{% endif %}">
+  {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
+  <meta property="og:image" content="{% if page_meta.og_image %}{{ page_meta.og_image }}{% else %}https://www.tradegateconsultants.com/static/og-default.png{% endif %}">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#07111F">
+
+  {% if structured_data_json %}
+  <script type="application/ld+json">{{ structured_data_json|safe }}</script>
   {% endif %}
 
   <!-- Favicon: inline SVG -->
   <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%230B1220'/%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='none' stroke='%23C6A15B' stroke-opacity='.4'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Georgia,serif' font-size='24' font-weight='700' fill='%23C6A15B'%3ETG%3C/text%3E%3C/svg%3E" />
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%2307111F'/%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='none' stroke='%23D6B36A' stroke-opacity='.55'/%3E%3Cpath d='M16 35h32M32 16v32M20 24c6 4 18 4 24 0M20 40c6-4 18-4 24 0' stroke='%23D6B36A' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 
   <!-- Google Fonts: Sora display + DM Sans body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -46,10 +38,17 @@
           },
           colors: {
             brand: {
-              primary: "{% if site and site.brand_primary %}{{ site.brand_primary }}{% else %}#0B1220{% endif %}",
-              accent:  "{% if site and site.brand_accent %}{{ site.brand_accent }}{% else %}#C6A15B{% endif %}",
-              muted:   "{% if site and site.brand_muted %}{{ site.brand_muted }}{% else %}#94A3B8{% endif %}"
+              primary: "{% if site and site.brand_primary %}{{ site.brand_primary }}{% else %}#07111F{% endif %}",
+              accent:  "{% if site and site.brand_accent %}{{ site.brand_accent }}{% else %}#D6B36A{% endif %}",
+              muted:   "{% if site and site.brand_muted %}{{ site.brand_muted }}{% else %}#8CA3B8{% endif %}",
+              ink:     "#07111F",
+              copper:  "#A56A43",
+              ivory:   "#F7F2EA"
             }
+          },
+          boxShadow: {
+            soft: '0 20px 60px rgba(7,17,31,.10)',
+            glow: '0 24px 80px rgba(214,179,106,.20)'
           }
         }
       }
@@ -57,23 +56,21 @@
   </script>
 
   <style>
-    /* ── Base ── */
     html { scroll-behavior: smooth; }
     body { font-family: 'DM Sans', sans-serif; }
     h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
+    ::selection { background: rgba(214,179,106,.35); }
 
-    /* ── Subtle grain on dark sections ── */
     .grain::after {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
       pointer-events: none;
       mix-blend-mode: overlay;
-      opacity: 0.3;
+      opacity: .35;
     }
 
-    /* ── Scroll-reveal ── */
     .reveal { opacity: 0; transform: translateY(16px); }
     .reveal.visible {
       opacity: 1; transform: translateY(0);
@@ -83,224 +80,179 @@
     .reveal.d2.visible { transition-delay: 160ms; }
     .reveal.d3.visible { transition-delay: 240ms; }
 
-    /* ── Accent underline on hover links ── */
+    .glass {
+      background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(16px);
+    }
     .hover-gold { position: relative; }
     .hover-gold::after {
-      content: ''; position: absolute; bottom: -1px; left: 0;
-      width: 0; height: 1.5px; background: #C6A15B;
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1.5px; background: #D6B36A;
       transition: width .25s ease;
     }
     .hover-gold:hover::after { width: 100%; }
 
-    /* ── Details chevron ── */
     details summary { list-style: none; }
     details summary::-webkit-details-marker { display: none; }
     details[open] .chevron { transform: rotate(180deg); }
     .chevron { transition: transform .2s ease; }
 
-    /* ── Form fields ── */
     .field input, .field textarea, .field select {
       width: 100%;
       background: #fff;
       border: 1.5px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 0.7rem 0.9rem;
+      border-radius: 14px;
+      padding: .82rem 1rem;
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem;
+      font-size: .94rem;
       outline: none;
-      transition: border-color .15s, box-shadow .15s;
+      transition: border-color .15s, box-shadow .15s, background .15s;
     }
-    .field textarea { min-height: 150px; resize: vertical; }
+    .field textarea { min-height: 160px; resize: vertical; }
     .field input:focus, .field textarea:focus, .field select:focus {
-      border-color: #C6A15B;
-      box-shadow: 0 0 0 3px rgba(198,161,91,0.15);
+      border-color: #D6B36A;
+      box-shadow: 0 0 0 4px rgba(214,179,106,.16);
+      background: #fff;
     }
     .field.err input, .field.err textarea, .field.err select {
       border-color: #F87171;
-      box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
+      box-shadow: 0 0 0 4px rgba(248,113,113,.13);
     }
     .contact-radios ul { list-style: none; padding: 0; margin: 0; }
     .contact-radios li label { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer; }
     .contact-radios li input[type=radio], input[type=checkbox] { width: auto; }
+
+    .carousel-scroll { scroll-snap-type: x mandatory; scrollbar-width: thin; }
+    .carousel-card { scroll-snap-align: start; }
   </style>
+  {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-stone-50 text-slate-900 antialiased">
+<body class="bg-[#F7F2EA] text-slate-900 antialiased">
 
-  <!-- ══ NAVBAR ══ -->
-  <header id="navbar" class="sticky top-0 z-50 bg-[#0B1220]/95 backdrop-blur-md border-b border-white/8 transition-all duration-300">
+  <header id="navbar" class="sticky top-0 z-50 bg-[#07111F]/95 backdrop-blur-md border-b border-white/10 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-6">
-
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-3 shrink-0">
+      <a href="/" class="flex items-center gap-3 shrink-0" aria-label="TradeGate Consultants home">
         <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-accent/10 border border-brand-accent/30">
           <span class="font-display font-bold text-brand-accent text-lg leading-none">TG</span>
         </span>
-        <span class="font-display font-semibold text-white text-base leading-tight">
+        <span class="font-display font-semibold text-white text-base leading-tight tracking-tight">
           {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %}
           <span class="text-white/50 font-normal"> Consultants</span>
         </span>
       </a>
 
-      <!-- Desktop nav -->
-      <nav class="hidden md:flex items-center gap-1 text-sm">
-        {% if nav_items and nav_items|length %}
-          {% for item in nav_items %}
-            {% if item.is_cta %}
-              <a href="{{ item.get_href }}"
-                 class="ml-3 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand-accent text-[#0B1220] font-semibold hover:bg-brand-accent/90 transition text-sm">
-                {{ item.label }}
-              </a>
-            {% else %}
-              <a href="{{ item.get_href }}"
-                 class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">
-                {{ item.label }}
-              </a>
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          <a href="/#pillars" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">Pillars</a>
-          <a href="/#services" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">Services</a>
-          <a href="/#process" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">Process</a>
-          <a href="{% url 'faq' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">FAQs</a>
-          <a href="{% url 'about' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">About</a>
-          <a href="{% url 'contact' %}"
-             class="ml-3 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand-accent text-[#0B1220] font-semibold hover:bg-brand-accent/90 transition text-sm">
-            Book a call
-          </a>
-        {% endif %}
+      <nav class="hidden lg:flex items-center gap-1 text-sm">
+        <a href="/" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">Home</a>
+        <div class="relative group">
+          <button type="button" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition inline-flex items-center gap-1">
+            Services
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full pt-3 w-[330px]">
+            <div class="rounded-2xl border border-white/10 bg-[#07111F] p-3 shadow-2xl">
+              {% for label, slug in global_service_nav %}
+                <a href="{% url 'service_landing' slug=slug %}" class="block rounded-xl px-4 py-3 text-white/65 hover:text-white hover:bg-white/10 transition">
+                  <span class="font-semibold text-sm">{{ label }}</span>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <a href="/#opportunities" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">Opportunities</a>
+        <a href="{% url 'faq' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">FAQs</a>
+        <a href="{% url 'about' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">About</a>
+        <a href="{% url 'contact' %}" class="ml-3 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition text-sm shadow-glow">
+          Request consultation
+        </a>
       </nav>
 
-      <!-- Mobile toggle -->
       <button id="navToggle" aria-label="Open menu"
-              class="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white/8 border border-white/10 text-white hover:bg-white/15 transition">
-        <svg id="iconMenu" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-        <svg id="iconClose" class="h-4 w-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+              class="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-white/10 border border-white/10 text-white hover:bg-white/15 transition">
+        <svg id="iconMenu" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg id="iconClose" class="h-4 w-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
 
-    <!-- Mobile panel -->
-    <div id="mobileNav" class="hidden md:hidden border-t border-white/8 bg-[#0B1220]">
+    <div id="mobileNav" class="hidden lg:hidden border-t border-white/10 bg-[#07111F]">
       <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1 text-sm">
-        {% if nav_items and nav_items|length %}
-          {% for item in nav_items %}
-            {% if item.is_cta %}
-              <a href="{{ item.get_href }}"
-                 class="mt-3 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-brand-accent text-[#0B1220] font-semibold">
-                {{ item.label }}
-              </a>
-            {% else %}
-              <a href="{{ item.get_href }}" class="px-3 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">{{ item.label }}</a>
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          <a href="/#pillars" class="px-3 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">Pillars</a>
-          <a href="/#services" class="px-3 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">Services</a>
-          <a href="/#process" class="px-3 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">Process</a>
-          <a href="{% url 'faq' %}" class="px-3 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">FAQs</a>
-          <a href="{% url 'about' %}" class="px-3 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition">About</a>
-          <a href="{% url 'contact' %}"
-             class="mt-3 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-brand-accent text-[#0B1220] font-semibold">
-            Book a call
-          </a>
-        {% endif %}
+        <a href="/" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">Home</a>
+        <p class="px-3 pt-4 pb-1 text-[11px] uppercase tracking-[0.22em] text-white/35">Services</p>
+        {% for label, slug in global_service_nav %}
+          <a href="{% url 'service_landing' slug=slug %}" class="px-3 py-2.5 rounded-lg text-white/65 hover:text-white hover:bg-white/10 transition">{{ label }}</a>
+        {% endfor %}
+        <a href="/#opportunities" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">Opportunities</a>
+        <a href="{% url 'faq' %}" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">FAQs</a>
+        <a href="{% url 'about' %}" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">About</a>
+        <a href="{% url 'contact' %}" class="mt-3 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-brand-accent text-[#07111F] font-bold">Request consultation</a>
       </div>
     </div>
   </header>
 
   <main>{% block content %}{% endblock %}</main>
 
-  <!-- ══ FOOTER ══ -->
-  <footer class="bg-[#0B1220] text-white border-t border-white/8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 grid gap-12 md:grid-cols-12">
-
-      <!-- Brand col -->
-      <div class="md:col-span-4">
+  <footer class="bg-[#07111F] text-white border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-4">
         <div class="flex items-center gap-3">
-          <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-accent/10 border border-brand-accent/30">
-            <span class="font-display font-bold text-brand-accent text-lg">TG</span>
+          <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-accent/10 border border-brand-accent/35">
+            <span class="font-display font-extrabold text-brand-accent text-lg">TG</span>
           </span>
-          <span class="font-display font-semibold text-lg">
-            {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %} Consultants
-          </span>
+          <span class="font-display font-semibold text-lg">TradeGate Consultants</span>
         </div>
-        <p class="mt-4 text-white/50 text-sm leading-relaxed max-w-xs">
-          {% if site and site.tagline %}{{ site.tagline }}{% else %}Strategy. Execution. Growth.{% endif %}
+        <p class="mt-4 text-white/55 text-sm leading-relaxed max-w-sm">
+          Germany-based market-entry support for international SMEs: trade fair representation, partner search, local presence and follow-up from Leipzig.
         </p>
-        <p class="mt-3 text-white/30 text-xs">
-          {% if site and site.city %}{{ site.city }}{% if site.country %}, {{ site.country }}{% endif %}{% else %}Leipzig, Germany{% endif %}
-        </p>
-
-        <!-- Social row -->
-        <div class="mt-6 flex items-center gap-3">
-          {% if site and site.facebook_url %}
-            <a href="{{ site.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook"
-               class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H8v-3h2.4V9.7c0-2.4 1.4-3.7 3.6-3.7 1 0 2 .2 2 .2v2.2H15c-1.2 0-1.6.7-1.6 1.5V12H16l-.4 3h-2.2v7A10 10 0 0 0 22 12z"/></svg>
-            </a>
-          {% endif %}
-          {% if site and site.linkedin_url %}
-            <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener" aria-label="LinkedIn"
-               class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          {% else %}
-            <a href="https://www.linkedin.com/company/tradegate-consultants/" target="_blank" rel="noopener" aria-label="LinkedIn"
-               class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          {% endif %}
-          {% if site and site.instagram_url %}
-            <a href="{{ site.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram"
-               class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
-            </a>
-          {% endif %}
+        <div class="mt-6 flex flex-wrap gap-2 text-xs text-white/45">
+          <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Leipzig, Germany</span>
+          <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Africa · Middle East · Asia</span>
+          <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">B2B only</span>
         </div>
       </div>
 
-      <!-- Links -->
-      <div class="md:col-span-3">
-        <p class="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Navigation</p>
+      <div class="lg:col-span-3">
+        <p class="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Services</p>
+        <div class="space-y-2 text-sm">
+          {% for label, slug in global_service_nav %}
+            <a href="{% url 'service_landing' slug=slug %}" class="block text-white/55 hover:text-white hover-gold transition">{{ label }}</a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        <p class="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Company</p>
         <div class="space-y-2 text-sm">
           <a href="/" class="block text-white/55 hover:text-white hover-gold transition">Home</a>
           <a href="{% url 'about' %}" class="block text-white/55 hover:text-white hover-gold transition">About</a>
           <a href="{% url 'faq' %}" class="block text-white/55 hover:text-white hover-gold transition">FAQs</a>
           <a href="{% url 'contact' %}" class="block text-white/55 hover:text-white hover-gold transition">Contact</a>
-          <a href="{% url 'legal_page' key='impressum' %}" class="block text-white/55 hover:text-white hover-gold transition">Impressum</a>
-          <a href="{% url 'legal_page' key='datenschutz' %}" class="block text-white/55 hover:text-white hover-gold transition">Datenschutz</a>
+          <a href="{% url 'legal_page' key='impressum' %}" class="block text-white/55 hover:text-white hover-gold transition">Imprint (Impressum)</a>
+          <a href="{% url 'legal_page' key='datenschutz' %}" class="block text-white/55 hover:text-white hover-gold transition">Privacy Policy</a>
         </div>
       </div>
 
-      <!-- Contact -->
-      <div class="md:col-span-5">
+      <div class="lg:col-span-3">
         <p class="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Get in touch</p>
         <div class="space-y-3">
           {% if site and site.primary_email %}
-            <a href="mailto:{{ site.primary_email }}"
-               class="flex items-center gap-3 text-sm text-white/55 hover:text-white transition group">
-              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/40 transition shrink-0">
+            <a href="mailto:{{ site.primary_email }}" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
+              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/45 transition shrink-0">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </span>
               {{ site.primary_email }}
             </a>
           {% else %}
-            <a href="mailto:info@tradegateconsultants.com"
-               class="flex items-center gap-3 text-sm text-white/55 hover:text-white transition group">
-              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/40 transition shrink-0">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <a href="mailto:contact@tradegateconsultants.com" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
+              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/45 transition shrink-0">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </span>
-              info@tradegateconsultants.com
+              contact@tradegateconsultants.com
             </a>
           {% endif %}
           {% if site and site.whatsapp_url %}
-            <a href="{{ site.whatsapp_url }}" target="_blank" rel="noopener"
-               class="flex items-center gap-3 text-sm text-white/55 hover:text-white transition group">
-              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/40 transition shrink-0">
+            <a href="{{ site.whatsapp_url }}" target="_blank" rel="noopener" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
+              <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/45 transition shrink-0">
                 <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.5 11.9a8.5 8.5 0 0 1-12.9 7.3L3.5 20.5l1.4-4A8.5 8.5 0 1 1 20.5 11.9Z"/><path d="M9.2 9.3c.2-.3.4-.3.6-.3h.5c.2 0 .4.1.5.4l.7 1.8c.1.2.1.4 0 .6l-.3.4c-.1.2-.1.4 0 .6.4.8 1.2 1.6 2 2 .2.1.4.1.6 0l.4-.3c.2-.1.4-.1.6 0l1.8.7c.3.1.4.3.4.5v.5c0 .2 0 .4-.3.6-.4.4-1 .6-1.6.5-1.2-.2-2.6-.9-3.8-2.1-1.2-1.2-1.9-2.6-2.1-3.8-.1-.6.1-1.2.5-1.6Z"/></svg>
               </span>
               WhatsApp — fastest reply
@@ -308,30 +260,25 @@
           {% endif %}
         </div>
 
-        <!-- CTA card -->
-        <div class="mt-8 rounded-2xl border border-white/8 bg-white/3 p-5">
-          <p class="text-sm text-white/70">Ready to enter the EU market?</p>
-          <a href="{% url 'contact' %}"
-             class="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent text-[#0B1220] text-sm font-semibold hover:bg-brand-accent/90 transition">
-            Book a discovery call
+        <div class="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+          <p class="text-sm text-white/75">Need a Germany/EU entry route?</p>
+          <a href="{% url 'contact' %}" class="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent text-[#07111F] text-sm font-bold hover:bg-brand-accent/90 transition">
+            Start with a short brief
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
           </a>
         </div>
       </div>
     </div>
 
-    <!-- Bottom bar -->
-    <div class="border-t border-white/5">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/25">
-        <span>© {% now "Y" %} {% if site and site.site_name %}{{ site.site_name }}{% else %}TradeGate{% endif %} Consultants. All rights reserved.</span>
-        <span>Germany · EU representation &amp; market access · Leipzig</span>
+    <div class="border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/28">
+        <span>© {% now "Y" %} TradeGate Consultants. All rights reserved.</span>
+        <span>Germany · EU representation & market access · Leipzig</span>
       </div>
     </div>
   </footer>
 
-  <!-- ══ SCRIPTS ══ -->
   <script>
-    // Mobile nav toggle
     (function () {
       const btn = document.getElementById('navToggle');
       const panel = document.getElementById('mobileNav');
@@ -344,7 +291,6 @@
         iMenu.classList.toggle('hidden', !open);
         iClose.classList.toggle('hidden', open);
       });
-      // close on nav link click
       panel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
         panel.classList.add('hidden');
         iMenu.classList.remove('hidden');
@@ -352,7 +298,6 @@
       }));
     })();
 
-    // Scroll reveal
     (function () {
       const els = document.querySelectorAll('.reveal');
       if (!els.length) return;
@@ -361,16 +306,7 @@
       }, { threshold: 0.1 });
       els.forEach(el => io.observe(el));
     })();
-
-    // Navbar shrink on scroll
-    (function () {
-      const nav = document.getElementById('navbar');
-      if (!nav) return;
-      window.addEventListener('scroll', () => {
-        nav.classList.toggle('py-3', window.scrollY > 40);
-        nav.classList.toggle('py-4', window.scrollY <= 40);
-      }, { passive: true });
-    })();
   </script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

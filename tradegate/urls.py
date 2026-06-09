@@ -3,10 +3,11 @@ from django.http import HttpResponse
 from django.urls import include, path
 from django.contrib.sitemaps.views import sitemap
 
-from website.sitemaps import StaticViewSitemap, LegalPageSitemap
+from website.sitemaps import StaticViewSitemap, ServicePageSitemap, LegalPageSitemap
 
 sitemaps = {
     "static": StaticViewSitemap,
+    "services": ServicePageSitemap,
     "legal": LegalPageSitemap,
 }
 
