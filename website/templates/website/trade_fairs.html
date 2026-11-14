@@ -9,8 +9,8 @@
     <span class="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-bold text-white/70 mb-6 reveal">
       <span class="h-1.5 w-1.5 rounded-full bg-brand-accent"></span>Trade fair calendar
     </span>
-    <h1 class="font-display text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight max-w-4xl reveal d1">The trade fairs that matter, and how to make them pay off.</h1>
-    <p class="mt-6 text-lg md:text-xl text-white/62 max-w-3xl leading-relaxed reveal d2">Exhibiting in Germany, or a German company looking at fairs abroad? Pick an event to see who it suits and how we can help you get real buyer meetings out of it.</p>
+    <h1 class="font-display text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight max-w-4xl reveal d1">Trade fairs: exhibit abroad with us, or let us represent you in Germany.</h1>
+    <p class="mt-6 text-lg md:text-xl text-white/62 max-w-3xl leading-relaxed reveal d2">Two kinds of events on one page. Partner events are international fairs we recruit exhibitors for. The German calendar lists major fairs in Germany where we can represent you, set up buyer meetings and follow up.</p>
     <div class="mt-8 flex flex-wrap gap-3 reveal d3">
       {% if represented %}<a href="#partner-events" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-accent text-[#07111F] font-bold text-sm">Our partner events</a>{% endif %}
       <a href="#germany" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm">German trade fairs</a>
@@ -22,13 +22,13 @@
 <section id="partner-events" class="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
   <div class="max-w-3xl mb-10 reveal">
     <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Partner events</span>
-    <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">International events we recruit German exhibitors for.</h2>
-    <p class="text-slate-600 mt-4 text-lg leading-relaxed">We work with these organisers as their contact in Germany. Ask us about stands, packages and whether the event fits your products. Booking through us costs you nothing extra.</p>
+    <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Exhibit at our partner trade fairs.</h2>
+    <p class="text-slate-600 mt-4 text-lg leading-relaxed">We are the German contact for these international events. Ask us about stands and packages, and whether the event fits your products. Booking through us costs you nothing extra.</p>
   </div>
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for fair in represented %}
       <a href="{% url 'trade_fair_detail' slug=fair.slug %}" data-sectors="{{ fair.categories|join:',' }}" class="fair-card group flex flex-col rounded-3xl border-2 border-brand-accent/60 bg-white p-6 shadow-soft hover:-translate-y-1 transition reveal">
-        <span class="self-start rounded-full bg-[#07111F] px-3 py-1 text-xs font-bold text-brand-accent">Partner event</span>
+        <div class="flex items-center justify-between gap-3"><span class="rounded-full bg-[#07111F] px-3 py-1 text-xs font-bold text-brand-accent">Partner event</span>{% if fair.logo %}<img src="{{ fair.logo.url }}" alt="" class="h-8 w-auto max-w-[96px] object-contain">{% endif %}</div>
         <p class="mt-4 text-sm font-bold text-brand-copper">{{ fair.date_label }}</p>
         <h3 class="font-display text-xl font-bold text-[#07111F] mt-1">{{ fair.name }}</h3>
         <p class="text-sm text-slate-500 mt-1">{{ fair.place_label }}</p>
@@ -43,8 +43,8 @@
 <section id="germany" class="py-16 md:py-20 bg-white border-y">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="max-w-3xl mb-8 reveal">
-      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Germany</span>
-      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Major German trade fairs for exporters.</h2>
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">German trade fair calendar</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Going to a German trade fair? We can represent you.</h2>
       <p class="text-slate-600 mt-4 text-lg leading-relaxed">We can represent you at any of these, pre-book meetings with German buyers and follow up afterwards, with or without your own stand.</p>
     </div>
 

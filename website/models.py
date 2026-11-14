@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinLengthValidator, URLValidator
+from django.core.validators import FileExtensionValidator, MinLengthValidator, URLValidator
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
@@ -340,9 +340,23 @@ class TradeFair(TimeStampedModel):
         help_text="Represented events only, exactly as the agreement allows, e.g. 'Exhibitor recruitment partner for Germany'.",
     )
     official_url = models.URLField(blank=True, default="", validators=[URLValidator()])
+
+    # Partner event materials (supplied by the organiser, used with permission)
+    materials_permission = models.BooleanField(
+        default=False,
+        help_text="Partner events: the organiser has given written permission to show the event name, logo and materials on our website.",
+    )
+    logo = models.FileField(upload_to="trade-fairs/logos/", blank=True, default="", validators=[FileExtensionValidator(["png", "jpg", "jpeg", "webp", "svg"])])
+    cover_image = models.FileField(upload_to="trade-fairs/covers/", blank=True, default="", validators=[FileExtensionValidator(["png", "jpg", "jpeg", "webp"])])
+    brochure = models.FileField(upload_to="trade-fairs/brochures/", blank=True, default="", validators=[FileExtensionValidator(["pdf"])], help_text="PDF from the organiser, e.g. exhibitor brochure.")
+    packages_text = models.TextField(
+        blank=True, default="",
+        help_text="Stand and sponsorship packages, one per line: Name | Price | Short description",
+    )
+
     is_published = models.BooleanField(
         default=False,
-        help_text="Represented events: tick only once the organiser has given written permission to list the event.",
+        help_text="Partner events: tick only once the organiser has given written permission to list the event.",
     )
     show_in_carousel = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
@@ -378,6 +392,20 @@ class TradeFair(TimeStampedModel):
     def help_list(self):
         return self._lines(self.how_we_help)
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.kind == self.KIND_REPRESENTED and self.is_published and not self.materials_permission:
+            raise ValidationError({"is_published": "Partner events can only be published after the organiser's written permission is recorded (tick 'materials permission')."})
+
+    @property
+    def package_list(self):
+        rows = []
+        for line in self.packages_text.splitlines():
+            parts = [p.strip() for p in line.split("|")]
+            if parts and parts[0]:
+                rows.append({"name": parts[0], "price": parts[1] if len(parts) > 1 else "", "details": parts[2] if len(parts) > 2 else ""})
+        return rows
+
     @property
     def date_label(self):
         if not self.start_date:
@@ -394,3 +422,63 @@ class TradeFair(TimeStampedModel):
     @property
     def place_label(self):
         return ", ".join([p for p in [self.city, self.country] if p])
+
+
+
+class ServicePackage(TimeStampedModel):
+    """Packages and prices shown on each service page. Editable in admin."""
+
+    service_slug = models.SlugField(max_length=160, help_text="Which service page this package belongs to.")
+    name = models.CharField(max_length=80)
+    price = models.CharField(max_length=40, help_text="e.g. '€490', 'From €890', 'By quote'.")
+    unit = models.CharField(max_length=80, blank=True, default="", help_text="e.g. 'one-off', 'per month, minimum 3 months'.")
+    best_for = models.CharField(max_length=120, blank=True, default="")
+    includes = models.TextField(blank=True, default="", help_text="One item per line.")
+    featured = models.BooleanField(default=False, help_text="Highlight as 'Most chosen'.")
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["service_slug", "order", "pk"]
+        verbose_name = "Service package"
+        verbose_name_plural = "Service packages and prices"
+
+    def __str__(self):
+        return f"{self.name} ({self.price})"
+
+    @property
+    def include_list(self):
+        return [line.strip(" -•\t") for line in self.includes.splitlines() if line.strip(" -•\t")]
+
+
+class TeamProfile(TimeStampedModel):
+    """People shown on the About page."""
+
+    name = models.CharField(max_length=120)
+    role = models.CharField(max_length=120, blank=True, default="")
+    location = models.CharField(max_length=120, blank=True, default="")
+    photo = models.FileField(upload_to="team/", blank=True, default="", validators=[FileExtensionValidator(["png", "jpg", "jpeg", "webp"])], help_text="Shown view-only. Upload a web-size image (about 600 x 600 px).")
+    photo_url = models.CharField(max_length=220, blank=True, default="", help_text="Used when no photo is uploaded.")
+    linkedin_url = models.URLField(blank=True, default="")
+    intro = models.TextField(blank=True, default="")
+    partners_text = models.TextField(blank=True, default="", help_text="Short note on the partner network.")
+    background = models.TextField(blank=True, default="")
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "pk"]
+        verbose_name = "Team profile"
+        verbose_name_plural = "Team (About page)"
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def display_photo_url(self):
+        if self.photo:
+            try:
+                return self.photo.url
+            except Exception:
+                pass
+        return self.photo_url

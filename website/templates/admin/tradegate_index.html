@@ -1,0 +1,53 @@
+{% extends "admin/index.html" %}
+{% block content %}
+<div class="tg-dashboard">
+  <div class="tg-card dark">
+    <div class="tg-label">New enquiries</div>
+    <div class="tg-num">{{ tg_new_enquiries }}</div>
+    <p>Not yet marked as handled.</p>
+    <div class="tg-actions"><a href="{% url 'admin:website_inquiry_changelist' %}?is_handled__exact=0">Open enquiries</a></div>
+  </div>
+  <div class="tg-card">
+    <div class="tg-label">Upcoming fairs</div>
+    <div class="tg-num">{{ tg_upcoming_fairs }}</div>
+    <p>Published in the trade fair calendar.</p>
+    <div class="tg-actions"><a href="{% url 'admin:website_tradefair_add' %}">Add a trade fair</a></div>
+  </div>
+  <div class="tg-card">
+    <div class="tg-label">Partner events waiting</div>
+    <div class="tg-num">{{ tg_partner_waiting }}</div>
+    <p>Hidden until the organiser's written permission is recorded.</p>
+    <div class="tg-actions"><a href="{% url 'admin:website_tradefair_changelist' %}?kind__exact=represented&is_published__exact=0">Review</a></div>
+  </div>
+  <div class="tg-card">
+    <div class="tg-label">Quick edits</div>
+    <div class="tg-actions">
+      <a href="{% url 'admin:website_servicepackage_changelist' %}">Packages and prices</a>
+      <a href="{% url 'admin:website_teamprofile_changelist' %}">Team</a>
+      <a href="{% url 'admin:website_sitesettings_changelist' %}">Site settings</a>
+      <a href="/" target="_blank" rel="noopener">View website</a>
+    </div>
+  </div>
+</div>
+
+{% if tg_recent_enquiries %}
+<div class="module tg-recent">
+  <table>
+    <caption>Latest open enquiries</caption>
+    <thead><tr><th>Received</th><th>From</th><th>Company</th><th>Subject</th></tr></thead>
+    <tbody>
+      {% for q in tg_recent_enquiries %}
+        <tr>
+          <td>{{ q.created_at|date:"d M Y, H:i" }}</td>
+          <td><a href="{% url 'admin:website_inquiry_change' q.pk %}">{{ q.full_name }}</a></td>
+          <td>{{ q.company_name|default:"–" }}</td>
+          <td>{{ q.subject }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}

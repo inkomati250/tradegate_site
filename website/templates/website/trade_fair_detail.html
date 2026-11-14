@@ -10,7 +10,10 @@
     <div class="grid lg:grid-cols-12 gap-10 items-start mt-6">
       <div class="lg:col-span-8">
         {% if fair.is_represented %}
-          <span class="inline-flex rounded-full bg-brand-accent px-3 py-1 text-xs font-bold text-[#07111F]">Partner event{% if fair.our_role %} · {{ fair.our_role }}{% endif %}</span>
+          <div class="flex items-center gap-4">
+            <span class="inline-flex rounded-full bg-brand-accent px-3 py-1 text-xs font-bold text-[#07111F]">Partner event{% if fair.our_role %} · {{ fair.our_role }}{% endif %}</span>
+            {% if fair.logo and fair.materials_permission %}<img src="{{ fair.logo.url }}" alt="{{ fair.name }} logo" class="h-10 w-auto max-w-[140px] object-contain bg-white rounded-lg p-1.5">{% endif %}
+          </div>
         {% else %}
           <span class="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold text-white/70">Trade fair in Germany</span>
         {% endif %}
@@ -50,6 +53,26 @@
         <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">About the event</span>
         <p class="text-slate-700 text-lg leading-relaxed">{{ fair.description }}</p>
       </div>
+      {% endif %}
+      {% if fair.is_represented and fair.materials_permission %}
+        {% if fair.cover_image %}<div class="rounded-3xl overflow-hidden border reveal"><img src="{{ fair.cover_image.url }}" alt="{{ fair.name }}" class="w-full h-auto" loading="lazy"></div>{% endif %}
+        {% if fair.package_list %}
+        <div class="rounded-3xl border bg-white p-7 shadow-soft reveal">
+          <h2 class="font-display text-2xl font-bold text-[#07111F]">Stand and sponsorship packages</h2>
+          <div class="mt-4 divide-y">
+            {% for p in fair.package_list %}
+              <div class="py-3 flex flex-wrap items-baseline justify-between gap-2">
+                <div><p class="font-semibold text-[#07111F]">{{ p.name }}</p>{% if p.details %}<p class="text-sm text-slate-500">{{ p.details }}</p>{% endif %}</div>
+                {% if p.price %}<p class="font-display font-bold text-brand-copper">{{ p.price }}</p>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          <p class="mt-3 text-xs text-slate-500">Prices as set by the organiser. We confirm availability and the final price before you book.</p>
+        </div>
+        {% endif %}
+        {% if fair.brochure %}
+          <a href="{{ fair.brochure.url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#07111F] text-white font-bold text-sm reveal">Download the exhibitor brochure (PDF)</a>
+        {% endif %}
       {% endif %}
       {% if fair.exhibit_list %}
       <div class="rounded-3xl border bg-white p-7 shadow-soft reveal">
@@ -94,6 +117,6 @@
   </div>
   {% endif %}
 
-  <p class="mt-12 text-xs text-slate-500 leading-relaxed max-w-4xl">{{ disclaimer }}{% if fair.is_represented and fair.our_role %} For this event TradeGate Consultants acts as: {{ fair.our_role }}.{% endif %}</p>
+  <p class="mt-12 text-xs text-slate-500 leading-relaxed max-w-4xl">{% if fair.is_represented %}Event information{% if fair.materials_permission %}, logo and materials{% endif %} provided by the organiser{% if fair.materials_permission %} and used with permission{% endif %}.{% if fair.our_role %} For this event TradeGate Consultants acts as: {{ fair.our_role }}.{% endif %} Dates and prices are set by the organiser and can change.{% else %}{{ disclaimer }}{% endif %}</p>
 </section>
 {% endblock %}

@@ -16,7 +16,7 @@ from datetime import date, timedelta
 from django.http import HttpResponse
 from django.utils import timezone
 
-from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, TradeFair, TradeFairOpportunity
+from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, ServicePackage, TeamProfile, TradeFair, TradeFairOpportunity
 
 logger = logging.getLogger(__name__)
 
@@ -223,7 +223,8 @@ def home(request):
         "service_nav": SERVICE_NAV,
         "service_pages": SERVICE_PAGES,
         "opportunities": opportunities,
-        "carousel_fairs": [f for f in _upcoming_fairs() if f.show_in_carousel],
+        "carousel_fairs": [f for f in _upcoming_fairs() if f.show_in_carousel and not f.is_represented],
+        "partner_fairs": [f for f in _upcoming_fairs() if f.is_represented],
         "page_meta": {
             "title": site.meta_title if site and site.meta_title else "Germany & EU Market Entry Support for International SMEs",
             "description": site.meta_description if site and site.meta_description else "TradeGate Consultants helps international SMEs with Germany/EU market entry, trade fair representation, partner search and local presence from Leipzig.",
@@ -242,10 +243,39 @@ def home(request):
     return render(request, "website/home.html", context)
 
 
+def _db_packages(slug):
+    try:
+        rows = ServicePackage.objects.filter(service_slug=slug, is_active=True)
+        return [
+            {"name": p.name, "price": p.price, "unit": p.unit, "best_for": p.best_for,
+             "featured": p.featured, "includes": p.include_list}
+            for p in rows
+        ]
+    except (OperationalError, ProgrammingError, DatabaseError):
+        return []
+
+
+def _team():
+    try:
+        people = list(TeamProfile.objects.filter(is_active=True))
+    except (OperationalError, ProgrammingError, DatabaseError):
+        people = []
+    if not people:
+        return [FOUNDER]
+    return [
+        {"name": p.name, "role": p.role, "location": p.location, "photo_url": p.display_photo_url,
+         "linkedin_url": p.linkedin_url, "intro": p.intro, "partners": p.partners_text, "background": p.background}
+        for p in people
+    ]
+
+
 def service_landing(request, slug):
     page = SERVICE_PAGES.get(slug)
     if not page:
         return redirect("home")
+    db_packages = _db_packages(slug)
+    if db_packages:
+        page = {**page, "packages": db_packages}
 
     related_pages = [SERVICE_PAGES[item] for item in page.get("related", []) if item in SERVICE_PAGES]
     context = {
@@ -428,7 +458,8 @@ def about(request):
             "canonical": request.build_absolute_uri("/about/"),
         },
         "service_nav": SERVICE_NAV,
-        "founder": FOUNDER,
+        "founder": _team()[0],
+        "team": _team(),
     }
     return render(request, "website/about.html", context)
 

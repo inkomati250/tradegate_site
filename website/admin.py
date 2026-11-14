@@ -14,6 +14,8 @@ from .models import (
     LegalPage,
     TradeFairOpportunity,
     TradeFair,
+    ServicePackage,
+    TeamProfile,
     Inquiry,
 )
 
@@ -152,7 +154,6 @@ class LegalPageAdmin(admin.ModelAdmin):
 # =========================
 # 4b) Trade fair / market opportunity carousel
 # =========================
-@admin.register(TradeFairOpportunity)
 class TradeFairOpportunityAdmin(admin.ModelAdmin):
     list_display = ("order", "title", "city_country", "industry", "is_active", "updated_at")
     list_display_links = ("title",)
@@ -219,5 +220,103 @@ class TradeFairAdmin(admin.ModelAdmin):
         ("Event", {"fields": ("name", "slug", "kind", "is_published", "show_in_carousel", "order")}),
         ("When and where", {"fields": ("start_date", "end_date", "date_note", "city", "country", "venue", "organiser", "official_url")}),
         ("Content (our own words)", {"fields": ("sectors", "summary", "description", "who_should_exhibit", "who_should_visit", "how_we_help")}),
-        ("Represented events only", {"fields": ("our_role",)}),
+        ("Partner events only: role and organiser materials", {
+            "description": "Only tick 'materials permission' once the organiser has confirmed in writing that we may show their event, logo and materials.",
+            "fields": ("our_role", "materials_permission", "logo", "cover_image", "brochure", "packages_text"),
+        }),
     )
+    list_display = ("name", "kind", "start_date", "city", "is_published", "materials_permission", "show_in_carousel")
+
+
+@admin.register(ServicePackage)
+class ServicePackageAdmin(admin.ModelAdmin):
+    list_display = ("name", "service_slug", "price", "unit", "featured", "is_active", "order")
+    list_filter = ("service_slug", "featured", "is_active")
+    list_editable = ("price", "featured", "is_active", "order")
+    search_fields = ("name", "service_slug")
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "service_slug":
+            from django import forms
+            from .content import SERVICE_PAGES
+            choices = [(slug, page["title"]) for slug, page in SERVICE_PAGES.items() if page.get("audience") != "organisers"]
+            return forms.ChoiceField(choices=choices, label="Service page")
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+@admin.register(TeamProfile)
+class TeamProfileAdmin(admin.ModelAdmin):
+    list_display = ("name", "role", "location", "is_active", "order")
+    list_editable = ("is_active", "order")
+    fieldsets = (
+        (None, {"fields": ("name", "role", "location", "is_active", "order")}),
+        ("Photo", {"fields": ("photo", "photo_url"), "description": "The photo is shown view-only on the website (no right-click or long-press saving)."}),
+        ("Text", {"fields": ("intro", "partners_text", "background", "linkedin_url")}),
+    )
+
+
+# -------------------------
+# Admin branding, sections and dashboard
+# -------------------------
+admin.site.site_header = "TradeGate Admin"
+admin.site.site_title = "TradeGate Admin"
+admin.site.index_title = "Dashboard"
+admin.site.index_template = "admin/tradegate_index.html"
+
+ADMIN_SECTIONS = [
+    ("Enquiries", "enquiries", ["Inquiry"]),
+    ("Trade fairs", "trade-fairs", ["TradeFair"]),
+    ("Services and prices", "services", ["ServicePackage", "Service", "Industry", "ProcessStep"]),
+    ("Team and company", "company", ["TeamProfile", "SiteSettings"]),
+    ("Website structure", "structure", ["NavigationItem", "LegalPage"]),
+]
+
+
+def _tradegate_app_list(request, app_label=None):
+    original = admin.AdminSite.get_app_list(admin.site, request, app_label)
+    if app_label:
+        return original
+    models_by_name = {}
+    others = []
+    for app in original:
+        for model in app["models"]:
+            if app["app_label"] == "website":
+                models_by_name[model["object_name"]] = model
+            else:
+                others.append(model)
+    sections = []
+    for title, label, names in ADMIN_SECTIONS:
+        models = [models_by_name.pop(n) for n in names if n in models_by_name]
+        if models:
+            sections.append({"name": title, "app_label": "website", "app_url": models[0]["admin_url"], "has_module_perms": True, "models": models})
+    leftover = list(models_by_name.values())
+    if leftover:
+        sections.append({"name": "Other content", "app_label": "website", "app_url": leftover[0]["admin_url"], "has_module_perms": True, "models": leftover})
+    if others:
+        sections.append({"name": "Users and access", "app_label": "auth", "app_url": others[0]["admin_url"], "has_module_perms": True, "models": others})
+    return sections
+
+
+admin.site.get_app_list = _tradegate_app_list
+
+_original_index = admin.site.index
+
+
+def _tradegate_index(request, extra_context=None):
+    from django.utils import timezone
+    today = timezone.localdate()
+    context = {}
+    try:
+        context = {
+            "tg_new_enquiries": Inquiry.objects.filter(is_handled=False).count(),
+            "tg_recent_enquiries": Inquiry.objects.filter(is_handled=False).order_by("-created_at")[:5],
+            "tg_upcoming_fairs": TradeFair.objects.filter(is_published=True).exclude(end_date__lt=today).count(),
+            "tg_partner_waiting": TradeFair.objects.filter(kind=TradeFair.KIND_REPRESENTED, is_published=False).count(),
+        }
+    except Exception:
+        pass
+    context.update(extra_context or {})
+    return _original_index(request, context)
+
+
+admin.site.index = _tradegate_index

@@ -116,3 +116,64 @@ class TradeFairCalendarTests(TestCase):
         response = self.client.get(reverse("about"))
         self.assertContains(response, "Partner with us")
         self.assertNotContains(response, "contact: me")
+
+
+class AdminAndContentTests(TestCase):
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+        self.admin_user = get_user_model().objects.create_superuser("boss", "boss@example.com", "pass12345!")
+
+    def test_admin_dashboard_is_branded_and_grouped(self):
+        self.client.force_login(self.admin_user)
+        response = self.client.get(reverse("admin:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "tradegate-admin.css")
+        self.assertContains(response, "New enquiries")
+        self.assertContains(response, "Partner events waiting")
+        for section in ["Enquiries", "Trade fairs", "Services and prices", "Team and company"]:
+            self.assertContains(response, section)
+
+    def test_admin_login_page_is_branded(self):
+        response = self.client.get(reverse("admin:login"))
+        self.assertContains(response, "tradegate-logo-light.webp")
+
+    def test_admin_changelists_load(self):
+        self.client.force_login(self.admin_user)
+        for name in ["tradefair", "servicepackage", "teamprofile", "inquiry"]:
+            response = self.client.get(reverse(f"admin:website_{name}_changelist"))
+            self.assertEqual(response.status_code, 200, name)
+
+    def test_partner_event_cannot_be_published_without_permission(self):
+        from django.core.exceptions import ValidationError
+        from .models import TradeFair
+        fair = TradeFair.objects.get(slug="azerbaijan-mining-expo-2027")
+        fair.is_published = True
+        with self.assertRaises(ValidationError):
+            fair.full_clean()
+        fair.materials_permission = True
+        fair.full_clean()
+
+    def test_package_prices_come_from_admin(self):
+        from .models import ServicePackage
+        ServicePackage.objects.filter(name="Partner shortlist").update(price="€450")
+        response = self.client.get(reverse("service_landing", kwargs={"slug": "find-business-partners-germany"}))
+        self.assertContains(response, "€450")
+        self.assertNotContains(response, ">€490<")
+
+    def test_team_profile_from_admin(self):
+        from .models import TeamProfile
+        TeamProfile.objects.update(role="Managing Director")
+        response = self.client.get(reverse("about"))
+        self.assertContains(response, "Managing Director")
+
+    def test_homepage_separates_partner_events_from_german_calendar(self):
+        from .models import TradeFair
+        TradeFair.objects.filter(slug="ecowas-aviana-expo-2027").update(is_published=True, materials_permission=True)
+        response = self.client.get(reverse("home"))
+        html = response.content.decode()
+        self.assertIn("Our partner trade fairs", html)
+        self.assertIn("Going to a trade fair in Germany?", html)
+        partner_section = html.split('id="partner-events"')[1].split('id="opportunities"')[0]
+        self.assertIn("ECOWAS Aviana", partner_section)
+        calendar_section = html.split('id="opportunities"')[1].split("</section>")[0]
+        self.assertNotIn("ECOWAS Aviana", calendar_section)
