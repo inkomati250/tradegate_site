@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from .content import DEFAULT_OPPORTUNITIES, SERVICE_NAV, SERVICE_PAGES
+from .content import DEFAULT_OPPORTUNITIES, FOUNDER, PRICING_NOTE, SERVICE_NAV, SERVICE_PAGES
 from .forms import InquiryForm
 from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, TradeFairOpportunity
 
@@ -137,6 +137,7 @@ def service_landing(request, slug):
     related_pages = [SERVICE_PAGES[item] for item in page.get("related", []) if item in SERVICE_PAGES]
     context = {
         "page": page,
+        "pricing_note": PRICING_NOTE,
         "service_nav": SERVICE_NAV,
         "related_pages": related_pages,
         "page_meta": {
@@ -176,6 +177,9 @@ def contact(request):
     event = request.GET.get("event")
     if event:
         initial["subject"] = f"Trade fair support: {event.replace('-', ' ').title()}"
+    package = (request.GET.get("package") or "").strip()[:80]
+    if package:
+        initial["subject"] = f"Package enquiry: {package}"
 
     if request.method == "POST":
         form = InquiryForm(request.POST)
@@ -306,6 +310,7 @@ def about(request):
             "canonical": request.build_absolute_uri("/about/"),
         },
         "service_nav": SERVICE_NAV,
+        "founder": FOUNDER,
     }
     return render(request, "website/about.html", context)
 

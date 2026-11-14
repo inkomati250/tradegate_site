@@ -261,3 +261,391 @@ DEFAULT_OPPORTUNITIES = [
         "visual_label": "HMI",
     },
 ]
+
+
+# ---------------------------------------------------------------------------
+# Service details and packages (Nov 2026).
+# Every service page explains: who it is for, what is included, what you
+# receive, how long it takes, what it costs, what we need from you and what
+# is not included. Prices are "from" prices; the final quote follows a short
+# call, so there is room to adjust scope.
+# ---------------------------------------------------------------------------
+
+PRICING_NOTE = (
+    "Prices are starting points in euros, net of VAT where it applies. "
+    "After a short call we confirm the scope and price in a one-page agreement. "
+    "Work starts only once the agreement is signed."
+)
+
+SERVICE_DETAILS = {
+    "trade-fair-representation-germany": {
+        "card_summary": "We attend a German or EU trade fair for you, meet the visitors you want and send you the leads and a report.",
+        "from_price": "From €650 per fair day",
+        "who_for": "Export-ready companies that want to be seen at a German or EU trade fair without sending their own team.",
+        "timeline": "Book at least 3 weeks before the fair. The report arrives within 3 working days after the last fair day.",
+        "we_need": [
+            "Your company profile, product sheets and price list",
+            "The kind of buyers you want to meet",
+            "Your booth details, if you have a booth",
+            "Samples or brochures, if you want them handed out",
+        ],
+        "not_included": [
+            "Fair tickets, travel and hotel (charged at cost, agreed in advance)",
+            "Booth rental and booth construction",
+            "Signing contracts on your behalf",
+        ],
+        "packages": [
+            {
+                "name": "Fair day",
+                "price": "From €650",
+                "unit": "per fair day + ticket and travel at cost",
+                "best_for": "One fair, one clear goal",
+                "includes": [
+                    "Pre-fair briefing call",
+                    "Attendance or booth support for one day",
+                    "Lead list with notes",
+                    "Photos and a short written report",
+                ],
+            },
+            {
+                "name": "Fair + follow-up",
+                "price": "From €950",
+                "unit": "per fair day + ticket and travel at cost",
+                "best_for": "Turning fair contacts into meetings",
+                "featured": True,
+                "includes": [
+                    "Everything in Fair day",
+                    "Follow-up of every lead for 3 weeks",
+                    "Booking of first calls or meetings",
+                    "Final summary with next steps",
+                ],
+            },
+            {
+                "name": "Multi-day or booth staffing",
+                "price": "By quote",
+                "unit": "",
+                "best_for": "Several days, several fairs or a full booth",
+                "includes": [
+                    "Scope agreed on a call",
+                    "Daily reporting during the fair",
+                    "Follow-up included",
+                ],
+            },
+        ],
+    },
+    "find-business-partners-germany": {
+        "card_summary": "We find and check potential partners in Germany, contact the best ones and set up the first calls.",
+        "from_price": "From €490",
+        "who_for": "Companies looking for importers, resellers, sourcing partners or other business partners in Germany.",
+        "timeline": "Shortlist in 2 weeks. Outreach and first calls within 6 weeks.",
+        "we_need": [
+            "Your product or service, prices and minimum order quantities",
+            "The partner profile you want (type, size, region)",
+            "Certifications and export documents you already have",
+        ],
+        "not_included": [
+            "Guaranteed deals or sales",
+            "Legal, tax or customs advice",
+            "Translation of your full catalogue",
+        ],
+        "packages": [
+            {
+                "name": "Partner shortlist",
+                "price": "€490",
+                "unit": "one-off",
+                "best_for": "Seeing who is out there before you invest more",
+                "includes": [
+                    "30 checked potential partners",
+                    "Why each one fits, plus contact routes",
+                    "Short market notes",
+                ],
+            },
+            {
+                "name": "Shortlist + outreach",
+                "price": "From €890",
+                "unit": "+ €1,200 per signed partner",
+                "best_for": "Getting real conversations started",
+                "featured": True,
+                "includes": [
+                    "Everything in Partner shortlist",
+                    "Personal outreach to the best 15",
+                    "Reply tracking and follow-up",
+                    "First introduction calls set up",
+                ],
+            },
+            {
+                "name": "Custom search",
+                "price": "By quote",
+                "unit": "",
+                "best_for": "Several sectors, countries or partner types",
+                "includes": [
+                    "Scope agreed on a call",
+                    "Regular progress updates",
+                ],
+            },
+        ],
+    },
+    "germany-market-entry-support": {
+        "card_summary": "We check how your offer fits Germany and give you a clear first route: which fair, which partners, which price level.",
+        "from_price": "From €390",
+        "who_for": "Companies that want to enter Germany but are not yet sure where to start.",
+        "timeline": "Entry check in 1 week. Entry plan with first contacts in 4 weeks.",
+        "we_need": [
+            "Your product range, prices and current export markets",
+            "Your goal for Germany and your budget range",
+        ],
+        "not_included": [
+            "Company registration or legal set-up in Germany",
+            "Product certification or labelling work",
+        ],
+        "packages": [
+            {
+                "name": "Entry check",
+                "price": "€390",
+                "unit": "one-off",
+                "best_for": "A fast, honest first view",
+                "includes": [
+                    "60-minute call",
+                    "Written one-page entry route",
+                    "Price and positioning notes",
+                    "Recommended first fair or partner route",
+                ],
+            },
+            {
+                "name": "Entry plan + first contacts",
+                "price": "From €990",
+                "unit": "one-off",
+                "best_for": "Starting with real contacts",
+                "featured": True,
+                "includes": [
+                    "Everything in Entry check",
+                    "Market and competitor snapshot",
+                    "Shortlist of 20 first contacts",
+                    "Personal outreach to the best 10",
+                ],
+            },
+            {
+                "name": "Ongoing support",
+                "price": "From €290",
+                "unit": "per month, after a first project",
+                "best_for": "Keeping momentum after the first results",
+                "includes": [
+                    "Monthly priorities and follow-up",
+                    "Monthly progress report",
+                ],
+            },
+        ],
+    },
+    "eu-local-representative-germany": {
+        "card_summary": "A named contact person in Germany who answers your partners, attends meetings and keeps relationships going.",
+        "from_price": "From €290 per month",
+        "who_for": "Companies with first German contacts that need someone local before opening an office.",
+        "timeline": "Starts within 2 weeks of signing. Minimum term 3 months.",
+        "we_need": [
+            "Your key contacts and open conversations",
+            "Clear rules on what we may say and promise on your behalf",
+        ],
+        "not_included": [
+            "A registered office address or virtual office",
+            "Signing contracts on your behalf",
+            "Travel outside Leipzig (charged at cost, agreed in advance)",
+        ],
+        "packages": [
+            {
+                "name": "Local contact",
+                "price": "From €290",
+                "unit": "per month, minimum 3 months",
+                "best_for": "Being reachable in Germany",
+                "includes": [
+                    "Named contact person in Germany",
+                    "Answers to partner enquiries in German and English",
+                    "Monthly update",
+                ],
+            },
+            {
+                "name": "Local contact + meetings",
+                "price": "From €490",
+                "unit": "per month, minimum 3 months",
+                "best_for": "Active relationship building",
+                "featured": True,
+                "includes": [
+                    "Everything in Local contact",
+                    "Up to 2 meetings a month",
+                    "Follow-up management",
+                ],
+            },
+        ],
+    },
+    "distributor-search-germany": {
+        "card_summary": "We find German distributors that match your product, contact them and set up the first talks.",
+        "from_price": "From €490",
+        "who_for": "Manufacturers and exporters looking for distributors or wholesalers in Germany.",
+        "timeline": "Shortlist in 2 weeks. Outreach and first talks within 6 weeks.",
+        "we_need": [
+            "Product details, prices and minimum order quantities",
+            "Packaging, shelf life and certifications",
+            "Delivery terms you can offer (for example EXW or CIF)",
+        ],
+        "not_included": [
+            "Guaranteed distribution agreements",
+            "Logistics, customs clearance or warehousing",
+        ],
+        "packages": [
+            {
+                "name": "Distributor shortlist",
+                "price": "€490",
+                "unit": "one-off",
+                "best_for": "Knowing which distributors fit",
+                "includes": [
+                    "25 checked distributor candidates",
+                    "Why each one fits, plus contact routes",
+                    "Notes on what they usually expect",
+                ],
+            },
+            {
+                "name": "Shortlist + outreach",
+                "price": "From €890",
+                "unit": "+ €1,200 per signed distributor",
+                "best_for": "Getting distributor talks started",
+                "featured": True,
+                "includes": [
+                    "Everything in Distributor shortlist",
+                    "Personal outreach to the best 12",
+                    "Sample and price-list follow-up",
+                    "First talks set up",
+                ],
+            },
+            {
+                "name": "Custom search",
+                "price": "By quote",
+                "unit": "",
+                "best_for": "Several product lines or EU countries",
+                "includes": [
+                    "Scope agreed on a call",
+                    "Regular progress updates",
+                ],
+            },
+        ],
+    },
+    "trade-fair-follow-up-lead-management": {
+        "card_summary": "After a fair, we follow up every contact you collected and turn the interested ones into calls.",
+        "from_price": "From €350",
+        "who_for": "Companies that came back from a fair with contacts but no time to follow up.",
+        "timeline": "Starts within 1 week. Each sprint runs 4 weeks.",
+        "we_need": [
+            "Your lead list, business cards or scanner export",
+            "Your notes from the fair, if you have them",
+            "Your offer, prices and what you want from each lead",
+        ],
+        "not_included": [
+            "Sales negotiations on your behalf",
+            "Leads you did not collect yourself",
+        ],
+        "packages": [
+            {
+                "name": "Follow-up sprint",
+                "price": "€350",
+                "unit": "up to 50 leads, 4 weeks",
+                "best_for": "Not losing contacts after a fair",
+                "includes": [
+                    "Lead list cleaned and ranked",
+                    "Personal follow-up of every lead",
+                    "Reply tracking",
+                    "Summary of who is interested",
+                ],
+            },
+            {
+                "name": "Follow-up + meetings",
+                "price": "From €590",
+                "unit": "up to 100 leads, 4 weeks",
+                "best_for": "Turning interest into calls",
+                "featured": True,
+                "includes": [
+                    "Everything in Follow-up sprint",
+                    "Calls or meetings booked",
+                    "Next-step notes for each hot lead",
+                ],
+            },
+        ],
+    },
+}
+
+for _slug, _details in SERVICE_DETAILS.items():
+    SERVICE_PAGES[_slug].update(_details)
+
+
+# Service for trade-fair organisers (separate audience, commission only).
+SERVICE_PAGES["exhibitor-recruitment-germany"] = {
+    "slug": "exhibitor-recruitment-germany",
+    "service_code": "exhibitor_recruitment",
+    "audience": "organisers",
+    "kicker": "For trade-fair organisers",
+    "title": "Exhibitor Recruitment in Germany for International Trade Fairs",
+    "subtitle": "Organising a trade fair abroad and looking for German exhibitors? TradeGate acts as your agent for Germany: we find suitable companies, introduce your event and follow up until they book.",
+    "primary_keyword": "exhibitor recruitment Germany",
+    "meta_title": "Exhibitor Recruitment Germany | TradeGate Consultants",
+    "meta_description": "Germany-based exhibitor recruitment agent for international trade fairs: research, introductions and follow-up, paid by commission on confirmed bookings.",
+    "hero_badges": ["Commission only", "Germany-based", "Lead registration", "Monthly reporting"],
+    "card_summary": "For organisers of trade fairs abroad: we recruit German exhibitors and sponsors for your event, paid by commission.",
+    "from_price": "Commission on confirmed bookings",
+    "who_for": "Organisers of international trade fairs and expos who want exhibitors or sponsors from Germany.",
+    "pain_points": [
+        "German companies rarely respond to foreign event marketing they have never heard of.",
+        "You need someone who knows which German companies fit your sectors.",
+        "You want to pay for results, not for activity.",
+    ],
+    "deliverables": [
+        "Research of German companies that fit your sectors",
+        "Introduction of your event in German and English",
+        "Registration of every introduced company with you",
+        "Follow-up until the company books or declines",
+        "Monthly report on contacts, interest and bookings",
+    ],
+    "process": [
+        ("Agree", "We review your event, packages and terms and sign an agent agreement."),
+        ("Register", "We register each company with you before we introduce your event."),
+        ("Recruit", "We introduce the event, answer questions and follow up."),
+        ("Report", "You get a monthly report; commission is due once a booking is paid."),
+    ],
+    "timeline": "Best started 6 to 9 months before the event, so German companies can plan their budget.",
+    "we_need": [
+        "Event presentation, exhibitor and sponsorship packages with prices",
+        "Results from previous editions",
+        "Proof of the contracting company and the venue",
+        "Written permission to use your event name and logo",
+    ],
+    "not_included": [
+        "Upfront fees",
+        "Travel to the event (agreed separately if needed)",
+        "Paid advertising campaigns",
+    ],
+    "commission_terms": [
+        "Commission on all confirmed and fully paid business from companies we introduced: booth space, sponsorship, advertising and upgrades",
+        "Rate agreed per event",
+        "Registered companies stay protected for this edition and the next",
+        "Payment within 30 days after you receive the exhibitor's payment, with a monthly statement",
+    ],
+    "faq": [
+        ("Do you charge an upfront fee?", "No. We work on commission on confirmed and fully paid bookings."),
+        ("How do you avoid disputes about who introduced a company?", "We register every company with you in writing before we contact it, and you confirm the registration."),
+        ("Which sectors do you cover?", "Mainly food and agriculture, machinery and technology, and consumer sectors. We confirm fit after reviewing your event."),
+    ],
+    "related": ["trade-fair-representation-germany", "find-business-partners-germany"],
+}
+
+ORGANISER_NAV = [
+    ("Exhibitor Recruitment (for organisers)", "exhibitor-recruitment-germany"),
+]
+
+
+# Founder section on the About page. Photo, LinkedIn and background are
+# shown only once they are filled in.
+FOUNDER = {
+    "name": "Ivan Nkomati",
+    "role": "Founder & Managing Partner",
+    "location": "Leipzig, Germany",
+    "photo_url": "",      # e.g. "/static/website/img/ivan-nkomati.jpg"
+    "linkedin_url": "",   # e.g. "https://www.linkedin.com/in/..."
+    "background": "",     # two or three sentences, to be supplied
+    "intro": "You work with me directly, from the first call to the final report. TradeGate is run from Leipzig, in German and English.",
+}

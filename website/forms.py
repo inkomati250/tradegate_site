@@ -12,6 +12,7 @@ SERVICE_CHOICES = [
     ("distributor_search", "Distributor / reseller search"),
     ("local_presence", "Local EU presence without an office"),
     ("follow_up", "Trade fair follow-up & lead management"),
+    ("exhibitor_recruitment", "Exhibitor recruitment (for trade-fair organisers)"),
     ("other", "Other / Not sure yet"),
 ]
 

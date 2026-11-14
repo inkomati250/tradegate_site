@@ -31,6 +31,20 @@
     <!-- Left -->
     <div class="lg:col-span-7 space-y-6">
 
+      {% if founder %}
+      <div class="rounded-2xl border bg-white p-7 shadow-sm reveal flex flex-col sm:flex-row gap-6 items-start">
+        {% if founder.photo_url %}<img src="{{ founder.photo_url }}" alt="{{ founder.name }}" class="h-28 w-28 rounded-2xl object-cover shrink-0" loading="lazy">{% endif %}
+        <div>
+          <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em]">Who you work with</p>
+          <h2 class="font-display text-xl font-semibold mt-2">{{ founder.name }}</h2>
+          <p class="text-sm text-slate-500">{{ founder.role }} · {{ founder.location }}</p>
+          <p class="text-slate-600 leading-relaxed mt-3">{{ founder.intro }}</p>
+          {% if founder.background %}<p class="text-slate-600 leading-relaxed mt-3">{{ founder.background }}</p>{% endif %}
+          {% if founder.linkedin_url %}<a href="{{ founder.linkedin_url }}" target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#07111F] hover:text-brand-copper">LinkedIn profile &rarr;</a>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+
       <div class="rounded-2xl border bg-white p-7 shadow-sm reveal">
         <h2 class="font-display text-xl font-semibold mb-3">What we do</h2>
         <p class="text-slate-600 leading-relaxed">

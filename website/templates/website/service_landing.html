@@ -19,13 +19,15 @@
             Request consultation
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
           </a>
-          <a href="#deliverables" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/105">View deliverables</a>
+          {% if page.packages %}<a href="#packages" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/105">View packages and prices</a>{% elif page.commission_terms %}<a href="#terms" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/105">How commission works</a>{% else %}<a href="#deliverables" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm text-white/105">View deliverables</a>{% endif %}
         </div>
       </div>
       <div class="lg:col-span-4 reveal d2">
         <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
-          <p class="text-xs font-bold text-brand-accent uppercase tracking-[0.2em]">Search intent</p>
-          <p class="font-display text-2xl font-bold mt-4">{{ page.primary_keyword }}</p>
+          <p class="text-xs font-bold text-brand-accent uppercase tracking-[0.2em]">At a glance</p>
+          {% if page.from_price %}<p class="font-display text-2xl font-bold mt-4">{{ page.from_price }}</p>{% else %}<p class="font-display text-2xl font-bold mt-4">{{ page.primary_keyword }}</p>{% endif %}
+          {% if page.who_for %}<p class="mt-3 text-sm text-white/62 leading-relaxed"><span class="text-white/85 font-semibold">For:</span> {{ page.who_for }}</p>{% endif %}
+          {% if page.timeline %}<p class="mt-2 text-sm text-white/62 leading-relaxed"><span class="text-white/85 font-semibold">Timing:</span> {{ page.timeline }}</p>{% endif %}
           <div class="mt-5 flex flex-wrap gap-2">
             {% for badge in page.hero_badges %}
               <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/58">{{ badge }}</span>
@@ -71,6 +73,73 @@
     </div>
   </div>
 </section>
+
+{% if page.packages %}
+<section id="packages" class="py-18 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="max-w-3xl mb-10 reveal">
+    <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Packages</span>
+    <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Choose a starting point.</h2>
+    <p class="text-slate-600 mt-4 text-lg leading-relaxed">Not sure which fits? Tell us your goal and we suggest one. Scope and price can be adjusted to your situation.</p>
+  </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-{{ page.packages|length }} gap-5">
+    {% for pkg in page.packages %}
+      <div class="flex flex-col rounded-3xl border p-6 reveal {% if pkg.featured %}bg-[#07111F] text-white shadow-glow{% else %}bg-white shadow-soft{% endif %}">
+        {% if pkg.featured %}<span class="self-start rounded-full bg-brand-accent px-3 py-1 text-xs font-bold text-[#07111F] mb-4">Most chosen</span>{% endif %}
+        <h3 class="font-display text-xl font-bold">{{ pkg.name }}</h3>
+        <p class="mt-1 text-sm {% if pkg.featured %}text-white/60{% else %}text-slate-500{% endif %}">{{ pkg.best_for }}</p>
+        <p class="font-display text-3xl font-extrabold mt-5 {% if pkg.featured %}text-brand-accent{% else %}text-[#07111F]{% endif %}">{{ pkg.price }}</p>
+        {% if pkg.unit %}<p class="text-xs mt-1 {% if pkg.featured %}text-white/55{% else %}text-slate-500{% endif %}">{{ pkg.unit }}</p>{% endif %}
+        <ul class="mt-5 space-y-2 flex-1">
+          {% for item in pkg.includes %}
+            <li class="flex gap-2 text-sm leading-relaxed {% if pkg.featured %}text-white/80{% else %}text-slate-700{% endif %}"><svg class="h-4 w-4 mt-0.5 shrink-0 text-brand-copper" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>{{ item }}</li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'contact' %}?service={{ page.service_code }}&package={{ pkg.name|urlencode }}#contact-form" class="mt-6 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition {% if pkg.featured %}bg-brand-accent text-[#07111F] hover:bg-brand-accent/90{% else %}bg-[#07111F] text-white hover:bg-[#07111F]/90{% endif %}">Ask about this package</a>
+      </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 text-sm text-slate-500 max-w-3xl">{{ pricing_note }}</p>
+</section>
+{% endif %}
+
+{% if page.commission_terms %}
+<section id="terms" class="py-18 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="max-w-3xl mb-8 reveal">
+    <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Terms</span>
+    <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">How commission works</h2>
+  </div>
+  <ul class="grid md:grid-cols-2 gap-4">
+    {% for item in page.commission_terms %}
+      <li class="rounded-3xl border bg-white p-6 shadow-soft text-slate-700 leading-relaxed reveal">{{ item }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if page.we_need or page.not_included %}
+<section class="py-18 md:py-20 bg-white border-y">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-8">
+    {% if page.we_need %}
+    <div class="reveal">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Before we start</span>
+      <h2 class="font-display text-2xl md:text-3xl font-bold tracking-tight text-[#07111F]">What we need from you</h2>
+      <ul class="mt-5 space-y-2">
+        {% for item in page.we_need %}<li class="flex gap-2 text-slate-700"><span class="text-brand-copper font-bold">&rarr;</span>{{ item }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    {% if page.not_included %}
+    <div class="reveal">
+      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Clear limits</span>
+      <h2 class="font-display text-2xl md:text-3xl font-bold tracking-tight text-[#07111F]">What is not included</h2>
+      <ul class="mt-5 space-y-2">
+        {% for item in page.not_included %}<li class="flex gap-2 text-slate-700"><span class="text-slate-400 font-bold">&times;</span>{{ item }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
 
 <section class="py-18 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
   <div class="max-w-3xl mb-10 reveal">

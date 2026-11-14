@@ -1,4 +1,5 @@
 {% extends "website/base.html" %}
+{% load website_extras %}
 {% block content %}
 
 <section class="relative overflow-hidden bg-[#07111F] text-white grain">
@@ -122,12 +123,18 @@
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
       {% for label, slug in service_nav %}
-        <a href="{% url 'service_landing' slug=slug %}" class="group rounded-3xl border bg-[#F7F2EA] p-6 hover:bg-[#07111F] hover:text-white hover:-translate-y-1 transition-all duration-300 reveal">
+        {% with svc=service_pages|get_item:slug %}
+        <div class="group flex flex-col rounded-3xl border bg-[#F7F2EA] p-6 hover:bg-[#07111F] hover:text-white hover:-translate-y-1 transition-all duration-300 reveal">
           <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-copper group-hover:text-brand-accent">TradeGate service</p>
           <h3 class="font-display text-xl font-bold mt-4">{{ label }}</h3>
-          <p class="mt-3 text-sm text-slate-600 group-hover:text-white/60 leading-relaxed">Clear deliverables, practical starting points and a direct route to discuss your Germany/EU market objective.</p>
-          <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#07111F] group-hover:text-brand-accent">Explore service <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></span>
-        </a>
+          <p class="mt-3 text-sm text-slate-600 group-hover:text-white/60 leading-relaxed flex-1">{{ svc.card_summary }}</p>
+          {% if svc.from_price %}<p class="mt-4 text-sm font-bold text-[#07111F] group-hover:text-white">{{ svc.from_price }}</p>{% endif %}
+          <div class="mt-5 flex flex-wrap gap-4 text-sm font-bold">
+            <a href="{% url 'service_landing' slug=slug %}" class="inline-flex items-center gap-2 text-[#07111F] group-hover:text-brand-accent">Full description <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></a>
+            <a href="{% url 'service_landing' slug=slug %}#packages" class="inline-flex items-center gap-2 text-brand-copper group-hover:text-white/80">Packages</a>
+          </div>
+        </div>
+        {% endwith %}
       {% endfor %}
     </div>
   </div>
