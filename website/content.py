@@ -644,8 +644,9 @@ FOUNDER = {
     "name": "Ivan Nkomati",
     "role": "Founder & Managing Partner",
     "location": "Leipzig, Germany",
-    "photo_url": "",      # e.g. "/static/website/img/ivan-nkomati.jpg"
-    "linkedin_url": "",   # e.g. "https://www.linkedin.com/in/..."
+    "photo_url": "/static/website/img/ivan-nkomati.webp",
+    "linkedin_url": "https://www.linkedin.com/in/ivan-nkomati-313637228",
     "background": "",     # two or three sentences, to be supplied
+    "partners": "When a project needs more hands or specialist knowledge, I bring in independent partners, for example trade-fair staff, translators or legal and tax advisers in Germany. I choose them for each project's scope, and you keep one contact: me.",
     "intro": "You work with me directly, from the first call to the final report. TradeGate is run from Leipzig, in German and English.",
 }

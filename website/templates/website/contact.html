@@ -68,40 +68,42 @@
             <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.company_name.id_for_label }}">Company / Organization</label>
             {{ form.company_name }}
           </div>
+          <div class="field {% if form.service_interest.errors %}err{% endif %}">
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.service_interest.id_for_label }}">What do you need? *</label>
+            {{ form.service_interest }}
+            {% if form.service_interest.errors %}<p class="text-xs text-red-600 mt-1">{{ form.service_interest.errors|join:", " }}</p>{% endif %}
+          </div>
+        </div>
+
+        <details class="mt-5 rounded-2xl border bg-[#F7F2EA]/60 p-4 group" {% if form.website.errors or form.website.value or form.phone.errors or form.phone.value %}open{% endif %}>
+          <summary class="cursor-pointer text-sm font-semibold text-slate-700">Add more details <span class="text-slate-400 font-normal">(optional, helps us reply faster)</span></summary>
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.role.errors %}err{% endif %}">
             <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.role.id_for_label }}">Your role <span class="text-slate-400 font-normal">(optional)</span></label>
             {{ form.role }}
           </div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.website.errors %}err{% endif %}">
             <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.website.id_for_label }}">Company website</label>
             {{ form.website }}
             {% if form.website.errors %}<p class="text-xs text-red-600 mt-1">{{ form.website.errors|join:", " }}</p>{% endif %}
           </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.country.errors %}err{% endif %}">
             <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.country.id_for_label }}">Country / Region</label>
             {{ form.country }}
           </div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-4">
           <div class="field {% if form.industry.errors %}err{% endif %}">
             <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.industry.id_for_label }}">Industry / sector</label>
             {{ form.industry }}
           </div>
-          <div class="field {% if form.target_market.errors %}err{% endif %}">
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.target_market.id_for_label }}">Target market</label>
-            {{ form.target_market }}
-          </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4 mt-4">
-          <div class="field {% if form.service_interest.errors %}err{% endif %}">
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.service_interest.id_for_label }}">What do you need? *</label>
-            {{ form.service_interest }}
-            {% if form.service_interest.errors %}<p class="text-xs text-red-600 mt-1">{{ form.service_interest.errors|join:", " }}</p>{% endif %}
+          <div class="field {% if form.target_market.errors %}err{% endif %}">
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.target_market.id_for_label }}">Target market</label>
+            {{ form.target_market }}
           </div>
           <div class="field {% if form.budget_range.errors %}err{% endif %}">
             <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.budget_range.id_for_label }}">Budget range <span class="text-slate-400 font-normal">(optional)</span></label>
@@ -127,6 +129,8 @@
             <div class="grid sm:grid-cols-3 gap-2 text-sm">{{ form.contact_method }}</div>
           </div>
         </div>
+
+        </details>
 
         <div class="field mt-4 {% if form.subject.errors %}err{% endif %}">
           <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="{{ form.subject.id_for_label }}">Subject *</label>
