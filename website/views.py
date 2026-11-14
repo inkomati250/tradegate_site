@@ -9,9 +9,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from .content import DEFAULT_OPPORTUNITIES, FOUNDER, PRICING_NOTE, SERVICE_NAV, SERVICE_PAGES
+from .content import DEFAULT_OPPORTUNITIES, FAIR_CATEGORIES, FAIR_DISCLAIMER, fair_categories, FOUNDER, PRICING_NOTE, SERVICE_NAV, SERVICE_PAGES
 from .forms import InquiryForm
-from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, TradeFairOpportunity
+from datetime import date, timedelta
+
+from django.http import HttpResponse
+from django.utils import timezone
+
+from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, TradeFair, TradeFairOpportunity
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +77,113 @@ def _get_opportunities():
         return DEFAULT_OPPORTUNITIES
 
 
+def _upcoming_fairs():
+    """Published fairs that have not ended yet, soonest first."""
+    try:
+        today = timezone.localdate()
+        qs = TradeFair.objects.filter(is_published=True)
+        return [f for f in qs if not f.end_date or f.end_date >= today]
+    except (OperationalError, ProgrammingError, DatabaseError):
+        logger.warning("TradeFair table not ready.", exc_info=True)
+        return []
+
+
+def trade_fairs(request):
+    fairs = _upcoming_fairs()
+    represented = [f for f in fairs if f.is_represented]
+    germany = [f for f in fairs if not f.is_represented]
+    months = []
+    for f in germany:
+        key = f.start_date.strftime("%B %Y") if f.start_date else "Dates to be announced"
+        if not months or months[-1][0] != key:
+            months.append((key, []))
+        months[-1][1].append(f)
+    for f in fairs:
+        f.categories = fair_categories(f.sectors)
+    used = {c for f in fairs for c in f.categories}
+    sectors = [name for name, _ in FAIR_CATEGORIES if name in used]
+    context = {
+        "represented": represented,
+        "months": months,
+        "sectors": sectors,
+        "disclaimer": FAIR_DISCLAIMER,
+        "service_nav": SERVICE_NAV,
+        "page_meta": {
+            "title": "Trade Fair Calendar Germany 2027",
+            "description": "Major German trade fairs in 2027 with dates, sectors and who should exhibit, plus international events we recruit German exhibitors for.",
+            "canonical": request.build_absolute_uri(reverse("trade_fairs")),
+        },
+    }
+    return render(request, "website/trade_fairs.html", context)
+
+
+def _fair_schema(request, fair):
+    data = {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": fair.name,
+        "description": fair.summary,
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": {
+            "@type": "Place",
+            "name": fair.venue or fair.city,
+            "address": {"@type": "PostalAddress", "addressLocality": fair.city, "addressCountry": fair.country},
+        },
+        "url": request.build_absolute_uri(reverse("trade_fair_detail", kwargs={"slug": fair.slug})),
+    }
+    if fair.start_date:
+        data["startDate"] = fair.start_date.isoformat()
+        data["endDate"] = (fair.end_date or fair.start_date).isoformat()
+    if fair.organiser:
+        data["organizer"] = {"@type": "Organization", "name": fair.organiser, "url": fair.official_url or None}
+    return json.dumps(data)
+
+
+def trade_fair_detail(request, slug):
+    fair = get_object_or_404(TradeFair, slug=slug, is_published=True)
+    others = [f for f in _upcoming_fairs() if f.pk != fair.pk][:3]
+    context = {
+        "fair": fair,
+        "others": others,
+        "disclaimer": FAIR_DISCLAIMER,
+        "service_nav": SERVICE_NAV,
+        "page_meta": {
+            "title": f"{fair.name} {fair.start_date.year if fair.start_date else ''}".strip() + (" – exhibit through TradeGate" if fair.is_represented else " – representation and buyer meetings"),
+            "description": fair.summary,
+            "canonical": request.build_absolute_uri(reverse("trade_fair_detail", kwargs={"slug": slug})),
+        },
+        "structured_data_json": _fair_schema(request, fair),
+    }
+    return render(request, "website/trade_fair_detail.html", context)
+
+
+def trade_fair_ics(request, slug):
+    fair = get_object_or_404(TradeFair, slug=slug, is_published=True)
+    if not fair.start_date:
+        return redirect("trade_fair_detail", slug=slug)
+    end = (fair.end_date or fair.start_date) + timedelta(days=1)
+    url = request.build_absolute_uri(reverse("trade_fair_detail", kwargs={"slug": slug}))
+    def esc(s):
+        return s.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
+    body = "\r\n".join([
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TradeGate Consultants//Trade fair calendar//EN",
+        "BEGIN:VEVENT",
+        f"UID:{fair.slug}@tradegateconsultants.com",
+        f"DTSTAMP:{timezone.now().strftime('%Y%m%dT%H%M%SZ')}",
+        f"DTSTART;VALUE=DATE:{fair.start_date.strftime('%Y%m%d')}",
+        f"DTEND;VALUE=DATE:{end.strftime('%Y%m%d')}",
+        f"SUMMARY:{esc(fair.name)}",
+        f"LOCATION:{esc(fair.place_label)}",
+        f"DESCRIPTION:{esc(fair.summary + ' Details: ' + url)}",
+        f"URL:{url}",
+        "END:VEVENT", "END:VCALENDAR", "",
+    ])
+    response = HttpResponse(body, content_type="text/calendar; charset=utf-8")
+    response["Content-Disposition"] = f'attachment; filename="{fair.slug}.ics"'
+    return response
+
+
 def _service_schema(request, page):
     return json.dumps({
         "@context": "https://schema.org",
@@ -111,6 +223,7 @@ def home(request):
         "service_nav": SERVICE_NAV,
         "service_pages": SERVICE_PAGES,
         "opportunities": opportunities,
+        "carousel_fairs": [f for f in _upcoming_fairs() if f.show_in_carousel],
         "page_meta": {
             "title": site.meta_title if site and site.meta_title else "Germany & EU Market Entry Support for International SMEs",
             "description": site.meta_description if site and site.meta_description else "TradeGate Consultants helps international SMEs with Germany/EU market entry, trade fair representation, partner search and local presence from Leipzig.",
@@ -177,6 +290,11 @@ def contact(request):
     event = request.GET.get("event")
     if event:
         initial["subject"] = f"Trade fair support: {event.replace('-', ' ').title()}"
+    fair_slug = (request.GET.get("fair") or "").strip()[:160]
+    if fair_slug:
+        fair = TradeFair.objects.filter(slug=fair_slug, is_published=True).first()
+        if fair:
+            initial["subject"] = (f"Stand enquiry: {fair.name}" if fair.is_represented else f"Representation at {fair.name}")[:160]
     package = (request.GET.get("package") or "").strip()[:80]
     if package:
         initial["subject"] = f"Package enquiry: {package}"

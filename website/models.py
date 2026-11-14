@@ -296,3 +296,101 @@ class Inquiry(TimeStampedModel):
 
 
 
+
+
+class TradeFair(TimeStampedModel):
+    """
+    Trade fair calendar entry.
+
+    Two kinds:
+    - "represented": events TradeGate recruits exhibitors for, shown only
+      after the organiser has given written permission (is_published).
+    - "germany": major German trade fairs listed for information, with our
+      own short description and a link to the organiser's official site.
+    """
+
+    KIND_REPRESENTED = "represented"
+    KIND_GERMANY = "germany"
+    KIND_CHOICES = [
+        (KIND_REPRESENTED, "Event we recruit exhibitors for"),
+        (KIND_GERMANY, "German trade fair (information listing)"),
+    ]
+
+    name = models.CharField(max_length=140)
+    slug = models.SlugField(max_length=160, unique=True)
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES, default=KIND_GERMANY)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    date_note = models.CharField(
+        max_length=120, blank=True, default="",
+        help_text="Optional, e.g. 'Dates to be confirmed by the organiser'.",
+    )
+    city = models.CharField(max_length=80, blank=True, default="")
+    country = models.CharField(max_length=80, blank=True, default="Germany")
+    venue = models.CharField(max_length=160, blank=True, default="")
+    organiser = models.CharField(max_length=160, blank=True, default="")
+    sectors = models.CharField(max_length=220, blank=True, default="", help_text="Comma-separated.")
+    summary = models.CharField(max_length=260, help_text="One or two sentences in our own words.")
+    description = models.TextField(blank=True, default="", help_text="Our own words. Do not copy the organiser's text.")
+    who_should_exhibit = models.TextField(blank=True, default="", help_text="One item per line.")
+    who_should_visit = models.TextField(blank=True, default="", help_text="One item per line.")
+    how_we_help = models.TextField(blank=True, default="", help_text="One item per line.")
+    our_role = models.CharField(
+        max_length=160, blank=True, default="",
+        help_text="Represented events only, exactly as the agreement allows, e.g. 'Exhibitor recruitment partner for Germany'.",
+    )
+    official_url = models.URLField(blank=True, default="", validators=[URLValidator()])
+    is_published = models.BooleanField(
+        default=False,
+        help_text="Represented events: tick only once the organiser has given written permission to list the event.",
+    )
+    show_in_carousel = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["start_date", "order", "name"]
+        verbose_name = "Trade fair (calendar)"
+        verbose_name_plural = "Trade fair calendar"
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def is_represented(self):
+        return self.kind == self.KIND_REPRESENTED
+
+    @property
+    def sector_list(self):
+        return [s.strip() for s in self.sectors.split(",") if s.strip()]
+
+    def _lines(self, value):
+        return [line.strip(" -•\t") for line in value.splitlines() if line.strip(" -•\t")]
+
+    @property
+    def exhibit_list(self):
+        return self._lines(self.who_should_exhibit)
+
+    @property
+    def visit_list(self):
+        return self._lines(self.who_should_visit)
+
+    @property
+    def help_list(self):
+        return self._lines(self.how_we_help)
+
+    @property
+    def date_label(self):
+        if not self.start_date:
+            return self.date_note or "Dates to be announced"
+        s, e = self.start_date, self.end_date or self.start_date
+        if s == e:
+            return s.strftime("%-d %B %Y")
+        if s.year == e.year and s.month == e.month:
+            return f"{s.day}–{e.day} {e.strftime('%B %Y')}"
+        if s.year == e.year:
+            return f"{s.strftime('%-d %B')} – {e.strftime('%-d %B %Y')}"
+        return f"{s.strftime('%-d %B %Y')} – {e.strftime('%-d %B %Y')}"
+
+    @property
+    def place_label(self):
+        return ", ".join([p for p in [self.city, self.country] if p])

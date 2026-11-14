@@ -35,7 +35,7 @@
       <div class="rounded-2xl border bg-white p-7 shadow-sm reveal flex flex-col sm:flex-row gap-6 items-start">
         {% if founder.photo_url %}<div role="img" aria-label="Photo of {{ founder.name }}" oncontextmenu="return false" class="founder-photo h-32 w-32 rounded-full bg-cover bg-center shrink-0 select-none" style="background-image:url('{{ founder.photo_url }}');-webkit-touch-callout:none"></div>{% endif %}
         <div>
-          <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em]">Who you work with</p>
+          <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em]">Your contact</p>
           <h2 class="font-display text-xl font-semibold mt-2">{{ founder.name }}</h2>
           <p class="text-sm text-slate-500">{{ founder.role }} · {{ founder.location }}</p>
           <p class="text-slate-600 leading-relaxed mt-3">{{ founder.intro }}</p>
@@ -45,6 +45,13 @@
         </div>
       </div>
       {% endif %}
+
+      <div id="partners" class="rounded-2xl border-2 border-dashed border-brand-accent/50 bg-[#F7F2EA] p-7 reveal">
+        <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em]">Partner with us</p>
+        <h2 class="font-display text-xl font-semibold mt-2">Consultants, agents and specialists welcome</h2>
+        <p class="text-slate-600 leading-relaxed mt-3">We regularly work with independent partners: trade-fair and sales agents, sector consultants, translators, logistics and customs experts, and advisers in Germany and in our clients' home markets. If you bring experience and contacts in a sector or country we serve, we would like to hear from you. Each cooperation is agreed per project, with clear roles and fair terms.</p>
+        <a href="{% url 'contact' %}?service=partnership#contact-form" class="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#07111F] text-white font-bold text-sm">Introduce yourself &rarr;</a>
+      </div>
 
       <div class="rounded-2xl border bg-white p-7 shadow-sm reveal">
         <h2 class="font-display text-xl font-semibold mb-3">What we do</h2>

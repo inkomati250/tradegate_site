@@ -13,6 +13,7 @@ from .models import (
     ProcessStep,
     LegalPage,
     TradeFairOpportunity,
+    TradeFair,
     Inquiry,
 )
 
@@ -205,3 +206,18 @@ class InquiryAdmin(admin.ModelAdmin):
 
 
 
+
+
+@admin.register(TradeFair)
+class TradeFairAdmin(admin.ModelAdmin):
+    list_display = ("name", "kind", "start_date", "end_date", "city", "is_published", "show_in_carousel")
+    list_filter = ("kind", "is_published", "show_in_carousel", "country")
+    list_editable = ("is_published", "show_in_carousel")
+    search_fields = ("name", "city", "sectors", "organiser")
+    prepopulated_fields = {"slug": ("name",)}
+    fieldsets = (
+        ("Event", {"fields": ("name", "slug", "kind", "is_published", "show_in_carousel", "order")}),
+        ("When and where", {"fields": ("start_date", "end_date", "date_note", "city", "country", "venue", "organiser", "official_url")}),
+        ("Content (our own words)", {"fields": ("sectors", "summary", "description", "who_should_exhibit", "who_should_visit", "how_we_help")}),
+        ("Represented events only", {"fields": ("our_role",)}),
+    )

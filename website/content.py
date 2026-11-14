@@ -647,6 +647,30 @@ FOUNDER = {
     "photo_url": "/static/website/img/ivan-nkomati.webp",
     "linkedin_url": "https://www.linkedin.com/in/ivan-nkomati-313637228",
     "background": "",     # two or three sentences, to be supplied
-    "partners": "When a project needs more hands or specialist knowledge, I bring in independent partners, for example trade-fair staff, translators or legal and tax advisers in Germany. I choose them for each project's scope, and you keep one contact: me.",
-    "intro": "You work with me directly, from the first call to the final report. TradeGate is run from Leipzig, in German and English.",
+    "partners": "Behind every project stands a network of independent specialists we work with, such as trade-fair staff, translators, sector consultants and legal and tax advisers in Germany. We bring in the right people for each project's scope, and you keep one contact throughout.",
+    "intro": "TradeGate is run from Leipzig, in German and English. You get one named contact, from the first call to the final report.",
 }
+
+
+FAIR_DISCLAIMER = (
+    "Event names, dates and venues come from the organisers' public information and can change, "
+    "so please confirm them on the official website before you plan. TradeGate Consultants is an "
+    "independent service provider. Unless an event is marked as a partner event, we are not affiliated "
+    "with, authorised by or acting for its organiser, and event names and trademarks belong to their owners."
+)
+
+
+# Broad categories for the calendar filter, matched against each fair's sectors.
+FAIR_CATEGORIES = [
+    ("Food and drink", ["food", "snack", "sweet", "wine", "spirit", "beverage", "bakery", "organic", "fruit", "ingredient", "private label"]),
+    ("Agriculture", ["agri", "farm", "livestock", "poultry", "animal feed", "veterinary", "horticulture"]),
+    ("Industry and technology", ["industry", "automation", "engineering", "machinery", "processing", "packaging", "technology", "digital", "equipment"]),
+    ("Consumer goods and lifestyle", ["consumer", "home", "tableware", "gift", "interior", "fashion", "lifestyle", "beauty", "wellness"]),
+    ("Tourism and hospitality", ["tourism", "travel", "hospitality", "foodservice", "destination"]),
+    ("Mining and energy", ["mining", "metallurgy", "energy"]),
+]
+
+
+def fair_categories(sectors_text):
+    text = (sectors_text or "").lower()
+    return [name for name, words in FAIR_CATEGORIES if any(w in text for w in words)]

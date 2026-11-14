@@ -49,7 +49,7 @@ class FounderAndContactTests(TestCase):
         response = self.client.get(reverse("about"))
         self.assertContains(response, "/static/website/img/ivan-nkomati.webp")
         self.assertNotContains(response, "<img src=\"/static/website/img/ivan-nkomati.webp")
-        self.assertContains(response, "you keep one contact: me")
+        self.assertContains(response, "you keep one contact throughout")
         self.assertContains(response, "linkedin.com/in/ivan-nkomati-313637228")
 
     def test_contact_form_keeps_optional_fields_folded(self):
@@ -63,3 +63,56 @@ class BrandingTests(TestCase):
         response = self.client.get(reverse("home"))
         self.assertContains(response, "tradegate-logo-light.webp")
         self.assertContains(response, "favicon-32.png")
+
+
+class TradeFairCalendarTests(TestCase):
+    """Uses the seeded fairs from migration 0013."""
+
+    def test_calendar_lists_german_fairs_and_hides_unpublished_partner_events(self):
+        response = self.client.get(reverse("trade_fairs"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Fruit Logistica")
+        self.assertContains(response, "AGRITECHNICA")
+        self.assertNotContains(response, "Azerbaijan Mining Expo")
+        self.assertContains(response, "not affiliated")
+
+    def test_published_partner_event_appears_with_badge(self):
+        from .models import TradeFair
+        TradeFair.objects.filter(slug="ecowas-aviana-expo-2027").update(is_published=True)
+        response = self.client.get(reverse("trade_fairs"))
+        self.assertContains(response, "ECOWAS Aviana")
+        self.assertContains(response, "Partner event")
+
+    def test_unpublished_detail_is_404(self):
+        response = self.client.get(reverse("trade_fair_detail", kwargs={"slug": "azerbaijan-mining-expo-2027"}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_detail_page_has_cta_disclaimer_schema_and_official_link(self):
+        response = self.client.get(reverse("trade_fair_detail", kwargs={"slug": "anuga-cologne-2027"}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "fair=anuga-cologne-2027")
+        self.assertContains(response, '"@type": "Event"')
+        self.assertContains(response, 'rel="noopener nofollow"')
+        self.assertContains(response, "not affiliated")
+
+    def test_ics_download(self):
+        response = self.client.get(reverse("trade_fair_ics", kwargs={"slug": "itb-berlin-2027"}))
+        self.assertEqual(response["Content-Type"], "text/calendar; charset=utf-8")
+        body = response.content.decode()
+        self.assertIn("DTSTART;VALUE=DATE:20270316", body)
+        self.assertIn("DTEND;VALUE=DATE:20270319", body)
+
+    def test_homepage_carousel_and_nav(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "fair-track")
+        self.assertContains(response, reverse("trade_fair_detail", kwargs={"slug": "hannover-messe-2027"}))
+        self.assertContains(response, "Trade fair calendar")
+
+    def test_contact_prefill_from_fair(self):
+        response = self.client.get(reverse("contact") + "?service=trade_fair&fair=prowein-duesseldorf-2027")
+        self.assertContains(response, "Representation at ProWein")
+
+    def test_about_uses_we_voice_and_invites_partners(self):
+        response = self.client.get(reverse("about"))
+        self.assertContains(response, "Partner with us")
+        self.assertNotContains(response, "contact: me")

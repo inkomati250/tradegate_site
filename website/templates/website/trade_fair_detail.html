@@ -1,0 +1,99 @@
+{% extends "website/base.html" %}
+{% block content %}
+
+<section class="relative overflow-hidden bg-[#07111F] text-white grain">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute -top-28 right-[-120px] h-[520px] w-[520px] rounded-full bg-brand-accent/12 blur-[110px]"></div>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-20">
+    <a href="{% url 'trade_fairs' %}" class="text-sm text-white/55 hover:text-white">&larr; Trade fair calendar</a>
+    <div class="grid lg:grid-cols-12 gap-10 items-start mt-6">
+      <div class="lg:col-span-8">
+        {% if fair.is_represented %}
+          <span class="inline-flex rounded-full bg-brand-accent px-3 py-1 text-xs font-bold text-[#07111F]">Partner event{% if fair.our_role %} · {{ fair.our_role }}{% endif %}</span>
+        {% else %}
+          <span class="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold text-white/70">Trade fair in Germany</span>
+        {% endif %}
+        <h1 class="font-display text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mt-5">{{ fair.name }}</h1>
+        <p class="mt-6 text-lg md:text-xl text-white/62 max-w-3xl leading-relaxed">{{ fair.summary }}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          {% if fair.is_represented %}
+            <a href="{% url 'contact' %}?service=exhibit_abroad&fair={{ fair.slug }}#contact-form" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-[#07111F] font-bold text-sm shadow-glow">Ask about a stand &rarr;</a>
+          {% else %}
+            <a href="{% url 'contact' %}?service=trade_fair&fair={{ fair.slug }}#contact-form" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-[#07111F] font-bold text-sm shadow-glow">Get represented at {{ fair.name }} &rarr;</a>
+            <a href="{% url 'service_landing' slug='find-business-partners-germany' %}#packages" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm">Buyer shortlist before the fair</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="lg:col-span-4">
+        <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 space-y-3 text-sm">
+          <p class="text-xs font-bold text-brand-accent uppercase tracking-[0.2em]">At a glance</p>
+          <p><span class="text-white/50">Dates</span><br><span class="font-display text-xl font-bold">{{ fair.date_label }}</span></p>
+          <p><span class="text-white/50">Place</span><br>{% if fair.venue %}{{ fair.venue }}, {% endif %}{{ fair.place_label }}</p>
+          {% if fair.organiser %}<p><span class="text-white/50">Organiser</span><br>{{ fair.organiser }}</p>{% endif %}
+          {% if fair.sector_list %}<div class="flex flex-wrap gap-1.5 pt-1">{% for s in fair.sector_list %}<span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">{{ s }}</span>{% endfor %}</div>{% endif %}
+          <div class="pt-2 flex flex-col gap-2">
+            {% if fair.start_date %}<a href="{% url 'trade_fair_ics' slug=fair.slug %}" class="text-brand-accent font-semibold">+ Add to your calendar</a>{% endif %}
+            {% if fair.official_url %}<a href="{{ fair.official_url }}" target="_blank" rel="noopener nofollow" class="text-white/70 hover:text-white">Official event website &#8599;</a>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="grid lg:grid-cols-12 gap-10">
+    <div class="lg:col-span-7 space-y-8">
+      {% if fair.description %}
+      <div class="reveal">
+        <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">About the event</span>
+        <p class="text-slate-700 text-lg leading-relaxed">{{ fair.description }}</p>
+      </div>
+      {% endif %}
+      {% if fair.exhibit_list %}
+      <div class="rounded-3xl border bg-white p-7 shadow-soft reveal">
+        <h2 class="font-display text-2xl font-bold text-[#07111F]">Who should exhibit</h2>
+        <ul class="mt-4 space-y-2">{% for item in fair.exhibit_list %}<li class="flex gap-2 text-slate-700"><span class="text-brand-copper font-bold">&rarr;</span>{{ item }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+      {% if fair.visit_list %}
+      <div class="rounded-3xl border bg-white p-7 shadow-soft reveal">
+        <h2 class="font-display text-2xl font-bold text-[#07111F]">Worth visiting if you are</h2>
+        <ul class="mt-4 space-y-2">{% for item in fair.visit_list %}<li class="flex gap-2 text-slate-700"><span class="text-brand-copper font-bold">&rarr;</span>{{ item }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+    </div>
+    <div class="lg:col-span-5">
+      <div class="rounded-[2rem] bg-[#07111F] text-white p-7 lg:sticky lg:top-28 reveal">
+        <span class="inline-block text-xs font-bold text-brand-accent uppercase tracking-[0.22em] mb-3">How we help</span>
+        <h2 class="font-display text-2xl font-bold">{% if fair.is_represented %}Exhibit with a contact in Germany{% else %}Make {{ fair.name }} pay off{% endif %}</h2>
+        <ul class="mt-5 space-y-3">{% for item in fair.help_list %}<li class="flex gap-3 text-sm text-white/75 leading-relaxed"><svg class="h-4 w-4 mt-0.5 shrink-0 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>{{ item }}</li>{% endfor %}</ul>
+        {% if fair.is_represented %}
+          <a href="{% url 'contact' %}?service=exhibit_abroad&fair={{ fair.slug }}#contact-form" class="mt-6 inline-flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-accent text-[#07111F] font-bold text-sm">Ask about a stand</a>
+        {% else %}
+          <a href="{% url 'contact' %}?service=trade_fair&fair={{ fair.slug }}#contact-form" class="mt-6 inline-flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-accent text-[#07111F] font-bold text-sm">Request representation</a>
+          <a href="{% url 'service_landing' slug='trade-fair-representation-germany' %}#packages" class="mt-3 inline-flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/15 text-sm text-white/80">See packages and prices</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if others %}
+  <div class="mt-16 reveal">
+    <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-4">Other upcoming events</p>
+    <div class="grid md:grid-cols-3 gap-5">
+      {% for o in others %}
+        <a href="{% url 'trade_fair_detail' slug=o.slug %}" class="rounded-3xl border bg-white p-6 hover:-translate-y-1 hover:shadow-soft transition">
+          <p class="text-sm font-bold text-brand-copper">{{ o.date_label }}</p>
+          <h3 class="font-display font-bold text-lg text-[#07111F] mt-1">{{ o.name }}</h3>
+          <p class="text-sm text-slate-500">{{ o.place_label }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <p class="mt-12 text-xs text-slate-500 leading-relaxed max-w-4xl">{{ disclaimer }}{% if fair.is_represented and fair.our_role %} For this event TradeGate Consultants acts as: {{ fair.our_role }}.{% endif %}</p>
+</section>
+{% endblock %}

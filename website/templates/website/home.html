@@ -140,47 +140,51 @@
   </div>
 </section>
 
-<section id="opportunities" class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
-  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 reveal">
-    <div class="max-w-3xl">
-      <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Trade fair & market opportunities</span>
-      <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Selected opportunities for Germany and EU market access.</h2>
-      <p class="text-slate-600 mt-4 text-lg leading-relaxed">Trade fairs and priority sectors can be powerful entry points for international SMEs. TradeGate can help you validate demand, meet relevant contacts and follow up from Germany.</p>
+<section id="opportunities" class="py-20 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 reveal">
+      <div class="max-w-3xl">
+        <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Trade fair calendar</span>
+        <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Upcoming trade fairs worth your time.</h2>
+        <p class="text-slate-600 mt-4 text-lg leading-relaxed">Major German fairs and the international events we recruit exhibitors for. Pick one to see who it suits and how we can help.</p>
+      </div>
+      <a href="{% url 'trade_fairs' %}" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#07111F] text-white font-bold hover:bg-[#07111F]/90 transition text-sm">Full calendar &rarr;</a>
     </div>
-    <a href="{% url 'contact' %}?service=trade_fair#contact-form" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#07111F] text-white font-bold hover:bg-[#07111F]/90 transition text-sm">Request representation</a>
   </div>
 
-  <div class="carousel-scroll overflow-x-auto pb-4 -mx-4 px-4">
-    <div class="flex gap-5 min-w-full">
-      {% for item in opportunities %}
-        <article class="carousel-card min-w-[310px] sm:min-w-[380px] max-w-[380px] rounded-[2rem] overflow-hidden border bg-white shadow-soft reveal">
-          {% if item.display_image_url %}
-            <div class="h-48 bg-cover bg-center" style="background-image:url('{{ item.display_image_url }}')"></div>
-          {% else %}
-            <div class="relative h-48 bg-[#07111F] overflow-hidden">
-              <div class="absolute inset-0 bg-gradient-to-br from-brand-accent/25 via-white/5 to-sky-700/25"></div>
-              <div class="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-brand-accent/20 blur-2xl"></div>
-              <div class="absolute left-6 bottom-6">
-                <p class="font-display text-4xl font-extrabold text-brand-accent">{{ item.visual_label|default:"EU" }}</p>
-                <p class="text-xs text-white/45 uppercase tracking-[0.22em] mt-1">Market access</p>
-              </div>
+  {% if carousel_fairs %}
+  <div class="fair-marquee" aria-label="Upcoming trade fairs">
+    <div class="fair-track" style="--fair-count: {{ carousel_fairs|length }}">
+      {% for pass in "ab" %}
+        {% for fair in carousel_fairs %}
+          <a href="{% url 'trade_fair_detail' slug=fair.slug %}" class="fair-slide group flex flex-col rounded-[1.75rem] border bg-white p-6 shadow-soft hover:border-brand-accent transition" {% if pass == "b" %}aria-hidden="true" tabindex="-1"{% endif %}>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm font-bold text-brand-copper">{{ fair.date_label }}</span>
+              {% if fair.is_represented %}<span class="rounded-full bg-[#07111F] px-2.5 py-1 text-[11px] font-bold text-brand-accent">Partner event</span>{% endif %}
             </div>
-          {% endif %}
-          <div class="p-6">
-            <div class="flex items-center justify-between gap-3 text-xs text-slate-400 mb-3">
-              <span>{{ item.city_country }}</span>
-              <span>{{ item.date_label }}</span>
-            </div>
-            <h3 class="font-display text-xl font-bold text-[#07111F]">{{ item.title }}</h3>
-            <p class="mt-2 text-sm font-semibold text-brand-copper">{{ item.industry }}</p>
-            <p class="mt-3 text-sm text-slate-600 leading-relaxed">{{ item.summary }}</p>
-            <a href="{{ item.cta_url }}" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#07111F] hover:text-brand-copper transition">{{ item.cta_label }} <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg></a>
-          </div>
-        </article>
+            <h3 class="font-display text-xl font-bold text-[#07111F] mt-3">{{ fair.name }}</h3>
+            <p class="text-sm text-slate-500 mt-1">{{ fair.place_label }}</p>
+            <p class="mt-3 text-sm text-slate-600 leading-relaxed flex-1">{{ fair.summary|truncatechars:120 }}</p>
+            <span class="mt-4 text-sm font-bold text-[#07111F] group-hover:text-brand-copper">Details &rarr;</span>
+          </a>
+        {% endfor %}
       {% endfor %}
     </div>
   </div>
+  {% endif %}
 </section>
+
+<style>
+  .fair-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .fair-track { display: flex; gap: 1.25rem; width: max-content; padding: .25rem 0 1rem; animation: fair-scroll calc(var(--fair-count) * 6s) linear infinite; }
+  .fair-slide { width: 320px; flex: 0 0 auto; }
+  .fair-marquee:hover .fair-track, .fair-marquee:focus-within .fair-track { animation-play-state: paused; }
+  @keyframes fair-scroll { from { transform: translateX(0); } to { transform: translateX(calc(-50% - .625rem)); } }
+  @media (prefers-reduced-motion: reduce) {
+    .fair-marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+    .fair-track { animation: none; padding-left: 1rem; }
+  }
+</style>
 
 <section id="process" class="py-20 bg-[#07111F] text-white relative overflow-hidden grain">
   <div class="absolute inset-0 pointer-events-none"><div class="absolute top-0 left-1/2 -translate-x-1/2 h-80 w-80 rounded-full bg-brand-accent/10 blur-3xl"></div></div>
