@@ -1,4 +1,6 @@
 import json
+
+from .seo import breadcrumbs, faq_pairs_from_html, faq_schema
 import logging
 from django.conf import settings
 from django.contrib import messages
@@ -114,8 +116,18 @@ def trade_fairs(request):
             "description": "Major German trade fairs in 2027 with dates, sectors and who should exhibit, plus international events we recruit German exhibitors for.",
             "canonical": request.build_absolute_uri(reverse("trade_fairs")),
         },
+        "breadcrumb_json": breadcrumbs(request, ("Trade fair calendar", reverse("trade_fairs"))),
     }
     return render(request, "website/trade_fairs.html", context)
+
+
+def _fair_title(fair):
+    name = fair.name
+    if fair.start_date and str(fair.start_date.year) not in name:
+        name = f"{name} {fair.start_date.year}"
+    if fair.is_represented:
+        return f"{name}: Exhibit with TradeGate (Stands & Prices)"
+    return f"{name}: Representation & Buyer Meetings"
 
 
 def _fair_schema(request, fair):
@@ -123,6 +135,9 @@ def _fair_schema(request, fair):
         "@context": "https://schema.org",
         "@type": "Event",
         "name": fair.name,
+        "description": fair.summary,
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
         "description": fair.summary,
         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
         "eventStatus": "https://schema.org/EventScheduled",
@@ -150,11 +165,13 @@ def trade_fair_detail(request, slug):
         "disclaimer": FAIR_DISCLAIMER,
         "service_nav": SERVICE_NAV,
         "page_meta": {
-            "title": f"{fair.name} {fair.start_date.year if fair.start_date else ''}".strip() + (" – exhibit through TradeGate" if fair.is_represented else " – representation and buyer meetings"),
+            "title": _fair_title(fair),
             "description": fair.summary,
             "canonical": request.build_absolute_uri(reverse("trade_fair_detail", kwargs={"slug": slug})),
         },
         "structured_data_json": _fair_schema(request, fair),
+        "breadcrumb_json": breadcrumbs(request, ("Trade fair calendar", reverse("trade_fairs")),
+                                       (fair.name, reverse("trade_fair_detail", kwargs={"slug": slug}))),
     }
     return render(request, "website/trade_fair_detail.html", context)
 
@@ -190,17 +207,10 @@ def _service_schema(request, page):
         "@context": "https://schema.org",
         "@type": "Service",
         "name": page["title"],
-        "description": page["subtitle"],
-        "provider": {
-            "@type": "Organization",
-            "name": "TradeGate Consultants",
-            "url": request.build_absolute_uri(reverse("home")),
-            "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Leipzig",
-                "addressCountry": "DE",
-            },
-        },
+        "serviceType": page.get("primary_keyword") or page["title"],
+        "description": page["meta_description"],
+        "url": request.build_absolute_uri(reverse("service_landing", kwargs={"slug": page["slug"]})),
+        "provider": {"@id": request.build_absolute_uri("/") + "#organization"},
         "areaServed": ["Germany", "European Union"],
         "audience": {
             "@type": "BusinessAudience",
@@ -232,14 +242,6 @@ def home(request):
             "og_image": site.og_image_url if site else "",
             "canonical": request.build_absolute_uri("/"),
         },
-        "structured_data_json": json.dumps({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "TradeGate Consultants",
-            "url": request.build_absolute_uri("/"),
-            "description": "Germany and EU market-entry support, trade fair representation and partner search for international SMEs.",
-            "address": {"@type": "PostalAddress", "addressLocality": "Leipzig", "addressCountry": "DE"},
-        }),
     }
     return render(request, "website/home.html", context)
 
@@ -290,6 +292,8 @@ def service_landing(request, slug):
             "canonical": request.build_absolute_uri(reverse("service_landing", kwargs={"slug": slug})),
         },
         "structured_data_json": _service_schema(request, page),
+        "faq_json": faq_schema(page.get("faq", [])),
+        "breadcrumb_json": breadcrumbs(request, (page["meta_title"].replace(" | TradeGate Consultants", ""), reverse("service_landing", kwargs={"slug": slug}))),
     }
     return render(request, "website/service_landing.html", context)
 
@@ -447,6 +451,7 @@ def contact(request):
             "description": "Contact TradeGate Consultants for Germany/EU market entry, trade fair representation, partner search and local presence support.",
             "canonical": request.build_absolute_uri("/contact/"),
         },
+        "breadcrumb_json": breadcrumbs(request, ("Contact", "/contact/")),
     }
     return render(request, "website/contact.html", context)
 
@@ -454,10 +459,11 @@ def contact(request):
 def about(request):
     context = {
         "page_meta": {
-            "title": "About TradeGate Consultants",
-            "description": "TradeGate Consultants is a Leipzig-based Germany/EU market-entry partner for international SMEs seeking representation, partners and trade fair support.",
+            "title": "About Us: Germany Market Entry Consultants in Leipzig",
+            "description": "TradeGate Consultants is a Leipzig-based Germany/EU market-entry partner for international companies: trade fair representation, partner and distributor search and local presence.",
             "canonical": request.build_absolute_uri("/about/"),
         },
+        "breadcrumb_json": breadcrumbs(request, ("About", "/about/")),
         "service_nav": SERVICE_NAV,
         "founder": _team()[0],
         "team": _team(),
@@ -467,8 +473,13 @@ def about(request):
 
 def faq(request):
     page_meta = {
-        "title": "FAQs",
-        "description": "Frequently asked questions about TradeGate Consultants: EU representation, trade fairs, market entry, partner search, deliverables and pricing.",
-        "canonical": request.build_absolute_uri(),
+        "title": "FAQ: Germany Market Entry, Trade Fairs & EU Representation",
+        "description": "Answers about TradeGate Consultants: EU representation, trade fair support in Germany, market entry, partner and distributor search, deliverables and pricing.",
+        "canonical": request.build_absolute_uri(reverse("faq")),
     }
-    return render(request, "website/faq.html", {"page_meta": page_meta, "service_nav": SERVICE_NAV})
+    context = {"page_meta": page_meta, "service_nav": SERVICE_NAV,
+               "breadcrumb_json": breadcrumbs(request, ("FAQ", reverse("faq")))}
+    from django.template.loader import render_to_string
+    html = render_to_string("website/faq.html", context, request=request)
+    context["faq_json"] = faq_schema(faq_pairs_from_html(html))
+    return render(request, "website/faq.html", context)

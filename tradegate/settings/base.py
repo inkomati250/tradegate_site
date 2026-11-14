@@ -132,6 +132,14 @@ USE_TZ = True
 # Static & Media
 # =========================
 STATIC_URL = "/static/"
+
+# Styling: compiled stylesheet by default. Set DJANGO_USE_TAILWIND_CDN=true to fall back
+# to the previous in-browser Tailwind script (instant rollback without a code change).
+USE_TAILWIND_CDN = env_bool("DJANGO_USE_TAILWIND_CDN", False)
+SITE_URL = env("DJANGO_SITE_URL", "").rstrip("/")
+# Search engine ownership verification codes (Google Search Console, Bing Webmaster Tools).
+GOOGLE_SITE_VERIFICATION = env("GOOGLE_SITE_VERIFICATION", "")
+BING_SITE_VERIFICATION = env("BING_SITE_VERIFICATION", "")
 MEDIA_URL = "/media/"
 
 STATICFILES_DIRS = [BASE_DIR / "website" / "static"]

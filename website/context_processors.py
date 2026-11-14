@@ -30,7 +30,15 @@ def site_settings(request) -> dict[str, Any]:
             nav_items = []
             nav_cta = None
 
+    from django.conf import settings
+
+    from .seo import org_schema
+
     return {
+        "org_schema_json": org_schema(request, site),
+        "google_site_verification": getattr(settings, "GOOGLE_SITE_VERIFICATION", ""),
+        "bing_site_verification": getattr(settings, "BING_SITE_VERIFICATION", ""),
+        "use_tailwind_cdn": getattr(settings, "USE_TAILWIND_CDN", False),
         "site": site,
         "site_name": (site.site_name if site and site.site_name else "TradeGate"),
         "nav_items": nav_items,

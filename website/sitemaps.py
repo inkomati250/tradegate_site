@@ -2,7 +2,7 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
 from .content import SERVICE_PAGES
-from .models import LegalPage
+from .models import LegalPage, TradeFair
 
 
 class StaticViewSitemap(Sitemap):
@@ -10,7 +10,7 @@ class StaticViewSitemap(Sitemap):
     priority = 0.7
 
     def items(self):
-        return ["home", "about", "faq", "contact"]
+        return ["home", "trade_fairs", "about", "faq", "contact"]
 
     def location(self, item):
         return reverse(item)
@@ -36,6 +36,20 @@ class LegalPageSitemap(Sitemap):
 
     def items(self):
         return LegalPage.objects.all()
+
+    def lastmod(self, obj):
+        return getattr(obj, "updated_at", None)
+
+
+class TradeFairSitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.6
+
+    def items(self):
+        return TradeFair.objects.filter(is_published=True)
+
+    def location(self, obj):
+        return reverse("trade_fair_detail", kwargs={"slug": obj.slug})
 
     def lastmod(self, obj):
         return getattr(obj, "updated_at", None)

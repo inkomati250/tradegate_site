@@ -263,3 +263,78 @@ class OfficialLinkTests(TestCase):
         r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
         self.assertContains(r, "Official link not available")
         self.assertNotContains(r, "Official event website")
+
+
+class ContactDeliveryTests(TestCase):
+    def _post(self, **extra):
+        import time
+        data = {
+            "full_name": "Anna Example", "email": "anna@example.de", "company_name": "Example GmbH",
+            "country": "Germany", "service_interest": "trade_fair", "contact_method": "email",
+            "subject": "Stand at a trade fair", "message": "We would like help with a stand at a fair next year.",
+            "consent": "on", "website_url": "", "form_started_at": str(int(time.time()) - 120),
+        }
+        data.update(extra)
+        return self.client.post(reverse("contact"), data, follow=True)
+
+    def test_valid_enquiry_is_saved_and_emailed(self):
+        from django.core import mail
+        from .models import Inquiry
+        r = self._post()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Inquiry.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Anna Example", mail.outbox[0].body)
+        self.assertEqual(mail.outbox[0].reply_to, ["anna@example.de"])
+
+    def test_new_service_choices_still_send(self):
+        from django.core import mail
+        for choice in ("exhibitor_recruitment", "exhibit_abroad", "partnership"):
+            self._post(service_interest=choice, email=f"{choice}@example.de")
+        self.assertEqual(len(mail.outbox), 3)
+
+
+class SeoTests(TestCase):
+    def test_every_page_has_title_description_canonical_and_org_schema(self):
+        from .models import TradeFair
+        fair = TradeFair.objects.filter(kind="germany", is_published=True).first()
+        urls = [reverse("home"), reverse("about"), reverse("faq"), reverse("contact"), reverse("trade_fairs"),
+                reverse("trade_fair_detail", kwargs={"slug": fair.slug})]
+        urls += [reverse("service_landing", kwargs={"slug": s}) for s in SERVICE_PAGES]
+        for url in urls:
+            body = self.client.get(url).content.decode()
+            self.assertIn("<title>", body, url)
+            self.assertIn('name="description"', body, url)
+            self.assertIn('rel="canonical"', body, url)
+            self.assertIn('property="og:url"', body, url)
+            self.assertIn('"ProfessionalService"', body, url)
+            self.assertIn("/static/website/css/site.css", body, url)
+            self.assertNotIn("cdn.tailwindcss.com", body, url)
+
+    def test_breadcrumbs_and_faq_schema(self):
+        body = self.client.get(reverse("faq")).content.decode()
+        self.assertIn('"FAQPage"', body)
+        self.assertIn('"BreadcrumbList"', body)
+        slug = next(iter(SERVICE_PAGES))
+        body = self.client.get(reverse("service_landing", kwargs={"slug": slug})).content.decode()
+        self.assertIn('"FAQPage"', body)
+        self.assertIn('"Service"', body)
+
+    def test_sitemap_lists_fairs_and_calendar_but_not_hidden_partner_events(self):
+        body = self.client.get("/sitemap.xml").content.decode()
+        self.assertIn("/trade-fairs/", body)
+        self.assertIn("/trade-fairs/hannover-messe-2027/", body)
+        self.assertNotIn("azerbaijan-mining-expo", body)
+        self.assertIn("/services/exhibitor-recruitment-germany/", body)
+
+    def test_fair_title_has_year_once(self):
+        from .models import TradeFair
+        TradeFair.objects.filter(kind="represented").update(is_published=True, materials_permission=True)
+        body = self.client.get(reverse("trade_fair_detail", kwargs={"slug": "azerbaijan-mining-expo-2027"})).content.decode()
+        self.assertNotIn("2027 2027", body)
+
+    def test_cdn_fallback_switch(self):
+        from django.test import override_settings
+        with override_settings(USE_TAILWIND_CDN=True):
+            body = self.client.get(reverse("home")).content.decode()
+        self.assertIn("cdn.tailwindcss.com", body)
