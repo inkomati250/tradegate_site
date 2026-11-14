@@ -36,7 +36,13 @@
           {% if fair.sector_list %}<div class="flex flex-wrap gap-1.5 pt-1">{% for s in fair.sector_list %}<span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">{{ s }}</span>{% endfor %}</div>{% endif %}
           <div class="pt-2 flex flex-col gap-2">
             {% if fair.start_date %}<a href="{% url 'trade_fair_ics' slug=fair.slug %}" class="text-brand-accent font-semibold">+ Add to your calendar</a>{% endif %}
-            {% if fair.official_url %}<a href="{{ fair.official_url }}" target="_blank" rel="noopener nofollow" class="text-white/70 hover:text-white">Official event website &#8599;</a>{% endif %}
+            {% if fair.is_represented %}
+              <a href="{% url 'contact' %}?service=exhibit_abroad&fair={{ fair.slug }}#contact-form" class="text-white/70 hover:text-white">Stand enquiries and documents: contact us &rarr;</a>
+            {% elif fair.public_official_url %}
+              <a href="{{ fair.public_official_url }}" target="_blank" rel="noopener nofollow" class="text-white/70 hover:text-white">Official event website &#8599;</a>
+            {% else %}
+              <span class="text-white/40 cursor-not-allowed" title="No working official link is available for this event yet.">Official link not available</span>
+            {% endif %}
           </div>
         </div>
       </div>

@@ -231,3 +231,26 @@ class PartnerEventBannerTests(TestCase):
         for url in (reverse("trade_fairs"), reverse("home")):
             r = self.client.get(url)
             self.assertContains(r, "Official banner coming soon")
+
+
+class OfficialLinkTests(TestCase):
+    def test_partner_event_never_links_to_organiser_site(self):
+        from .models import TradeFair
+        TradeFair.objects.filter(kind="represented").update(is_published=True, materials_permission=True)
+        fair = TradeFair.objects.get(slug="azerbaijan-mining-expo-2027")
+        self.assertTrue(fair.official_url)
+        r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
+        self.assertNotContains(r, "azerbaijanminingexpo.com")
+        self.assertNotContains(r, "Official event website")
+        self.assertContains(r, "contact us")
+
+    def test_german_fair_link_or_not_available(self):
+        from .models import TradeFair
+        fair = TradeFair.objects.filter(kind="germany", is_published=True).exclude(official_url="").first()
+        r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
+        self.assertContains(r, fair.official_url)
+        fair.official_url = ""
+        fair.save()
+        r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
+        self.assertContains(r, "Official link not available")
+        self.assertNotContains(r, "Official event website")

@@ -656,7 +656,7 @@ FOUNDER = {
 
 FAIR_DISCLAIMER = (
     "Event names, dates and venues come from the organisers' public information and can change, "
-    "so please confirm them on the official website before you plan. TradeGate Consultants is an "
+    "so please confirm them with the organiser before you plan. TradeGate Consultants is an "
     "independent service provider. Unless an event is marked as a partner event, we are not affiliated "
     "with, authorised by or acting for its organiser, and event names and trademarks belong to their owners."
 )

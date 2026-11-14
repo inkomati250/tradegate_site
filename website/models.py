@@ -339,7 +339,10 @@ class TradeFair(TimeStampedModel):
         max_length=160, blank=True, default="",
         help_text="Represented events only, exactly as the agreement allows, e.g. 'Exhibitor recruitment partner for Germany'.",
     )
-    official_url = models.URLField(blank=True, default="", validators=[URLValidator()])
+    official_url = models.URLField(
+        blank=True, default="", validators=[URLValidator()],
+        help_text="German calendar listings only: shown as 'Official event website'. Leave empty if there is no working link; the page then says 'Official link not available'. Never shown for partner events (enquiries for those come to us).",
+    )
 
     # Partner event materials (supplied by the organiser, used with permission)
     materials_permission = models.BooleanField(
@@ -428,6 +431,11 @@ class TradeFair(TimeStampedModel):
         if s.year == e.year:
             return f"{s.strftime('%-d %B')} – {e.strftime('%-d %B %Y')}"
         return f"{s.strftime('%-d %B %Y')} – {e.strftime('%-d %B %Y')}"
+
+    @property
+    def public_official_url(self):
+        """The organiser's link is only shown for events we are not affiliated with."""
+        return "" if self.is_represented else self.official_url
 
     @property
     def has_official_banner(self):

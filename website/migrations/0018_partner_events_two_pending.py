@@ -136,9 +136,13 @@ def forwards(apps, schema_editor):
             source = SEED_DIR / logo_file
             if source.exists():
                 name = f"trade-fairs/logos/{logo_file}"
-                if not default_storage.exists(name):
-                    name = default_storage.save(name, ContentFile(source.read_bytes()))
-                fair.logo = name
+                try:
+                    if not default_storage.exists(name):
+                        name = default_storage.save(name, ContentFile(source.read_bytes()))
+                    fair.logo = name
+                except OSError:
+                    # Media folder not writable: leave the logo empty; it can be uploaded in admin.
+                    pass
         fair.save()
 
 
