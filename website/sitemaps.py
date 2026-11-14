@@ -1,8 +1,29 @@
-from django.contrib.sitemaps import Sitemap
+from urllib.parse import urlparse
+
+from django.conf import settings
+from django.contrib.sitemaps import Sitemap as DjangoSitemap
 from django.urls import reverse
 
 from .content import SERVICE_PAGES
 from .models import LegalPage, TradeFair
+
+PUBLIC_DOMAIN = "www.tradegateconsultants.com"
+
+
+class Sitemap(DjangoSitemap):
+    """Every sitemap URL uses the real public domain (never Django's default 'example.com').
+
+    Order: DJANGO_SITE_URL setting -> Sites framework entry (if not the default) -> public domain.
+    """
+
+    def get_domain(self, site=None):
+        host = urlparse(getattr(settings, "SITE_URL", "") or "").netloc
+        if host:
+            return host
+        domain = getattr(site, "domain", "") or ""
+        if domain and domain != "example.com":
+            return domain
+        return PUBLIC_DOMAIN
 
 
 class StaticViewSitemap(Sitemap):

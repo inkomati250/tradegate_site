@@ -312,6 +312,15 @@ class ContactDeliveryTests(TestCase):
         self.assertEqual(len(mail.outbox), 3)
 
 
+class SitemapDomainTests(TestCase):
+    def test_sitemap_uses_public_domain_not_example_com(self):
+        r = self.client.get("/sitemap.xml")
+        self.assertEqual(r.status_code, 200)
+        body = r.content.decode()
+        self.assertNotIn("example.com", body)
+        self.assertIn("<loc>http://www.tradegateconsultants.com/</loc>", body.replace("https://", "http://"))
+
+
 class SeoTests(TestCase):
     def test_every_page_has_title_description_canonical_and_org_schema(self):
         from .models import TradeFair
