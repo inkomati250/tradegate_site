@@ -105,7 +105,7 @@ class TradeFairCalendarTests(TestCase):
     def test_homepage_carousel_and_nav(self):
         response = self.client.get(reverse("home"))
         self.assertContains(response, "fair-track")
-        self.assertContains(response, reverse("trade_fair_detail", kwargs={"slug": "hannover-messe-2027"}))
+        self.assertContains(response, reverse("trade_fair_detail", kwargs={"slug": "bau-munich-2027"}))
         self.assertContains(response, "Trade fair calendar")
 
     def test_contact_prefill_from_fair(self):
@@ -177,3 +177,16 @@ class AdminAndContentTests(TestCase):
         self.assertIn("ECOWAS Aviana", partner_section)
         calendar_section = html.split('id="opportunities"')[1].split("</section>")[0]
         self.assertNotIn("ECOWAS Aviana", calendar_section)
+
+
+class ComprehensiveCalendarTests(TestCase):
+    def test_calendar_lists_many_german_fairs_including_tbc(self):
+        response = self.client.get(reverse("trade_fairs"))
+        for name in ["BAU", "Heimtextil", "transport logistic", "automatica", "IAA MOBILITY", "productronica", "MEDICA"]:
+            self.assertContains(response, name)
+        self.assertContains(response, "Dates to be announced")
+
+    def test_organiser_page_is_non_exclusive_and_international(self):
+        response = self.client.get(reverse("service_landing", kwargs={"slug": "exhibitor-recruitment-germany"}))
+        self.assertContains(response, "Germany, the EU and Beyond")
+        self.assertContains(response, "Non-exclusive")

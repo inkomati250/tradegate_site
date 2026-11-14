@@ -23,17 +23,20 @@
   <div class="max-w-3xl mb-10 reveal">
     <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Partner events</span>
     <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-[#07111F]">Exhibit at our partner trade fairs.</h2>
-    <p class="text-slate-600 mt-4 text-lg leading-relaxed">We are the German contact for these international events. Ask us about stands and packages, and whether the event fits your products. Booking through us costs you nothing extra.</p>
+    <p class="text-slate-600 mt-4 text-lg leading-relaxed">We recruit exhibitors for these international events from Germany, the EU and other markets, as a non-exclusive partner of the organisers. Ask us about stands and packages, and whether the event fits your products. Booking through us costs you nothing extra.</p>
   </div>
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for fair in represented %}
-      <a href="{% url 'trade_fair_detail' slug=fair.slug %}" data-sectors="{{ fair.categories|join:',' }}" class="fair-card group flex flex-col rounded-3xl border-2 border-brand-accent/60 bg-white p-6 shadow-soft hover:-translate-y-1 transition reveal">
+      <a href="{% url 'trade_fair_detail' slug=fair.slug %}" data-sectors="{{ fair.categories|join:',' }}" class="fair-card group flex flex-col rounded-3xl border-2 border-brand-accent/60 bg-white overflow-hidden shadow-soft hover:-translate-y-1 transition reveal">
+        {% if fair.cover_image and fair.materials_permission %}<div class="h-40 bg-cover bg-center" style="background-image:url('{{ fair.cover_image.url }}')"></div>{% endif %}
+        <div class="p-6 flex flex-col flex-1">
         <div class="flex items-center justify-between gap-3"><span class="rounded-full bg-[#07111F] px-3 py-1 text-xs font-bold text-brand-accent">Partner event</span>{% if fair.logo %}<img src="{{ fair.logo.url }}" alt="" class="h-8 w-auto max-w-[96px] object-contain">{% endif %}</div>
         <p class="mt-4 text-sm font-bold text-brand-copper">{{ fair.date_label }}</p>
         <h3 class="font-display text-xl font-bold text-[#07111F] mt-1">{{ fair.name }}</h3>
         <p class="text-sm text-slate-500 mt-1">{{ fair.place_label }}</p>
         <p class="mt-3 text-sm text-slate-600 leading-relaxed flex-1">{{ fair.summary }}</p>
         <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#07111F] group-hover:text-brand-copper">Details and stand enquiry &rarr;</span>
+        </div>
       </a>
     {% endfor %}
   </div>
@@ -83,8 +86,8 @@
   <div class="grid lg:grid-cols-12 gap-8 items-center rounded-[2rem] bg-[#07111F] text-white p-8 md:p-12 reveal">
     <div class="lg:col-span-8">
       <span class="inline-block text-xs font-bold text-brand-accent uppercase tracking-[0.22em] mb-3">Organising a trade fair?</span>
-      <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Want German exhibitors for your event?</h2>
-      <p class="text-white/62 mt-4 text-lg leading-relaxed">We act as your recruitment partner for Germany, on commission. Your event appears here once we agree.</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Looking for exhibitors for your event?</h2>
+      <p class="text-white/62 mt-4 text-lg leading-relaxed">We recruit exhibitors from Germany, the EU and beyond, as a non-exclusive partner on commission. Your event appears here once we agree.</p>
     </div>
     <div class="lg:col-span-4 lg:text-right">
       <a href="{% url 'service_landing' slug='exhibitor-recruitment-germany' %}" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-brand-accent text-[#07111F] font-bold">How it works &rarr;</a>

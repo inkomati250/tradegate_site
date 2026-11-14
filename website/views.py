@@ -82,7 +82,8 @@ def _upcoming_fairs():
     try:
         today = timezone.localdate()
         qs = TradeFair.objects.filter(is_published=True)
-        return [f for f in qs if not f.end_date or f.end_date >= today]
+        fairs = [f for f in qs if not f.end_date or f.end_date >= today]
+        return sorted(fairs, key=lambda f: (f.start_date is None, f.start_date or today, f.order, f.name))
     except (OperationalError, ProgrammingError, DatabaseError):
         logger.warning("TradeFair table not ready.", exc_info=True)
         return []
@@ -223,7 +224,7 @@ def home(request):
         "service_nav": SERVICE_NAV,
         "service_pages": SERVICE_PAGES,
         "opportunities": opportunities,
-        "carousel_fairs": [f for f in _upcoming_fairs() if f.show_in_carousel and not f.is_represented],
+        "carousel_fairs": [f for f in _upcoming_fairs() if f.show_in_carousel and not f.is_represented and f.start_date][:15],
         "partner_fairs": [f for f in _upcoming_fairs() if f.is_represented],
         "page_meta": {
             "title": site.meta_title if site and site.meta_title else "Germany & EU Market Entry Support for International SMEs",
