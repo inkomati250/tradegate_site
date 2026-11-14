@@ -19,13 +19,14 @@ Live on `main` (last deploy 2026-11-14 05:50, commit 62d99d8 + this context pack
 | 2026-11-14 | Partner events never show organiser link/name; German fairs show "Official link not available" when no link; Asia-Pacific Sourcing URL fixed | ee2dcea, 3a9e81d |
 | 2026-11-14 | SEO: compiled CSS (faster), full meta/OG/Twitter tags, business/service/FAQ/breadcrumb/event schema, complete sitemap, new social image | fd0577b |
 | 2026-11-14 | Five languages (EN/DE/FR/PT/ES) with flag picker; favicon fix for Google results | 62d99d8; coverage script showed only identical words/company names untranslated |
-| 2026-11-14 | Six context files + entry files | this commit |
+| 2026-11-14 | Six context files + entry files | c388056 |
+| 2026-11-14 | Deploy now migrates the LIVE database (with backup first); partner events published as in the approved preview | this commit |
 
 ## Known issues / open questions
 
 | ID | Issue | Status |
 | --- | --- | --- |
-| EVT-001 | Owner reported "event calendars removed" after the language release. Code check: German calendar (home marquee + /trade-fairs/) renders in EN and DE. Partner events section is empty live because both events are unpublished (they were shown in the preview only). | Waiting for owner: publish partner events? / screenshot of what is missing |
+| EVT-001 | Live calendar empty and partner section missing. Root cause (read-only server diagnostics 2026-11-14): the deploy ran `migrate` without the live settings, so it migrated a local SQLite file; live PostgreSQL `tradegate_db` stayed at migration 0008 (0009–0021 never applied, no TradeFair/ServicePackage/TeamProfile tables). Fix: `scripts/deploy_manage.sh` loads `/srv/tradegate/.env`, backs up the live DB to `/srv/tradegate/backups/` before migrating, then migrates the live DB. Owner asked to show the two partner events as in the preview (migration 0022). | Fixed in this deploy; verify on live |
 | SEO-001 | Google still shows grey globe until it recrawls; owner to request indexing in Search Console | Waiting for Google |
 | SEO-002 | Search Console / Bing verification codes not yet set (`GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`) | Owner |
 | MEDIA-001 | Confirm nginx serves `/media/` (needed for partner logos/banners once published) | Unverified |

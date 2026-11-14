@@ -9,7 +9,7 @@
 
 ## Deployment
 
-`.github/workflows/deploy-prod.yml` on push to `main`: fetch + `reset --hard origin/main`, pip install, `makemigrations --check`, `check --deploy`, `migrate`, `collectstatic`, restart gunicorn, reload nginx. Media: `/srv/tradegate/media` (outside the app folder). Static: `/srv/tradegate/staticfiles`.
+`.github/workflows/deploy-prod.yml` on push to `main`: fetch + `reset --hard origin/main`, pip install, then `scripts/deploy_manage.sh` (loads the live settings from `/srv/tradegate/.env`, backs up the live PostgreSQL database `tradegate_db` to `/srv/tradegate/backups/`, `makemigrations --check`, `check --deploy`, `migrate`, `collectstatic`), restart gunicorn, reload nginx. Never run `manage.py` on the server without the live settings: it falls back to development settings and a local SQLite file. Media: `/srv/tradegate/media` (outside the app folder). Static: `/srv/tradegate/staticfiles`.
 
 **Pushing to `main` = going live.** Only with the owner's go-ahead.
 

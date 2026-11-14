@@ -70,6 +70,8 @@ class TradeFairCalendarTests(TestCase):
     """Uses the seeded fairs from migration 0013."""
 
     def test_calendar_lists_german_fairs_and_hides_unpublished_partner_events(self):
+        from .models import TradeFair as _TF
+        _TF.objects.filter(kind="represented").update(is_published=False, materials_permission=False)
         response = self.client.get(reverse("trade_fairs"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Fruit Logistica")
@@ -85,6 +87,8 @@ class TradeFairCalendarTests(TestCase):
         self.assertContains(response, "Partner event")
 
     def test_unpublished_detail_is_404(self):
+        from .models import TradeFair as _TF
+        _TF.objects.filter(kind="represented").update(is_published=False, materials_permission=False)
         response = self.client.get(reverse("trade_fair_detail", kwargs={"slug": "azerbaijan-mining-expo-2027"}))
         self.assertEqual(response.status_code, 404)
 
@@ -145,6 +149,8 @@ class AdminAndContentTests(TestCase):
             self.assertEqual(response.status_code, 200, name)
 
     def test_partner_event_cannot_be_published_without_permission(self):
+        from .models import TradeFair as _TF
+        _TF.objects.filter(kind="represented").update(is_published=False, materials_permission=False)
         from django.core.exceptions import ValidationError
         from .models import TradeFair
         fair = TradeFair.objects.get(slug="azerbaijan-mining-expo-2027")
@@ -200,10 +206,21 @@ class PartnerEventBannerTests(TestCase):
         return TradeFair.objects.get(slug=slug)
 
     def test_only_two_pending_partner_events_remain(self):
+        from .models import TradeFair as _TF
+        _TF.objects.filter(kind="represented").update(is_published=False, materials_permission=False)
         from .models import TradeFair
         slugs = set(TradeFair.objects.filter(kind="represented").values_list("slug", flat=True))
         self.assertEqual(slugs, {"ecowas-aviana-expo-2027", "azerbaijan-mining-expo-2027"})
         self.assertFalse(TradeFair.objects.filter(kind="represented", is_published=True).exists())
+
+    def test_partner_events_published_on_live_as_in_preview(self):
+        from .models import TradeFair
+        for slug in ("ecowas-aviana-expo-2027", "azerbaijan-mining-expo-2027"):
+            f = TradeFair.objects.get(slug=slug)
+            self.assertTrue(f.is_published and f.materials_permission)
+        body = self.client.get(reverse("home")).content.decode()
+        self.assertIn("Our partner trade fairs", body)
+        self.assertIn("Azerbaijan Mining Expo 2027", body)
 
     def test_placeholder_banner_until_official_banner_uploaded(self):
         fair = self._publish("azerbaijan-mining-expo-2027")
@@ -322,6 +339,8 @@ class SeoTests(TestCase):
         self.assertIn('"Service"', body)
 
     def test_sitemap_lists_fairs_and_calendar_but_not_hidden_partner_events(self):
+        from .models import TradeFair as _TF
+        _TF.objects.filter(kind="represented").update(is_published=False, materials_permission=False)
         body = self.client.get("/sitemap.xml").content.decode()
         self.assertIn("/trade-fairs/", body)
         self.assertIn("/trade-fairs/hannover-messe-2027/", body)

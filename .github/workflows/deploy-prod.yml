@@ -35,14 +35,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo -n -u deploy /bin/bash -lc '
-            set -euo pipefail
-            cd /srv/tradegate/app
-            /srv/tradegate/venv/bin/python manage.py makemigrations --check --dry-run
-            /srv/tradegate/venv/bin/python manage.py check --deploy
-            /srv/tradegate/venv/bin/python manage.py migrate --noinput
-            /srv/tradegate/venv/bin/python manage.py collectstatic --noinput
-          '
+          # Load exactly the settings the live site runs with (the tradegate service's
+          # EnvironmentFile and Environment= lines). Without this, manage.py fell back to
+          # development settings and migrated a local SQLite file instead of the live database.
+          ENV_FILES="$(systemctl show tradegate -p EnvironmentFiles --value | grep -o '/[^ ]*' || true)"
+          echo "Service environment files: ${ENV_FILES:-none (using /srv/tradegate/.env)}"
+          sudo -n -u deploy /bin/bash /srv/tradegate/app/scripts/deploy_manage.sh "$ENV_FILES"
 
       - name: Restart services
         shell: bash
