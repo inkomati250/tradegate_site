@@ -6,7 +6,7 @@ Update after every meaningful change. Record evidence; do not turn plans into co
 
 ## Current state
 
-Live on `main` (last deploy 2026-11-14 05:50, commit 62d99d8 + this context pack). All 47 tests pass. Branch `feature/service-packages` mirrors `main`.
+Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at migration 0022. All tests pass. Branch `feature/service-packages` mirrors `main`.
 
 ## Completed (all live)
 
@@ -26,10 +26,10 @@ Live on `main` (last deploy 2026-11-14 05:50, commit 62d99d8 + this context pack
 
 | ID | Issue | Status |
 | --- | --- | --- |
-| EVT-001 | Live calendar empty and partner section missing. Root cause (read-only server diagnostics 2026-11-14): the deploy ran `migrate` without the live settings, so it migrated a local SQLite file; live PostgreSQL `tradegate_db` stayed at migration 0008 (0009–0021 never applied, no TradeFair/ServicePackage/TeamProfile tables). Fix: `scripts/deploy_manage.sh` loads `/srv/tradegate/.env`, backs up the live DB to `/srv/tradegate/backups/` before migrating, then migrates the live DB. Owner asked to show the two partner events as in the preview (migration 0022). | Fixed in this deploy; verify on live |
+| EVT-001 | Live calendar empty and partner section missing. Root cause (read-only server diagnostics 2026-11-14): the deploy ran `migrate` without the live settings, so it migrated a local SQLite file; live PostgreSQL `tradegate_db` stayed at migration 0008 (0009–0021 never applied, no TradeFair/ServicePackage/TeamProfile tables). Fix: `scripts/deploy_manage.sh` loads `/srv/tradegate/.env`, backs up the live DB to `/srv/tradegate/backups/` before migrating, then migrates the live DB. Owner asked to show the two partner events as in the preview (migration 0022). | Fixed and verified 2026-11-14 08:07: live home shows partner section (both logos) + German carousel; /trade-fairs/ lists all fairs; DE/FR versions; logos/CSS/favicon served (200); 0 organiser links/names; backup db-20261114-070630.dump |
 | SEO-001 | Google still shows grey globe until it recrawls; owner to request indexing in Search Console | Waiting for Google |
 | SEO-002 | Search Console / Bing verification codes not yet set (`GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`) | Owner |
-| MEDIA-001 | Confirm nginx serves `/media/` (needed for partner logos/banners once published) | Unverified |
+| MEDIA-001 | nginx serves `/media/` | Verified 2026-11-14 (logos 200 image/webp) |
 | FAIR-001 | MEDICA 2027 dates unconfirmed (Team France lists 15–18 Nov 2027) | Watch organiser |
 | I18N-001 | Text added later in admin (new fairs, prices) stays English in other languages until added to `website/locale/*.json` | By design; translate on request |
 
