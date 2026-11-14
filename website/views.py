@@ -136,7 +136,7 @@ def _fair_schema(request, fair):
     if fair.start_date:
         data["startDate"] = fair.start_date.isoformat()
         data["endDate"] = (fair.end_date or fair.start_date).isoformat()
-    if fair.organiser:
+    if fair.organiser and not fair.is_represented:
         data["organizer"] = {"@type": "Organization", "name": fair.organiser, "url": fair.public_official_url or None}
     return json.dumps(data)
 

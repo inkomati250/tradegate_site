@@ -32,7 +32,7 @@
           <p class="text-xs font-bold text-brand-accent uppercase tracking-[0.2em]">At a glance</p>
           <p><span class="text-white/50">Dates</span><br><span class="font-display text-xl font-bold">{{ fair.date_label }}</span></p>
           <p><span class="text-white/50">Place</span><br>{% if fair.venue %}{{ fair.venue }}, {% endif %}{{ fair.place_label }}</p>
-          {% if fair.organiser %}<p><span class="text-white/50">Organiser</span><br>{{ fair.organiser }}</p>{% endif %}
+          {% if fair.organiser and not fair.is_represented %}<p><span class="text-white/50">Organiser</span><br>{{ fair.organiser }}</p>{% endif %}
           {% if fair.sector_list %}<div class="flex flex-wrap gap-1.5 pt-1">{% for s in fair.sector_list %}<span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">{{ s }}</span>{% endfor %}</div>{% endif %}
           <div class="pt-2 flex flex-col gap-2">
             {% if fair.start_date %}<a href="{% url 'trade_fair_ics' slug=fair.slug %}" class="text-brand-accent font-semibold">+ Add to your calendar</a>{% endif %}

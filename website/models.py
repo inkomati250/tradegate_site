@@ -328,7 +328,10 @@ class TradeFair(TimeStampedModel):
     city = models.CharField(max_length=80, blank=True, default="")
     country = models.CharField(max_length=80, blank=True, default="Germany")
     venue = models.CharField(max_length=160, blank=True, default="")
-    organiser = models.CharField(max_length=160, blank=True, default="")
+    organiser = models.CharField(
+        max_length=160, blank=True, default="",
+        help_text="Internal for partner events (not shown on the website). Shown for German calendar listings.",
+    )
     sectors = models.CharField(max_length=220, blank=True, default="", help_text="Comma-separated.")
     summary = models.CharField(max_length=260, help_text="One or two sentences in our own words.")
     description = models.TextField(blank=True, default="", help_text="Our own words. Do not copy the organiser's text.")
@@ -341,7 +344,7 @@ class TradeFair(TimeStampedModel):
     )
     official_url = models.URLField(
         blank=True, default="", validators=[URLValidator()],
-        help_text="German calendar listings only: shown as 'Official event website'. Leave empty if there is no working link; the page then says 'Official link not available'. Never shown for partner events (enquiries for those come to us).",
+        help_text="German calendar listings only: shown as 'Official event website'. Leave empty if there is no working link; the page then says 'Official link not available'. Partner events: leave empty. It is deleted automatically on save, so organiser websites are never published.",
     )
 
     # Partner event materials (supplied by the organiser, used with permission)
@@ -404,6 +407,12 @@ class TradeFair(TimeStampedModel):
     @property
     def help_list(self):
         return self._lines(self.how_we_help)
+
+    def save(self, *args, **kwargs):
+        # Partner events: never store the organiser's website, so it can never be shown.
+        if self.kind == self.KIND_REPRESENTED:
+            self.official_url = ""
+        super().save(*args, **kwargs)
 
     def clean(self):
         from django.core.exceptions import ValidationError

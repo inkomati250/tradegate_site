@@ -238,9 +238,18 @@ class OfficialLinkTests(TestCase):
         from .models import TradeFair
         TradeFair.objects.filter(kind="represented").update(is_published=True, materials_permission=True)
         fair = TradeFair.objects.get(slug="azerbaijan-mining-expo-2027")
-        self.assertTrue(fair.official_url)
+        self.assertEqual(fair.official_url, "")
+        fair.official_url = "https://www.azerbaijanminingexpo.com/"
+        fair.save()
+        fair.refresh_from_db()
+        self.assertEqual(fair.official_url, "")
+        for slug, banned in [("azerbaijan-mining-expo-2027", ["azerbaijanminingexpo", "introfair", "thetrueexpo", "Intro Exhibition", "True Expo"]),
+                             ("ecowas-aviana-expo-2027", ["ecowasavianavivexpo", "afpinfo", "aviananigeria"])]:
+            for url in (reverse("trade_fair_detail", kwargs={"slug": slug}), reverse("trade_fairs"), reverse("home")):
+                body = self.client.get(url).content.decode()
+                for word in banned:
+                    self.assertNotIn(word, body, f"{word} leaked on {url}")
         r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
-        self.assertNotContains(r, "azerbaijanminingexpo.com")
         self.assertNotContains(r, "Official event website")
         self.assertContains(r, "contact us")
 
