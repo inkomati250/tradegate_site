@@ -190,3 +190,44 @@ class ComprehensiveCalendarTests(TestCase):
         response = self.client.get(reverse("service_landing", kwargs={"slug": "exhibitor-recruitment-germany"}))
         self.assertContains(response, "Germany, the EU and Beyond")
         self.assertContains(response, "Non-exclusive")
+
+
+class PartnerEventBannerTests(TestCase):
+    def _publish(self, slug):
+        from .models import TradeFair
+        TradeFair.objects.filter(slug=slug).update(is_published=True, materials_permission=True)
+        return TradeFair.objects.get(slug=slug)
+
+    def test_only_two_pending_partner_events_remain(self):
+        from .models import TradeFair
+        slugs = set(TradeFair.objects.filter(kind="represented").values_list("slug", flat=True))
+        self.assertEqual(slugs, {"ecowas-aviana-expo-2027", "azerbaijan-mining-expo-2027"})
+        self.assertFalse(TradeFair.objects.filter(kind="represented", is_published=True).exists())
+
+    def test_placeholder_banner_until_official_banner_uploaded(self):
+        fair = self._publish("azerbaijan-mining-expo-2027")
+        self.assertTrue(fair.logo)
+        r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
+        self.assertContains(r, "Official event banner")
+        self.assertContains(r, fair.logo.url)
+        self.assertContains(r, "€480 per m²")
+        self.assertContains(r, "does not add to your price")
+        fair.cover_image = "trade-fairs/covers/official.jpg"
+        fair.save()
+        r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
+        self.assertNotContains(r, "Official event banner")
+        self.assertContains(r, "trade-fairs/covers/official.jpg")
+
+    def test_price_list_image_is_shown(self):
+        fair = self._publish("ecowas-aviana-expo-2027")
+        fair.packages_image = "trade-fairs/packages/aviana-prices.jpg"
+        fair.save()
+        r = self.client.get(reverse("trade_fair_detail", kwargs={"slug": fair.slug}))
+        self.assertContains(r, "trade-fairs/packages/aviana-prices.jpg")
+        self.assertContains(r, "US$ 2,650")
+
+    def test_banner_placeholder_on_listing_and_home(self):
+        self._publish("ecowas-aviana-expo-2027")
+        for url in (reverse("trade_fairs"), reverse("home")):
+            r = self.client.get(url)
+            self.assertContains(r, "Official banner coming soon")

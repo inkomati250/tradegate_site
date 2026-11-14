@@ -28,9 +28,9 @@
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for fair in represented %}
       <a href="{% url 'trade_fair_detail' slug=fair.slug %}" data-sectors="{{ fair.categories|join:',' }}" class="fair-card group flex flex-col rounded-3xl border-2 border-brand-accent/60 bg-white overflow-hidden shadow-soft hover:-translate-y-1 transition reveal">
-        {% if fair.cover_image and fair.materials_permission %}<div class="h-40 bg-cover bg-center" style="background-image:url('{{ fair.cover_image.url }}')"></div>{% endif %}
+        {% include "website/partials/fair_banner.html" with fair=fair size="card" %}
         <div class="p-6 flex flex-col flex-1">
-        <div class="flex items-center justify-between gap-3"><span class="rounded-full bg-[#07111F] px-3 py-1 text-xs font-bold text-brand-accent">Partner event</span>{% if fair.logo %}<img src="{{ fair.logo.url }}" alt="" class="h-8 w-auto max-w-[96px] object-contain">{% endif %}</div>
+        <div><span class="rounded-full bg-[#07111F] px-3 py-1 text-xs font-bold text-brand-accent">Partner event</span></div>
         <p class="mt-4 text-sm font-bold text-brand-copper">{{ fair.date_label }}</p>
         <h3 class="font-display text-xl font-bold text-[#07111F] mt-1">{{ fair.name }}</h3>
         <p class="text-sm text-slate-500 mt-1">{{ fair.place_label }}</p>

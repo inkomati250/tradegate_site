@@ -353,6 +353,16 @@ class TradeFair(TimeStampedModel):
         blank=True, default="",
         help_text="Stand and sponsorship packages, one per line: Name | Price | Short description",
     )
+    packages_image = models.FileField(
+        upload_to="trade-fairs/packages/", blank=True, default="",
+        validators=[FileExtensionValidator(["png", "jpg", "jpeg", "webp"])],
+        help_text="Optional: the organiser's price list as an image (e.g. a brochure page). Shown with or instead of the package list.",
+    )
+    packages_note = models.CharField(
+        max_length=260, blank=True,
+        default="Prices are set by the organiser. Our fee is paid by the organiser, so booking through us does not add to your price.",
+        help_text="Short note shown under the packages (currency, VAT, validity).",
+    )
 
     is_published = models.BooleanField(
         default=False,
@@ -418,6 +428,14 @@ class TradeFair(TimeStampedModel):
         if s.year == e.year:
             return f"{s.strftime('%-d %B')} – {e.strftime('%-d %B %Y')}"
         return f"{s.strftime('%-d %B %Y')} – {e.strftime('%-d %B %Y')}"
+
+    @property
+    def has_official_banner(self):
+        return bool(self.cover_image) and self.materials_permission
+
+    @property
+    def show_logo(self):
+        return bool(self.logo) and (self.materials_permission or not self.is_represented)
 
     @property
     def place_label(self):

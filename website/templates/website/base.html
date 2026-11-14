@@ -128,6 +128,15 @@
 
     .carousel-scroll { scroll-snap-type: x mandatory; scrollbar-width: thin; }
     .carousel-card { scroll-snap-align: start; }
+    /* Partner event banner placeholder (until the organiser's official banner is uploaded) */
+    .fair-banner { background: radial-gradient(120% 140% at 100% 0%, rgba(214,163,74,.28) 0%, rgba(214,163,74,0) 45%), linear-gradient(135deg, #07111F 0%, #0E2238 55%, #13314F 100%); }
+    .fair-banner-pattern { background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); background-size: 14px 14px; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 60%); mask-image: linear-gradient(90deg, transparent 0%, #000 60%); }
+    .fair-soon { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed rgba(214,163,74,.75); background: rgba(7,17,31,.55); color: #F3D9A4; font: 700 10px/1.2 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; backdrop-filter: blur(4px); }
+    .fair-soon-lg { gap: 12px; font-size: 12px; line-height: 1.5; padding: 14px 20px; border-radius: 18px; border-width: 2px; }
+    .fair-soon-lg strong { color: #D6A34A; font-size: 16px; letter-spacing: .1em; }
+    .fair-soon-dot { width: 7px; height: 7px; border-radius: 999px; background: #D6A34A; box-shadow: 0 0 0 4px rgba(214,163,74,.2); flex: none; animation: fairPulse 2s ease-in-out infinite; }
+    @keyframes fairPulse { 50% { box-shadow: 0 0 0 7px rgba(214,163,74,0); } }
+    @media (prefers-reduced-motion: reduce) { .fair-soon-dot { animation: none; } }
   </style>
   {% block extra_head %}{% endblock %}
 </head>

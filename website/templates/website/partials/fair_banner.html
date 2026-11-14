@@ -1,0 +1,42 @@
+{% comment %}
+Partner event banner. Uses the organiser's official banner (cover image) once it is
+uploaded and permission is recorded; until then shows a branded placeholder with the
+event logo and an "official banner coming soon" mark. Params: fair, size ("card" or "hero").
+{% endcomment %}
+{% if fair.has_official_banner %}
+  {% if size == "hero" %}
+    <img src="{{ fair.cover_image.url }}" alt="{{ fair.name }}" class="w-full max-h-[420px] object-cover" loading="lazy">
+  {% else %}
+    <div class="h-44 bg-cover bg-center" style="background-image:url('{{ fair.cover_image.url }}')" role="img" aria-label="{{ fair.name }}"></div>
+  {% endif %}
+{% elif size == "hero" %}
+  <div class="fair-banner relative overflow-hidden">
+    <div class="absolute inset-0 fair-banner-pattern"></div>
+    <div class="relative flex flex-col md:flex-row md:items-center gap-5 md:gap-10 px-6 md:px-12 py-7 md:py-12">
+      {% if fair.show_logo %}
+        <div class="self-start md:self-auto bg-white rounded-2xl shadow-lg p-4 md:p-5">
+          <img src="{{ fair.logo.url }}" alt="{{ fair.name }} logo" class="w-auto object-contain h-16 md:h-28 max-w-full md:max-w-[420px]">
+        </div>
+      {% else %}
+        <p class="font-display font-extrabold text-white leading-tight text-3xl md:text-4xl">{{ fair.name }}</p>
+      {% endif %}
+      <div class="text-white flex-1">
+        <p class="font-display font-bold text-brand-accent text-2xl md:text-3xl">{{ fair.date_label }}</p>
+        <p class="text-white/75 text-base md:text-lg mt-1">{% if fair.venue %}{{ fair.venue }}, {% endif %}{{ fair.place_label }}</p>
+      </div>
+      <div class="md:shrink-0">
+        <span class="fair-soon fair-soon-lg"><span class="fair-soon-dot"></span><span>Official event banner<br><strong>coming soon</strong></span></span>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="fair-banner relative overflow-hidden h-44 flex flex-col items-center justify-center gap-3 px-5">
+    <div class="absolute inset-0 fair-banner-pattern"></div>
+    {% if fair.show_logo %}
+      <div class="relative bg-white rounded-2xl shadow-lg p-2.5"><img src="{{ fair.logo.url }}" alt="{{ fair.name }} logo" class="h-14 w-auto max-w-[240px] object-contain"></div>
+    {% else %}
+      <p class="relative font-display font-extrabold text-white text-lg text-center leading-tight">{{ fair.name }}</p>
+    {% endif %}
+    <span class="relative fair-soon"><span class="fair-soon-dot"></span>Official banner coming soon</span>
+  </div>
+{% endif %}

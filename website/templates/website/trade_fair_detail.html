@@ -12,7 +12,6 @@
         {% if fair.is_represented %}
           <div class="flex items-center gap-4">
             <span class="inline-flex rounded-full bg-brand-accent px-3 py-1 text-xs font-bold text-[#07111F]">Partner event{% if fair.our_role %} · {{ fair.our_role }}{% endif %}</span>
-            {% if fair.logo and fair.materials_permission %}<img src="{{ fair.logo.url }}" alt="{{ fair.name }} logo" class="h-10 w-auto max-w-[140px] object-contain bg-white rounded-lg p-1.5">{% endif %}
           </div>
         {% else %}
           <span class="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold text-white/70">Trade fair in Germany</span>
@@ -45,10 +44,10 @@
   </div>
 </section>
 
-{% if fair.is_represented and fair.materials_permission and fair.cover_image %}
+{% if fair.is_represented %}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
   <div class="rounded-[2rem] overflow-hidden border shadow-soft bg-white">
-    <img src="{{ fair.cover_image.url }}" alt="{{ fair.name }}" class="w-full max-h-[420px] object-cover" loading="lazy">
+    {% include "website/partials/fair_banner.html" with fair=fair size="hero" %}
   </div>
 </section>
 {% endif %}
@@ -63,18 +62,24 @@
       </div>
       {% endif %}
       {% if fair.is_represented and fair.materials_permission %}
-        {% if fair.package_list %}
-        <div class="rounded-3xl border bg-white p-7 shadow-soft reveal">
+        {% if fair.package_list or fair.packages_image %}
+        <div id="packages" class="rounded-3xl border bg-white p-7 shadow-soft reveal">
           <h2 class="font-display text-2xl font-bold text-[#07111F]">Stand and sponsorship packages</h2>
+          {% if fair.packages_image %}
+            <a href="{{ fair.packages_image.url }}" target="_blank" rel="noopener" class="block mt-4 rounded-2xl overflow-hidden border hover:shadow-soft transition">
+              <img src="{{ fair.packages_image.url }}" alt="{{ fair.name }} price list" class="w-full h-auto" loading="lazy">
+            </a>
+            <p class="mt-2 text-xs text-slate-500">Click the price list to open it full size.</p>
+          {% endif %}
           <div class="mt-4 divide-y">
             {% for p in fair.package_list %}
-              <div class="py-3 flex flex-wrap items-baseline justify-between gap-2">
-                <div><p class="font-semibold text-[#07111F]">{{ p.name }}</p>{% if p.details %}<p class="text-sm text-slate-500">{{ p.details }}</p>{% endif %}</div>
-                {% if p.price %}<p class="font-display font-bold text-brand-copper">{{ p.price }}</p>{% endif %}
+              <div class="py-3 flex items-start justify-between gap-4">
+                <div class="min-w-0"><p class="font-semibold text-[#07111F]">{{ p.name }}</p>{% if p.details %}<p class="text-sm text-slate-500">{{ p.details }}</p>{% endif %}</div>
+                {% if p.price %}<p class="shrink-0 text-right font-display font-bold text-brand-copper whitespace-nowrap">{{ p.price }}</p>{% endif %}
               </div>
             {% endfor %}
           </div>
-          <p class="mt-3 text-xs text-slate-500">Prices as set by the organiser. We confirm availability and the final price before you book.</p>
+          <p class="mt-3 text-xs text-slate-500">{% if fair.packages_note %}{{ fair.packages_note }} {% endif %}We confirm availability and the final price before you book.</p>
         </div>
         {% endif %}
         {% if fair.brochure %}

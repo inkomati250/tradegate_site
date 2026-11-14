@@ -220,9 +220,17 @@ class TradeFairAdmin(admin.ModelAdmin):
         ("Event", {"fields": ("name", "slug", "kind", "is_published", "show_in_carousel", "order")}),
         ("When and where", {"fields": ("start_date", "end_date", "date_note", "city", "country", "venue", "organiser", "official_url")}),
         ("Content (our own words)", {"fields": ("sectors", "summary", "description", "who_should_exhibit", "who_should_visit", "how_we_help")}),
-        ("Partner events only: role and organiser materials", {
-            "description": "Only tick 'materials permission' once the organiser has confirmed in writing that we may show their event, logo and materials.",
-            "fields": ("our_role", "materials_permission", "logo", "cover_image", "brochure", "packages_text"),
+        ("Partner events only: role and permission", {
+            "description": "Only tick 'materials permission' once the organiser has confirmed in writing that we may show their event, logo and materials. Partner events stay hidden on the website until both 'materials permission' and 'published' are ticked.",
+            "fields": ("our_role", "materials_permission"),
+        }),
+        ("Partner events only: logo and banner", {
+            "description": "Cover image = the organiser's official banner (wide image, about 1600 × 600 px). While it is empty, the website shows a branded placeholder with the event logo, dates and an 'Official banner coming soon' ribbon. Upload the banner here and it replaces the placeholder automatically.",
+            "fields": ("logo", "cover_image", "brochure"),
+        }),
+        ("Partner events only: prices and packages", {
+            "description": "Type the packages as figures (one per line: Name | Price | Details), upload the organiser's price list as an image, or both.",
+            "fields": ("packages_text", "packages_image", "packages_note"),
         }),
     )
     list_display = ("name", "kind", "start_date", "city", "is_published", "materials_permission", "show_in_carousel")
