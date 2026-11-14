@@ -33,7 +33,7 @@
 
       {% if founder %}
       <div class="rounded-2xl border bg-white p-7 shadow-sm reveal flex flex-col sm:flex-row gap-6 items-start">
-        {% if founder.photo_url %}<img src="{{ founder.photo_url }}" alt="{{ founder.name }}" class="h-32 w-32 rounded-full object-cover shrink-0" width="128" height="128" loading="lazy">{% endif %}
+        {% if founder.photo_url %}<div role="img" aria-label="Photo of {{ founder.name }}" oncontextmenu="return false" class="founder-photo h-32 w-32 rounded-full bg-cover bg-center shrink-0 select-none" style="background-image:url('{{ founder.photo_url }}');-webkit-touch-callout:none"></div>{% endif %}
         <div>
           <p class="text-xs font-bold text-brand-copper uppercase tracking-[0.22em]">Who you work with</p>
           <h2 class="font-display text-xl font-semibold mt-2">{{ founder.name }}</h2>

@@ -48,6 +48,7 @@ class FounderAndContactTests(TestCase):
     def test_about_shows_photo_partners_and_linkedin(self):
         response = self.client.get(reverse("about"))
         self.assertContains(response, "/static/website/img/ivan-nkomati.webp")
+        self.assertNotContains(response, "<img src=\"/static/website/img/ivan-nkomati.webp")
         self.assertContains(response, "you keep one contact: me")
         self.assertContains(response, "linkedin.com/in/ivan-nkomati-313637228")
 
@@ -55,3 +56,10 @@ class FounderAndContactTests(TestCase):
         response = self.client.get(reverse("contact"))
         self.assertContains(response, "Add more details")
         self.assertContains(response, 'name="phone"')
+
+
+class BrandingTests(TestCase):
+    def test_header_uses_logo_and_favicon(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "tradegate-logo-light.webp")
+        self.assertContains(response, "favicon-32.png")
