@@ -1,5 +1,5 @@
 {% load static website_extras %}<!doctype html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,15 +8,15 @@
   <title>{{ full_title }}</title>
   {% if page_meta.description %}<meta name="description" content="{{ page_meta.description }}">{% endif %}
   <meta name="robots" content="{% if page_meta.noindex %}noindex, follow{% else %}index, follow, max-image-preview:large, max-snippet:-1{% endif %}">
-  {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}">{% endif %}
-  <link rel="alternate" hreflang="en" href="{{ page_meta.canonical|default:request.build_absolute_uri }}">
-  <link rel="alternate" hreflang="x-default" href="{{ page_meta.canonical|default:request.build_absolute_uri }}">
+  {% if page_meta.canonical %}<link rel="canonical" href="{{ page_meta.canonical }}{{ lang_suffix }}">
+  {% for code in lang_codes %}<link rel="alternate" hreflang="{{ code }}" href="{{ page_meta.canonical }}{% if code != 'en' %}?lang={{ code }}{% endif %}">
+  {% endfor %}<link rel="alternate" hreflang="x-default" href="{{ page_meta.canonical }}">{% endif %}
   <meta property="og:site_name" content="TradeGate Consultants">
-  <meta property="og:locale" content="en_GB">
+  <meta property="og:locale" content="{{ lang_og }}">
   <meta property="og:type" content="{{ page_meta.og_type|default:'website' }}">
   <meta property="og:title" content="{{ full_title }}">
   {% if page_meta.description %}<meta property="og:description" content="{{ page_meta.description }}">{% endif %}
-  <meta property="og:url" content="{{ page_meta.canonical|default:request.build_absolute_uri }}">
+  <meta property="og:url" content="{% if page_meta.canonical %}{{ page_meta.canonical }}{{ lang_suffix }}{% else %}{{ request.build_absolute_uri }}{% endif %}">
   <meta property="og:image" content="{% if page_meta.og_image %}{{ page_meta.og_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'og-default.png' %}{% endif %}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -32,9 +32,12 @@
   <meta name="geo.region" content="DE-SN">
   <meta name="geo.placename" content="Leipzig">
   <meta name="theme-color" content="#07111F">
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/website/img/favicon-32.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="96x96" href="/static/website/img/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/website/img/favicon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/static/website/img/favicon-512.png">
   <link rel="apple-touch-icon" href="/static/website/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
 
   <script type="application/ld+json">{{ org_schema_json|safe }}</script>
   {% if structured_data_json %}
@@ -46,10 +49,6 @@
   {% if breadcrumb_json %}
   <script type="application/ld+json">{{ breadcrumb_json|safe }}</script>
   {% endif %}
-
-  <!-- Favicon: inline SVG -->
-  <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%2307111F'/%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='none' stroke='%23D6B36A' stroke-opacity='.55'/%3E%3Cpath d='M16 35h32M32 16v32M20 24c6 4 18 4 24 0M20 40c6-4 18-4 24 0' stroke='%23D6B36A' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 
   <!-- Google Fonts: Sora display + DM Sans body -->
   <link rel="preload" as="image" href="/static/website/img/tradegate-logo-light.webp">
@@ -161,6 +160,7 @@
     .carousel-scroll { scroll-snap-type: x mandatory; scrollbar-width: thin; }
     .carousel-card { scroll-snap-align: start; }
     /* Partner event banner placeholder (until the organiser's official banner is uploaded) */
+    .lang-picker > summary::-webkit-details-marker { display: none; }
     .fair-banner { background: radial-gradient(120% 140% at 100% 0%, rgba(214,163,74,.28) 0%, rgba(214,163,74,0) 45%), linear-gradient(135deg, #07111F 0%, #0E2238 55%, #13314F 100%); }
     .fair-banner-pattern { background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); background-size: 14px 14px; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 60%); mask-image: linear-gradient(90deg, transparent 0%, #000 60%); }
     .fair-soon { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed rgba(214,163,74,.75); background: rgba(7,17,31,.55); color: #F3D9A4; font: 700 10px/1.2 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; backdrop-filter: blur(4px); }
@@ -209,11 +209,13 @@
         <a href="{% url 'trade_fairs' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">Trade fair calendar</a>
         <a href="{% url 'faq' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">FAQs</a>
         <a href="{% url 'about' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">About</a>
+        <div class="ml-2">{% include "website/partials/lang_picker.html" with compact=False %}</div>
         <a href="{% url 'contact' %}" class="ml-3 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition text-sm shadow-glow">
           Request consultation
         </a>
       </nav>
 
+      <div class="lg:hidden ml-auto mr-2">{% include "website/partials/lang_picker.html" with compact=True %}</div>
       <button id="navToggle" aria-label="Open menu"
               class="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl bg-white/10 border border-white/10 text-white hover:bg-white/15 transition">
         <svg id="iconMenu" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -364,5 +366,13 @@
     })();
   </script>
   {% block extra_js %}{% endblock %}
+<script>
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('details.lang-picker[open]').forEach(function (d) { if (!d.contains(e.target)) d.removeAttribute('open'); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') document.querySelectorAll('details.lang-picker[open]').forEach(function (d) { d.removeAttribute('open'); });
+  });
+</script>
 </body>
 </html>

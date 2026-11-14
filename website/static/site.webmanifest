@@ -1,0 +1,11 @@
+{
+  "name": "TradeGate Consultants",
+  "short_name": "TradeGate",
+  "icons": [
+    {"src": "/static/website/img/favicon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/static/website/img/favicon-512.png", "sizes": "512x512", "type": "image/png"}
+  ],
+  "theme_color": "#07111F",
+  "background_color": "#07111F",
+  "display": "browser"
+}

@@ -62,7 +62,8 @@ class BrandingTests(TestCase):
     def test_header_uses_logo_and_favicon(self):
         response = self.client.get(reverse("home"))
         self.assertContains(response, "tradegate-logo-light.webp")
-        self.assertContains(response, "favicon-32.png")
+        self.assertContains(response, "/favicon.ico")
+        self.assertNotContains(response, "<link rel=\"icon\" type=\"image/svg+xml\"")
 
 
 class TradeFairCalendarTests(TestCase):
@@ -338,3 +339,67 @@ class SeoTests(TestCase):
         with override_settings(USE_TAILWIND_CDN=True):
             body = self.client.get(reverse("home")).content.decode()
         self.assertIn("cdn.tailwindcss.com", body)
+
+
+class LanguageTests(TestCase):
+    def test_german_page_is_translated_with_seo_tags(self):
+        r = self.client.get(reverse("home") + "?lang=de")
+        body = r.content.decode()
+        self.assertIn('<html lang="de"', body)
+        self.assertIn("Ihr Markteintrittsteam", body)
+        self.assertIn('?lang=de"', body)  # canonical / og:url
+        for code in ("en", "de", "fr", "pt", "es", "x-default"):
+            self.assertIn(f'hreflang="{code}"', body)
+        self.assertEqual(r["Content-Language"], "de")
+        self.assertEqual(r.cookies["tg_lang"].value, "de")
+
+    def test_language_is_remembered_and_english_default(self):
+        self.client.get(reverse("home") + "?lang=fr")
+        body = self.client.get(reverse("about")).content.decode()
+        self.assertIn('<html lang="fr"', body)
+        fresh = self.client_class()
+        self.assertIn('<html lang="en"', fresh.get(reverse("about")).content.decode())
+
+    def test_browser_language_used_when_no_choice(self):
+        body = self.client.get(reverse("faq"), HTTP_ACCEPT_LANGUAGE="es-ES,es;q=0.9").content.decode()
+        self.assertIn('<html lang="es"', body)
+
+    def test_all_languages_render_every_main_page(self):
+        for code in ("de", "fr", "pt", "es"):
+            for name in ("home", "about", "faq", "contact", "trade_fairs"):
+                r = self.client.get(reverse(name) + f"?lang={code}")
+                self.assertEqual(r.status_code, 200, (code, name))
+            for slug in SERVICE_PAGES:
+                self.assertEqual(self.client.get(reverse("service_landing", kwargs={"slug": slug}) + f"?lang={code}").status_code, 200)
+
+    def test_picker_in_nav_and_structured_data_untouched(self):
+        body = self.client.get(reverse("home") + "?lang=pt").content.decode()
+        self.assertIn('class="lang-picker', body)
+        for name in ("English", "Deutsch", "Français", "Português", "Español"):
+            self.assertIn(name, body)
+        self.assertIn('"ProfessionalService"', body)
+        self.assertIn("csrfmiddlewaretoken", self.client.get(reverse("contact") + "?lang=de").content.decode())
+
+    def test_contact_form_in_german_still_emails(self):
+        import time
+        from django.core import mail
+        self.client.get(reverse("contact") + "?lang=de")
+        r = self.client.post(reverse("contact"), {
+            "full_name": "Max Muster", "email": "max@example.de", "company_name": "Muster GmbH",
+            "service_interest": "trade_fair", "contact_method": "email", "subject": "Messe",
+            "message": "Wir brauchen Unterstützung auf einer Messe im nächsten Jahr.", "consent": "on",
+            "website_url": "", "form_started_at": str(int(time.time()) - 120),
+        }, follow=True)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Danke", r.content.decode())
+
+    def test_admin_and_sitemap_not_translated(self):
+        self.assertNotIn("Content-Language", self.client.get("/sitemap.xml?lang=de").headers)
+        body = self.client.get("/sitemap.xml").content.decode()
+        self.assertIn("?lang=de", body)
+        self.assertIn("?lang=es", body)
+
+    def test_favicon_served_at_root(self):
+        r = self.client.get("/favicon.ico")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r["Content-Type"], "image/x-icon")

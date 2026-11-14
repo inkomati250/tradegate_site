@@ -33,9 +33,25 @@ def site_settings(request) -> dict[str, Any]:
     from django.conf import settings
 
     from .seo import org_schema
+    from . import i18n
+
+    lang = getattr(request, "LANGUAGE_CODE", i18n.DEFAULT)
+    params = request.GET.copy()
+    lang_links = []
+    for code, info in i18n.LANGS.items():
+        params["lang"] = code
+        lang_links.append({"code": code, "name": info["name"], "flag": info["flag"],
+                           "url": f"{request.path}?{params.urlencode()}", "current": code == lang})
 
     return {
         "org_schema_json": org_schema(request, site),
+        "lang": lang,
+        "lang_name": i18n.LANGS[lang]["name"],
+        "lang_flag": i18n.LANGS[lang]["flag"],
+        "lang_og": i18n.LANGS[lang]["og"],
+        "lang_suffix": "" if lang == i18n.DEFAULT else f"?lang={lang}",
+        "lang_links": lang_links,
+        "lang_codes": list(i18n.LANGS),
         "google_site_verification": getattr(settings, "GOOGLE_SITE_VERIFICATION", ""),
         "bing_site_verification": getattr(settings, "BING_SITE_VERIFICATION", ""),
         "use_tailwind_cdn": getattr(settings, "USE_TAILWIND_CDN", False),

@@ -53,3 +53,20 @@ class TradeFairSitemap(Sitemap):
 
     def lastmod(self, obj):
         return getattr(obj, "updated_at", None)
+
+
+class TranslatedSitemap(Sitemap):
+    """German, French, Portuguese and Spanish versions of every public page (?lang=xx)."""
+    changefreq = "weekly"
+    priority = 0.6
+
+    def items(self):
+        from . import i18n
+        paths = [reverse(n) for n in ("home", "trade_fairs", "about", "faq", "contact")]
+        paths += [reverse("service_landing", kwargs={"slug": s}) for s in SERVICE_PAGES]
+        paths += [reverse("trade_fair_detail", kwargs={"slug": f.slug}) for f in TradeFair.objects.filter(is_published=True)]
+        return [(p, code) for code in i18n.LANGS if code != i18n.DEFAULT for p in paths]
+
+    def location(self, item):
+        path, code = item
+        return f"{path}?lang={code}"

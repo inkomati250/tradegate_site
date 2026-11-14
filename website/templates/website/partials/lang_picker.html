@@ -1,0 +1,18 @@
+{% comment %}Language picker (flags), as on expoBridge. Never translated. Param: compact (bool).{% endcomment %}
+<details class="lang-picker relative" translate="no">
+  <summary class="lang-current list-none cursor-pointer select-none inline-flex items-center gap-2 h-9 px-3 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 text-white/85 text-[13px] font-semibold transition" aria-label="Language: {{ lang_name }}">
+    {% include "website/partials/flag.html" with code=lang_flag %}
+    <span class="{% if compact %}sr-only{% endif %}">{{ lang_name }}</span>
+    <svg class="h-3 w-3 opacity-70" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+  </summary>
+  <div class="lang-menu absolute right-0 top-[calc(100%+8px)] z-50 min-w-[190px] p-1.5 rounded-2xl bg-white shadow-soft border border-slate-200" role="menu">
+    {% for l in lang_links %}
+      <a href="{{ l.url }}" lang="{{ l.code }}" hreflang="{{ l.code }}" role="menuitem" rel="alternate"
+         class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#07111F] hover:bg-slate-100 {% if l.current %}bg-slate-100 font-bold{% else %}font-medium{% endif %}"{% if l.current %} aria-current="true"{% endif %}>
+        {% include "website/partials/flag.html" with code=l.flag %}
+        <span>{{ l.name }}</span>
+        {% if l.current %}<svg class="ml-auto h-3.5 w-3.5 text-brand-copper" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>{% endif %}
+      </a>
+    {% endfor %}
+  </div>
+</details>

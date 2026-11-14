@@ -3,13 +3,14 @@ from django.http import HttpResponse
 from django.urls import include, path
 from django.contrib.sitemaps.views import sitemap
 
-from website.sitemaps import StaticViewSitemap, ServicePageSitemap, LegalPageSitemap, TradeFairSitemap
+from website.sitemaps import StaticViewSitemap, ServicePageSitemap, LegalPageSitemap, TradeFairSitemap, TranslatedSitemap
 
 sitemaps = {
     "static": StaticViewSitemap,
     "services": ServicePageSitemap,
     "legal": LegalPageSitemap,
     "trade_fairs": TradeFairSitemap,
+    "languages": TranslatedSitemap,
 }
 
 
@@ -31,6 +32,27 @@ def robots_txt(request):
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
 
 
+def _static_file(name, content_type):
+    """Serve a file from website/static at the site root (Google looks for /favicon.ico)."""
+    from pathlib import Path
+    from django.http import FileResponse, Http404
+
+    path = Path(__file__).resolve().parent.parent / "website" / "static" / name
+    if not path.exists():
+        raise Http404
+    response = FileResponse(open(path, "rb"), content_type=content_type)
+    response["Cache-Control"] = "public, max-age=604800"
+    return response
+
+
+def favicon(request):
+    return _static_file("favicon.ico", "image/x-icon")
+
+
+def webmanifest(request):
+    return _static_file("site.webmanifest", "application/manifest+json")
+
+
 def healthcheck(request):
     """
     Very small health endpoint for monitoring.
@@ -43,6 +65,8 @@ urlpatterns = [
 
     # SEO + indexing
     path("robots.txt", robots_txt, name="robots_txt"),
+    path("favicon.ico", favicon, name="favicon"),
+    path("site.webmanifest", webmanifest, name="webmanifest"),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
 
     # Ops
