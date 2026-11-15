@@ -9,6 +9,7 @@ from django.core.mail import EmailMessage
 from django.db import DatabaseError, OperationalError, ProgrammingError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .content import DEFAULT_OPPORTUNITIES, FAIR_CATEGORIES, FAIR_DISCLAIMER, fair_categories, FOUNDER, PRICING_NOTE, SERVICE_NAV, SERVICE_PAGES
@@ -591,3 +592,17 @@ def partner_pool(request):
         "breadcrumb_json": breadcrumbs(request, ("Partner Hub", reverse("partner_pool"))),
     }
     return render(request, "website/partner_pool.html", context)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def visit_beacon(request):
+    """Receives the page-view signal from the script in base.html (cookieless statistics)."""
+    from . import analytics
+    try:
+        data = json.loads(request.body[:2000] or b"{}")
+    except ValueError:
+        data = {}
+    if isinstance(data, dict):
+        analytics.record_beacon(request, data)
+    return HttpResponse(status=204)

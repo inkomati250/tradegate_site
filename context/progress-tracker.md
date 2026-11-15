@@ -17,6 +17,8 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 
 - **UI-HDR-001** (2026-11-15, owner request): header background made fully solid navy (#07111F). It was 95% opaque since June, so at the top of the page the cream page background showed through and the logo looked duller than when scrolled. Logo file and size unchanged (verified pixel-identical).
 
+- **STATS-002** (2026-11-15): first hours of statistics were inflated by scanners (103 "visitors", 1 view each, 27 countries, all direct). Counting now happens only when a real browser runs a tiny script and reports the view to `/v/` (headless/automation, bot user agents, DNT/GPC, staff excluded); one person = one visitor per day. Old rows reset (0029). Inquiry list: Save button readable, company column.
+
 ## Completed (all live)
 
 | Date | Change | Evidence |

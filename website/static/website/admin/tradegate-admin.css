@@ -171,3 +171,5 @@ div.breadcrumbs { padding: 10px 32px; font-size: 13px; }
 .tg-note { color: #94a3b8; font-size: 12px; margin-top: 8px; }
 .tg-stats-page #content { max-width: 1440px; }
 @media (max-width: 1100px) { .tg-grid3 { grid-template-columns: 1fr; } }
+/* Save button under editable lists (was navy text on navy) */
+#changelist .paginator input[type=submit], #changelist-form .paginator .button { background: #D6B36A !important; color: #07111F !important; border: 0; padding: 9px 18px; border-radius: 10px; font-weight: 700; }

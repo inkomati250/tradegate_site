@@ -185,7 +185,7 @@ class TradeFairOpportunityAdmin(admin.ModelAdmin):
 # =========================
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
-    list_display = ("created_at", "full_name", "email", "subject", "is_handled")
+    list_display = ("created_at", "full_name", "company_name", "email", "subject", "is_handled")
     list_filter = ("is_handled", "created_at")
     search_fields = ("full_name", "email", "subject", "message", "company_name", "country")
     readonly_fields = ("created_at", "updated_at", "ip_address", "user_agent")

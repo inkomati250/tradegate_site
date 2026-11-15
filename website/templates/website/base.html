@@ -372,6 +372,7 @@
     })();
   </script>
   {% block extra_js %}{% endblock %}
+  {% if not user.is_staff %}<script>/* cookieless visitor statistics, see privacy policy section 11 */(function(){try{if(navigator.webdriver||document.visibilityState==="prerender")return;var d=JSON.stringify({p:location.pathname,r:document.referrer,l:document.documentElement.lang});if(navigator.sendBeacon){navigator.sendBeacon("/v/",new Blob([d],{type:"application/json"}))}else{fetch("/v/",{method:"POST",body:d,keepalive:true,headers:{"Content-Type":"application/json"}})}}catch(e){}})();</script>{% endif %}
 <script>
   document.addEventListener('click', function (e) {
     document.querySelectorAll('details.lang-picker[open]').forEach(function (d) { if (!d.contains(e.target)) d.removeAttribute('open'); });

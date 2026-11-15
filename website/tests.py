@@ -606,27 +606,46 @@ class PartnerHubConfirmationAndAdminTests(TestCase):
 class VisitorStatsTests(TestCase):
     UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36"
 
-    def test_page_views_counted_without_ip_and_bots_skipped(self):
+    def _beacon(self, path="/partner-hub/", ref="", lang="en", **headers):
+        import json
+        h = {"HTTP_USER_AGENT": self.UA, "HTTP_X_REAL_IP": "203.0.113.7"}
+        h.update(headers)
+        return self.client.post("/v/", data=json.dumps({"p": path, "r": ref, "l": lang}), content_type="application/json", **h)
+
+    def test_only_browser_beacons_count_and_no_ip_stored(self):
         from .models import PageVisit
-        self.client.get("/partner-hub/?lang=de", HTTP_USER_AGENT=self.UA, HTTP_REFERER="https://www.google.com/",
-                        HTTP_X_REAL_IP="203.0.113.7")
-        self.client.get("/", HTTP_USER_AGENT="Googlebot/2.1 (+http://www.google.com/bot.html)")
-        self.client.get("/", HTTP_USER_AGENT=self.UA, HTTP_DNT="1")
-        self.client.get("/static/website/css/site.css", HTTP_USER_AGENT=self.UA)
-        self.client.get("/does-not-exist/", HTTP_USER_AGENT=self.UA)
+        self.client.get("/", HTTP_USER_AGENT=self.UA)  # plain page load (e.g. a scanner): not counted
+        self.assertEqual(PageVisit.objects.count(), 0)
+        self.assertEqual(self._beacon(ref="https://www.google.com/", lang="de").status_code, 204)
+        self._beacon(HTTP_USER_AGENT="Googlebot/2.1 (+http://www.google.com/bot.html)")
+        self._beacon(HTTP_USER_AGENT="python-requests/2.31")
+        self._beacon(HTTP_DNT="1")
+        self._beacon(path="/admin/")
+        self._beacon(path="https://evil.example/")
         self.assertEqual(PageVisit.objects.count(), 1)
         v = PageVisit.objects.get()
         self.assertEqual((v.path, v.source, v.language, v.device), ("/partner-hub/", "Google", "de", "Desktop"))
-        self.assertEqual(len(v.visitor), 16)
         self.assertNotIn("203.0.113.7", str(v.__dict__))
+
+    def test_same_person_counts_once_per_day(self):
+        from .analytics import summary
+        for p in ("/", "/about/", "/partner-hub/"):
+            self._beacon(path=p)
+        self._beacon(path="/", HTTP_X_REAL_IP="198.51.100.9")
+        s = summary(7)
+        self.assertEqual((s["visitors"], s["views"]), (2, 4))
+
+    def test_public_pages_carry_the_beacon_script(self):
+        self.assertContains(self.client.get("/"), 'sendBeacon("/v/"')
 
     def test_staff_visits_not_counted_and_stats_page_renders(self):
         from django.contrib.auth.models import User
         from .models import PageVisit
         User.objects.create_superuser("boss", "boss@example.com", "pw-123456")
         self.client.login(username="boss", password="pw-123456")
-        self.client.get("/", HTTP_USER_AGENT=self.UA)
+        self._beacon()
         self.assertEqual(PageVisit.objects.count(), 0)
+        self.assertNotContains(self.client.get("/"), 'sendBeacon("/v/"')
         r = self.client.get(reverse("admin:website_pagevisit_changelist") + "?days=7")
         self.assertContains(r, "Visitor statistics")
         self.assertContains(r, "DB-IP")

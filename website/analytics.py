@@ -6,7 +6,9 @@ language and a visitor code. The visitor code is a hash of IP + browser + a salt
 that changes every day, so the same person cannot be followed across days and
 the IP address itself is never stored. No cookies, nothing sent to third parties.
 Visits by logged-in staff, bots, and browsers with Do Not Track / Global Privacy
-Control are not counted.
+Control are not counted. A page view is only counted when the visitor's browser runs
+the small script on the page (automated scanners usually do not), and a person is
+counted once per day however many pages they open.
 """
 import hashlib
 import logging
@@ -108,17 +110,15 @@ def visitor_code(ip, ua, day):
     return hashlib.sha256(f"{salt}|{ip}|{ua}".encode()).hexdigest()[:16]
 
 
-def should_count(request, response):
-    if request.method != "GET" or response.status_code != 200:
-        return False
-    if not (response.get("Content-Type", "").startswith("text/html")):
-        return False
-    if request.path.startswith(SKIP_PREFIXES):
-        return False
+MAX_VIEWS_PER_VISITOR_PER_DAY = 300
+
+
+def is_real_browser(request):
+    """Server-side checks; the main bot filter is that only browsers running JavaScript send the beacon."""
     if request.META.get("HTTP_DNT") == "1" or request.META.get("HTTP_SEC_GPC") == "1":
         return False
     ua = request.META.get("HTTP_USER_AGENT", "")
-    if not ua or BOT_RE.search(ua):
+    if not ua or BOT_RE.search(ua) or "mozilla" not in ua.lower():
         return False
     user = getattr(request, "user", None)
     if user is not None and getattr(user, "is_staff", False):
@@ -126,31 +126,34 @@ def should_count(request, response):
     return True
 
 
-def record(request, response):
+def record_beacon(request, data):
+    """Count one page view reported by the small script on every public page (see base.html).
+
+    Returns True when the view was stored."""
     from .models import PageVisit
 
-    if not should_count(request, response):
-        return
+    path = str(data.get("p") or "")[:200]
+    if not path.startswith("/") or path.startswith(SKIP_PREFIXES) or not is_real_browser(request):
+        return False
     try:
         from django.utils import timezone
         today = timezone.localdate()
         ip = client_ip(request)
         ua = request.META.get("HTTP_USER_AGENT", "")[:400]
+        visitor = visitor_code(ip, ua, today)
+        if PageVisit.objects.filter(day=today, visitor=visitor).count() >= MAX_VIEWS_PER_VISITOR_PER_DAY:
+            return False
         code, name = country_of(ip)
-        source, ref_host = source_of(request.META.get("HTTP_REFERER", ""), request.get_host().split(":")[0].lower())
+        source, ref_host = source_of(str(data.get("r") or "")[:500], request.get_host().split(":")[0].lower())
+        lang = str(data.get("l") or "en")[:5]
         PageVisit.objects.create(
-            day=today,
-            visitor=visitor_code(ip, ua, today),
-            path=request.path[:200],
-            country_code=code,
-            country=name,
-            source=source,
-            referrer_host=ref_host,
-            device=device_of(ua),
-            language=getattr(request, "LANGUAGE_CODE", "en")[:5],
+            day=today, visitor=visitor, path=path, country_code=code, country=name, source=source,
+            referrer_host=ref_host, device=device_of(ua), language=lang if lang in LANG_NAMES else "en",
         )
+        return True
     except Exception:
         logger.debug("Visit not recorded", exc_info=True)
+        return False
 
 
 def prune():

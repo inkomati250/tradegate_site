@@ -14,7 +14,7 @@
 </div>
 
 <div class="tg-kpis">
-  <div class="tg-kpi dark"><div class="k">Visitors</div><div class="n">{{ stats.visitors }}</div><div class="s">Daily unique visitors added up</div></div>
+  <div class="tg-kpi dark"><div class="k">Visitors</div><div class="n">{{ stats.visitors }}</div><div class="s">Each person counted once per day</div></div>
   <div class="tg-kpi"><div class="k">Page views</div><div class="n">{{ stats.views }}</div><div class="s">{% if stats.visitors %}{{ stats.views|floatformat:0 }} views by {{ stats.visitors }} visitors{% else %}–{% endif %}</div></div>
   <div class="tg-kpi"><div class="k">Countries</div><div class="n">{{ stats.country_count }}</div><div class="s">{% if not stats.has_geo %}Country database not installed yet{% else %}Where visitors come from{% endif %}</div></div>
   <div class="tg-kpi"><div class="k">Today / last 7 days</div><div class="n">{{ stats.today }} <span style="font-size:20px;color:#94a3b8">/ {{ stats.week }}</span></div><div class="s">Visitors</div></div>
@@ -43,5 +43,5 @@
   <section class="tg-panel"><div class="tg-panel-h"><h3>Devices</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.devices %}</div></section>
   <section class="tg-panel"><div class="tg-panel-h"><h3>Website language used</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.languages %}</div></section>
 </div>
-<p class="tg-note">Country data: IP geolocation by <a href="https://db-ip.com" target="_blank" rel="noopener">DB-IP</a> (CC BY 4.0). Statistics are kept for 13 months, as stated in the privacy policy (section 11).</p>
+<p class="tg-note">How we count: a page view is recorded only when a real browser opens the page (automated scanners and search robots are left out). Each person counts once per day, however many pages they open; someone who comes back on another day counts again, because we deliberately do not track people across days. Country data: IP geolocation by <a href="https://db-ip.com" target="_blank" rel="noopener">DB-IP</a> (CC BY 4.0). Statistics are kept for 13 months, as stated in the privacy policy (section 11).</p>
 {% endblock %}
