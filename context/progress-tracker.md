@@ -56,6 +56,13 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 
 ## Next steps (owner's order)
 
+**Tomorrow (owner at private PC with Chrome + Claude in Chrome):**
+- Install the three Gmail signatures (Ivan, team for info@/contact@, short reply) from the signatures page https://claude.ai/artifact/CtPS2z8YCMuAef7sEMjKu1; one per "Send mail as" address; ask Ralf Schmidt's title for his signature.
+- Optional, offered: TradeGate company profile PDF and digital business card (no phone number) to link from signatures.
+- Owner: mark test enquiries handled, archive the "TradeGate TEST company" in Partner Hub, decide on the Partner Hub confirmation email (Site Settings), clean up WhatsApp privacy settings on phone.
+- Later: working structure, standards, onboarding and training materials.
+
+
 1. Resolve EVT-001.
 2. When Aviana is countersigned: tick materials permission + published; upload official logo/banner/brochure (no organiser contacts on them).
 3. Search Console + Google Business Profile.
