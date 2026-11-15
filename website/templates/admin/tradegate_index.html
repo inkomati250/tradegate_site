@@ -1,59 +1,99 @@
 {% extends "admin/index.html" %}
+{% load i18n %}
+{% block coltype %}colM tg-home{% endblock %}
+{% block bodyclass %}{{ block.super }} tg-dashboard-page{% endblock %}
+{% block content_title %}{% endblock %}
+{% block sidebar %}{% endblock %}
 {% block content %}
-<div class="tg-dashboard">
-  <div class="tg-card dark">
-    <div class="tg-label">New enquiries</div>
-    <div class="tg-num">{{ tg_new_enquiries }}</div>
-    <p>Not yet marked as handled.</p>
-    <div class="tg-actions"><a href="{% url 'admin:website_inquiry_changelist' %}?is_handled__exact=0">Open enquiries</a></div>
+<div class="tg-hello">
+  <div>
+    <h2>Hello{% if user.first_name %} {{ user.first_name }}{% endif %}.</h2>
+    <p>{{ tg_today|date:"l, j F Y" }} · Here is what needs your attention.</p>
   </div>
-  <div class="tg-card dark">
-    <div class="tg-label">Partner Hub: new companies</div>
-    <div class="tg-num">{{ tg_pool_pending }}</div>
-    <p>{{ tg_pool_approved }} approved in the network.</p>
-    <div class="tg-actions"><a href="{% url 'admin:website_partnerprofile_changelist' %}?status__exact=pending">Review new companies</a></div>
-  </div>
-  <div class="tg-card">
-    <div class="tg-label">Upcoming fairs</div>
-    <div class="tg-num">{{ tg_upcoming_fairs }}</div>
-    <p>Published in the trade fair calendar.</p>
-    <div class="tg-actions"><a href="{% url 'admin:website_tradefair_add' %}">Add a trade fair</a></div>
-  </div>
-  <div class="tg-card">
-    <div class="tg-label">Partner events waiting</div>
-    <div class="tg-num">{{ tg_partner_waiting }}</div>
-    <p>Hidden until the organiser's written permission is recorded.</p>
-    <div class="tg-actions"><a href="{% url 'admin:website_tradefair_changelist' %}?kind__exact=represented&is_published__exact=0">Review</a></div>
-  </div>
-  <div class="tg-card">
-    <div class="tg-label">Quick edits</div>
-    <div class="tg-actions">
-      <a href="{% url 'admin:website_servicepackage_changelist' %}">Packages and prices</a>
-      <a href="{% url 'admin:website_teamprofile_changelist' %}">Team</a>
-      <a href="{% url 'admin:website_sitesettings_changelist' %}">Site settings</a>
-      <a href="/" target="_blank" rel="noopener">View website</a>
-    </div>
+  <div class="tg-quick" style="padding:0">
+    <a class="main" href="{% url 'admin:website_partnerprofile_changelist' %}?status__exact=pending">Review new companies</a>
+    <a href="{% url 'admin:website_tradefair_add' %}">Add a trade fair</a>
+    <a href="/partner-hub/" target="_blank" rel="noopener">Partner Hub page ↗</a>
   </div>
 </div>
 
-{% if tg_recent_enquiries %}
-<div class="module tg-recent">
-  <table>
-    <caption>Latest open enquiries</caption>
-    <thead><tr><th>Received</th><th>From</th><th>Company</th><th>Subject</th></tr></thead>
-    <tbody>
+<div class="tg-kpis">
+  <a class="tg-kpi dark" href="{% url 'admin:website_inquiry_changelist' %}?is_handled__exact=0">
+    <div class="k">Open enquiries</div><div class="n">{{ tg_new_enquiries|default:0 }}</div>
+    <div class="s">{{ tg_enquiries_month|default:0 }} received this month</div>
+  </a>
+  <a class="tg-kpi dark" href="{% url 'admin:website_partnerprofile_changelist' %}?status__exact=pending">
+    <div class="k">Partner Hub: to review</div><div class="n">{{ tg_pool_pending|default:0 }}</div>
+    <div class="s">New companies waiting for approval</div>
+  </a>
+  <a class="tg-kpi" href="{% url 'admin:website_partnerprofile_changelist' %}?status__exact=approved">
+    <div class="k">Partner Hub: network</div><div class="n">{{ tg_pool_approved|default:0 }}</div>
+    <div class="s">{{ tg_pool_introduced|default:0 }} already introduced</div>
+  </a>
+  <a class="tg-kpi" href="{% url 'admin:website_tradefair_changelist' %}">
+    <div class="k">Upcoming fairs</div><div class="n">{{ tg_upcoming_fairs|default:0 }}</div>
+    <div class="s">Partner events waiting for permission: {{ tg_partner_waiting|default:0 }}</div>
+  </a>
+</div>
+
+<div class="tg-grid2">
+  <section class="tg-panel">
+    <div class="tg-panel-h"><h3>Open enquiries</h3><a href="{% url 'admin:website_inquiry_changelist' %}">All enquiries →</a></div>
+    {% if tg_recent_enquiries %}
+    <table>
+      <tr><th>Received</th><th>From</th><th>Subject</th></tr>
       {% for q in tg_recent_enquiries %}
-        <tr>
-          <td>{{ q.created_at|date:"d M Y, H:i" }}</td>
-          <td><a href="{% url 'admin:website_inquiry_change' q.pk %}">{{ q.full_name }}</a></td>
-          <td>{{ q.company_name|default:"–" }}</td>
-          <td>{{ q.subject }}</td>
-        </tr>
+      <tr>
+        <td>{{ q.created_at|date:"j M, H:i" }}</td>
+        <td><a href="{% url 'admin:website_inquiry_change' q.pk %}">{{ q.full_name }}</a>{% if q.company_name %}<br><span style="color:#64748b">{{ q.company_name }}</span>{% endif %}</td>
+        <td>{{ q.subject|truncatechars:60 }}</td>
+      </tr>
       {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% endif %}
+    </table>
+    {% else %}<div class="tg-empty">No open enquiries. Well done.</div>{% endif %}
+  </section>
 
-{{ block.super }}
+  <section class="tg-panel">
+    <div class="tg-panel-h"><h3>Partner Hub: newest companies</h3><a href="{% url 'admin:website_partnerprofile_changelist' %}">All companies →</a></div>
+    {% if tg_pool_newest %}
+    <table>
+      <tr><th>Company</th><th>Status</th><th>Matches</th></tr>
+      {% for p in tg_pool_newest %}
+      <tr>
+        <td><a href="{% url 'admin:website_partnerprofile_change' p.pk %}">{{ p.company_name }}</a><br><span style="color:#64748b">{{ p.country }} · {{ p.get_sector_display }}</span></td>
+        <td><span class="tg-status {{ p.status }}">{{ p.get_status_display|cut:": waiting for review"|cut:": in the pool" }}</span></td>
+        <td>{% if p.tg_matches %}<span class="tg-match">{{ p.tg_matches }}</span>{% else %}–{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<div class="tg-empty">No companies yet. Share <a href="/partner-hub/" target="_blank" rel="noopener">tradegateconsultants.com/partner-hub/</a> with your contacts.</div>{% endif %}
+  </section>
+</div>
+
+<div class="tg-grid2">
+  <section class="tg-panel">
+    <div class="tg-panel-h"><h3>Trade fairs in the next 4 months</h3><a href="{% url 'admin:website_tradefair_changelist' %}">Calendar →</a></div>
+    {% if tg_next_fairs %}
+    <table>
+      {% for f in tg_next_fairs %}
+      <tr><td style="white-space:nowrap">{{ f.start_date|date:"j M" }}</td><td><a href="{% url 'admin:website_tradefair_change' f.pk %}">{{ f.name }}</a></td><td>{{ f.place_label }}</td></tr>
+      {% endfor %}
+    </table>
+    {% else %}<div class="tg-empty">No published fairs in the next 4 months.</div>{% endif %}
+  </section>
+
+  <section class="tg-panel">
+    <div class="tg-panel-h"><h3>Manage the website</h3></div>
+    <div class="tg-sections" style="padding:14px 18px; grid-template-columns: repeat(2, minmax(0,1fr));">
+      {% for app in app_list %}
+      <div class="tg-section">
+        <h4>{{ app.name }}</h4>
+        {% for model in app.models %}
+          {% if model.admin_url %}<a class="row" href="{{ model.admin_url }}">{{ model.name }}</a>{% endif %}
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
 {% endblock %}

@@ -67,6 +67,14 @@ class SiteSettings(models.Model):
     brand_accent = models.CharField(max_length=20, default="#C6A15B")   # warm gold
     brand_muted = models.CharField(max_length=20, default="#94A3B8")    # slate-ish
 
+    # Partner Hub
+    hub_confirmation_email = models.BooleanField(
+        default=False,
+        verbose_name="Partner Hub: send confirmation email",
+        help_text="When ticked, companies that register in the Partner Hub get a short confirmation email in the language they used "
+                  "(what happens next, profile is private, reply to update or delete). You always get your own notification.",
+    )
+
     # ✅ NEW: prevents your admin “updated_at not found” errors
     updated_at = models.DateTimeField(auto_now=True)
 

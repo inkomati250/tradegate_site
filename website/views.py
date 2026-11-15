@@ -542,6 +542,15 @@ def partner_pool(request):
             except Exception:
                 logger.exception("Partner pool email failed for profile_id=%s", profile.id)
 
+            if site and site.hub_confirmation_email:
+                from .partner_pool import confirmation_email
+                subject, text = confirmation_email(profile)
+                try:
+                    EmailMessage(subject=subject, body=text, from_email=from_email, to=[profile.email],
+                                 reply_to=[receiver]).send(fail_silently=False)
+                except Exception:
+                    logger.exception("Partner Hub confirmation email failed for profile_id=%s", profile.id)
+
             messages.success(request, "Thank you. Your company is registered. We review every profile within 2 working days and contact you when we see a fitting partner.")
             return redirect(reverse("partner_pool") + "#pool-form")
         messages.error(request, "Please correct the highlighted fields and try again.")

@@ -1,9 +1,13 @@
+import logging
+
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+
+logger = logging.getLogger(__name__)
 
 from .models import (
     SiteSettings,
@@ -56,6 +60,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         ("Social links (footer)", {"fields": ("facebook_url", "instagram_url", "x_url", "whatsapp_url")}),
         ("Homepage hero", {"fields": ("hero_title", "hero_subtitle", "hero_cta_label", "hero_cta_url")}),
         ("SEO defaults", {"fields": ("meta_title", "meta_description", "og_image_url")}),
+        ("Partner Hub", {"fields": ("hub_confirmation_email",)}),
         ("System", {"fields": ("updated_at",)}),
     )
 
@@ -313,25 +318,54 @@ _original_index = admin.site.index
 
 
 def _tradegate_index(request, extra_context=None):
+    from datetime import timedelta
     from django.utils import timezone
+    from .partner_pool import suggestions_for
     today = timezone.localdate()
     context = {}
     try:
+        pool = list(PartnerProfile.objects.filter(status__in=["approved", "introduced"]))
+        newest = list(PartnerProfile.objects.order_by("-created_at")[:6])
+        for p in newest:
+            p.tg_matches = len(suggestions_for(p, [o for o in pool if o.pk != p.pk]))
+        month_start = today.replace(day=1)
         context = {
             "tg_new_enquiries": Inquiry.objects.filter(is_handled=False).count(),
-            "tg_recent_enquiries": Inquiry.objects.filter(is_handled=False).order_by("-created_at")[:5],
+            "tg_enquiries_month": Inquiry.objects.filter(created_at__date__gte=month_start).count(),
+            "tg_recent_enquiries": Inquiry.objects.filter(is_handled=False).order_by("-created_at")[:6],
             "tg_upcoming_fairs": TradeFair.objects.filter(is_published=True).exclude(end_date__lt=today).count(),
+            "tg_next_fairs": TradeFair.objects.filter(is_published=True, start_date__gte=today,
+                                                      start_date__lte=today + timedelta(days=120)).order_by("start_date")[:6],
             "tg_pool_pending": PartnerProfile.objects.filter(status="pending").count(),
-            "tg_pool_approved": PartnerProfile.objects.filter(status__in=["approved", "introduced"]).count(),
+            "tg_pool_approved": len(pool),
+            "tg_pool_introduced": PartnerProfile.objects.filter(status="introduced").count(),
+            "tg_pool_newest": newest,
             "tg_partner_waiting": TradeFair.objects.filter(kind=TradeFair.KIND_REPRESENTED, is_published=False).count(),
+            "tg_today": today,
         }
     except Exception:
-        pass
+        logger.exception("Admin dashboard figures failed")
     context.update(extra_context or {})
     return _original_index(request, context)
 
 
 admin.site.index = _tradegate_index
+admin.site.enable_nav_sidebar = False
+
+_original_each_context = admin.site.each_context
+
+
+def _tradegate_each_context(request):
+    ctx = _original_each_context(request)
+    try:
+        ctx["tg_nav_pending"] = PartnerProfile.objects.filter(status="pending").count()
+        ctx["tg_nav_enquiries"] = Inquiry.objects.filter(is_handled=False).count()
+    except Exception:
+        ctx["tg_nav_pending"] = ctx["tg_nav_enquiries"] = 0
+    return ctx
+
+
+admin.site.each_context = _tradegate_each_context
 
 
 # =========================
@@ -367,10 +401,41 @@ class _AgeFilter(admin.SimpleListFilter):
         return queryset
 
 
+from django import forms as _forms  # noqa: E402
+
+
+class PartnerProfileAdminForm(_forms.ModelForm):
+    """Shows partner types and regions as tick-boxes; stores them as comma-separated codes."""
+    from .partner_pool import PARTNER_TYPE_CHOICES as _PT, TARGET_CHOICES as _TR, COUNTRY_CHOICES as _CC, SIZE_CHOICES as _SC
+    partner_types = _forms.MultipleChoiceField(choices=_PT, widget=_forms.CheckboxSelectMultiple, required=False, label="Partner types sought")
+    target_regions = _forms.MultipleChoiceField(choices=_TR, widget=_forms.CheckboxSelectMultiple, required=False, label="Regions where they look")
+    country = _forms.ChoiceField(choices=_CC, label="Country")
+    company_size = _forms.ChoiceField(choices=_SC, required=False, label="Company size")
+
+    class Meta:
+        model = PartnerProfile
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            from .partner_pool import split_csv
+            self.initial["partner_types"] = split_csv(self.instance.partner_types)
+            self.initial["target_regions"] = split_csv(self.instance.target_regions)
+
+    def clean_partner_types(self):
+        return ",".join(self.cleaned_data.get("partner_types") or [])
+
+    def clean_target_regions(self):
+        return ",".join(self.cleaned_data.get("target_regions") or [])
+
+
 @admin.register(PartnerProfile)
 class PartnerProfileAdmin(admin.ModelAdmin):
-    list_display = ("company_name", "country", "sector", "company_type", "status", "match_count", "created_at")
-    list_filter = ("status", _RegionFilter, "sector", "company_type", _AgeFilter, "created_at")
+    form = PartnerProfileAdminForm
+    list_display = ("company_name", "location", "sector", "company_type", "status_badge", "match_count", "created_at")
+    list_display_links = ("company_name",)
+    list_filter = ("status", _RegionFilter, "sector", _AgeFilter)
     search_fields = ("company_name", "products", "offering", "seeking", "contact_name", "email", "country", "city")
     list_per_page = 50
     date_hierarchy = "created_at"
@@ -379,11 +444,20 @@ class PartnerProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Review", {"fields": ("status", "suggested_matches", "internal_notes")}),
         ("Company", {"fields": ("company_name", "website", ("country", "city"), ("company_type", "company_size"), "sector", "products")}),
-        ("Offer and search", {"fields": ("offering", "seeking", "partner_types", "target_regions"),
-                              "description": "Partner types and regions are stored as codes, separated by commas."}),
+        ("Offer and search", {"fields": ("offering", "seeking", "partner_types", "target_regions")}),
         ("Contact person (never shared without approval)", {"fields": ("contact_name", "contact_role", "email", "phone")}),
         ("Consent and record", {"classes": ("collapse",), "fields": ("consent", "consent_at", "language", "ip_address", "user_agent", "reviewed_at", "created_at", "updated_at")}),
     )
+
+    @admin.display(description="Location", ordering="country")
+    def location(self, obj):
+        return ", ".join(p for p in (obj.city, obj.country) if p)
+
+    @admin.display(description="Status", ordering="status")
+    def status_badge(self, obj):
+        from django.utils.html import format_html
+        label = obj.get_status_display().split(":")[0]
+        return format_html('<span class="tg-status {}">{}</span>', obj.status, label)
 
     def _pool(self, obj):
         return PartnerProfile.objects.filter(status__in=["approved", "introduced"]).exclude(pk=obj.pk)

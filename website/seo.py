@@ -54,6 +54,7 @@ def org_schema(request, site=None):
             "Germany market entry", "EU market entry", "Trade fair representation in Germany",
             "Distributor search Germany", "Business partner search Germany", "EU local representative",
             "Exhibitor recruitment", "Trade fair follow-up and lead management", "German trade fairs",
+            "B2B partner matching", "Business partner network Germany",
         ],
         "founder": {"@type": "Person", "name": "Ivan Nkomati", "jobTitle": "Founder and Managing Partner",
                     "sameAs": [LINKEDIN_FOUNDER]},

@@ -133,7 +133,7 @@ class AdminAndContentTests(TestCase):
         response = self.client.get(reverse("admin:index"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "tradegate-admin.css")
-        self.assertContains(response, "New enquiries")
+        self.assertContains(response, "Open enquiries")
         self.assertContains(response, "Partner events waiting")
         for section in ["Enquiries", "Trade fairs", "Services and prices", "Team and company"]:
             self.assertContains(response, section)
@@ -531,7 +531,7 @@ class PartnerHubTests(TestCase):
         r = self.client.get(reverse("admin:website_partnerprofile_change", args=[exporter.pk]))
         self.assertContains(r, importer.company_name)
         self.assertContains(r, "same sector")
-        self.assertContains(self.client.get(reverse("admin:index")), "Partner Hub: new companies")
+        self.assertContains(self.client.get(reverse("admin:index")), "Partner Hub: to review")
 
     def test_german_version(self):
         r = self.client.get(reverse("partner_pool") + "?lang=de")
@@ -558,3 +558,46 @@ class PrivacyPartnerHubMigrationTests(TestCase):
         self.assertGreater(c.index("private company network"), c.index("English Version"))
         self.assertIn("Stand: 15.11.2026", c)
         self.assertIn("tg_lang", c)
+
+
+class PartnerHubConfirmationAndAdminTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def _post(self, lang=""):
+        import time
+        data = {"form_started_at": str(int(time.time()) - 60), "company_name": "Lagos Agro Ltd", "country": "Nigeria",
+                "company_type": "exporter", "sector": "agrifood", "products": "cashew nuts",
+                "offering": "We process and export cashew nuts in bulk with full traceability.",
+                "seeking": "German importers and wholesalers of nuts and dried fruit.", "partner_types": ["distributor"],
+                "target_regions": ["germany"], "contact_name": "Ada Obi", "email": "ada@lagosagro.example", "consent": "on"}
+        return self.client.post(reverse("partner_pool") + lang, data, follow=True)
+
+    def test_no_confirmation_email_unless_switched_on(self):
+        from django.core import mail
+        self._post()
+        self.assertEqual(len(mail.outbox), 1)  # only our own notification
+
+    def test_confirmation_email_in_registration_language(self):
+        from django.core import mail
+        from .models import SiteSettings
+        SiteSettings.objects.create(hub_confirmation_email=True)
+        self.client.get(reverse("partner_pool") + "?lang=de")
+        self._post()
+        self.assertEqual(len(mail.outbox), 2)
+        confirmation = mail.outbox[1]
+        self.assertEqual(confirmation.to, ["ada@lagosagro.example"])
+        self.assertIn("TradeGate Partner Hub registriert", confirmation.subject)
+        self.assertIn("Lagos Agro Ltd", confirmation.body)
+
+    def test_dashboard_and_top_menu(self):
+        from django.contrib.auth.models import User
+        User.objects.create_superuser("boss", "boss@example.com", "pw-123456")
+        self.client.login(username="boss", password="pw-123456")
+        r = self.client.get(reverse("admin:index"))
+        self.assertContains(r, "Partner Hub: to review")
+        self.assertContains(r, 'class="tg-topnav"')
+        self.assertNotContains(r, 'id="nav-sidebar"')
+        r = self.client.get(reverse("admin:website_partnerprofile_changelist"))
+        self.assertContains(r, 'class="tg-topnav"')

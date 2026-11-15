@@ -198,3 +198,75 @@ def suggestions_for(profile, candidates, limit=10, minimum=40):
             out.append((total, other, r1))
     out.sort(key=lambda x: -x[0])
     return out[:limit]
+
+
+# Confirmation email sent to a company after it registers (only when switched on
+# in Site Settings). Written in the language the company used on the website.
+CONFIRMATION = {
+    "en": ("Your company is registered in the TradeGate Partner Hub",
+           "Dear {name},\n\n"
+           "thank you for registering {company} in the TradeGate Partner Hub.\n\n"
+           "What happens next:\n"
+           "1. We review your profile within 2 working days.\n"
+           "2. We compare it with the companies in our network.\n"
+           "3. When we see a fitting partner, we contact you first. We only make an introduction when both sides agree.\n\n"
+           "Your profile is private. We never publish it or pass on your details without your approval.\n\n"
+           "Your summary:\n{summary}\n\n"
+           "To update or delete your profile, simply reply to this email.\n\n"
+           "Kind regards\nTradeGate Consultants\nwww.tradegateconsultants.com"),
+    "de": ("Ihr Unternehmen ist im TradeGate Partner Hub registriert",
+           "Guten Tag {name},\n\n"
+           "vielen Dank, dass Sie {company} im TradeGate Partner Hub registriert haben.\n\n"
+           "So geht es weiter:\n"
+           "1. Wir prüfen Ihr Profil innerhalb von 2 Werktagen.\n"
+           "2. Wir gleichen es mit den Unternehmen in unserem Netzwerk ab.\n"
+           "3. Sehen wir einen passenden Partner, melden wir uns zuerst bei Ihnen. Wir stellen nur vor, wenn beide Seiten zustimmen.\n\n"
+           "Ihr Profil ist privat. Wir veröffentlichen es nie und geben Ihre Daten nicht ohne Ihre Zustimmung weiter.\n\n"
+           "Ihre Angaben im Überblick:\n{summary}\n\n"
+           "Um Ihr Profil zu ändern oder zu löschen, antworten Sie einfach auf diese E-Mail.\n\n"
+           "Mit freundlichen Grüßen\nTradeGate Consultants\nwww.tradegateconsultants.com"),
+    "fr": ("Votre entreprise est inscrite au TradeGate Partner Hub",
+           "Bonjour {name},\n\n"
+           "merci d’avoir inscrit {company} au TradeGate Partner Hub.\n\n"
+           "Les prochaines étapes :\n"
+           "1. Nous examinons votre profil sous 2 jours ouvrés.\n"
+           "2. Nous le comparons avec les entreprises de notre réseau.\n"
+           "3. Dès que nous voyons un partenaire adapté, nous vous contactons d’abord. Nous ne faisons de mise en relation qu’avec l’accord des deux parties.\n\n"
+           "Votre profil est privé. Nous ne le publions jamais et ne transmettons pas vos coordonnées sans votre accord.\n\n"
+           "Votre résumé :\n{summary}\n\n"
+           "Pour modifier ou supprimer votre profil, répondez simplement à cet e-mail.\n\n"
+           "Cordialement\nTradeGate Consultants\nwww.tradegateconsultants.com"),
+    "pt": ("A sua empresa está registada no TradeGate Partner Hub",
+           "Olá {name},\n\n"
+           "obrigado por registar {company} no TradeGate Partner Hub.\n\n"
+           "Próximos passos:\n"
+           "1. Analisamos o seu perfil no prazo de 2 dias úteis.\n"
+           "2. Comparamo-lo com as empresas da nossa rede.\n"
+           "3. Quando virmos um parceiro adequado, contactamo-lo primeiro. Só fazemos uma apresentação com o acordo de ambas as partes.\n\n"
+           "O seu perfil é privado. Nunca o publicamos nem partilhamos os seus dados sem a sua autorização.\n\n"
+           "O seu resumo:\n{summary}\n\n"
+           "Para atualizar ou eliminar o seu perfil, basta responder a este e-mail.\n\n"
+           "Com os melhores cumprimentos\nTradeGate Consultants\nwww.tradegateconsultants.com"),
+    "es": ("Su empresa está registrada en el TradeGate Partner Hub",
+           "Hola {name}:\n\n"
+           "gracias por registrar {company} en el TradeGate Partner Hub.\n\n"
+           "Próximos pasos:\n"
+           "1. Revisamos su perfil en un plazo de 2 días laborables.\n"
+           "2. Lo comparamos con las empresas de nuestra red.\n"
+           "3. Cuando veamos un socio adecuado, le contactamos primero a usted. Solo hacemos una presentación con el acuerdo de ambas partes.\n\n"
+           "Su perfil es privado. Nunca lo publicamos ni compartimos sus datos sin su aprobación.\n\n"
+           "Su resumen:\n{summary}\n\n"
+           "Para actualizar o eliminar su perfil, simplemente responda a este correo.\n\n"
+           "Saludos cordiales\nTradeGate Consultants\nwww.tradegateconsultants.com"),
+}
+
+
+def confirmation_email(profile):
+    """(subject, body) for the company, in the language it registered in."""
+    subject, body = CONFIRMATION.get(profile.language or "en", CONFIRMATION["en"])
+    summary = "\n".join([
+        f"- {profile.company_name}, {profile.country}",
+        f"- {profile.products}",
+        f"- {', '.join(profile.partner_type_labels())}",
+    ])
+    return subject, body.format(name=profile.contact_name, company=profile.company_name, summary=summary)

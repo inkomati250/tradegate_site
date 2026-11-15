@@ -25,6 +25,39 @@
 
 {% block nav-global %}{% endblock %}
 
+{% block header %}
+  {{ block.super }}
+  {% if has_permission and not is_popup %}
+  <nav class="tg-topnav" aria-label="Admin sections">
+    {% url 'admin:index' as u_home %}
+    <a href="{{ u_home }}" class="{% if request.path == u_home %}on{% endif %}">Dashboard</a>
+    <a href="{% url 'admin:website_inquiry_changelist' %}" class="{% if '/inquiry/' in request.path %}on{% endif %}">Enquiries{% if tg_nav_enquiries %} <span class="tg-pill">{{ tg_nav_enquiries }}</span>{% endif %}</a>
+    <a href="{% url 'admin:website_partnerprofile_changelist' %}" class="{% if '/partnerprofile/' in request.path %}on{% endif %}">Partner Hub{% if tg_nav_pending %} <span class="tg-pill">{{ tg_nav_pending }}</span>{% endif %}</a>
+    <a href="{% url 'admin:website_tradefair_changelist' %}" class="{% if '/tradefair/' in request.path %}on{% endif %}">Trade fairs</a>
+    <div class="tg-drop{% if '/servicepackage/' in request.path or '/service/' in request.path or '/industry/' in request.path or '/processstep/' in request.path %} on{% endif %}" tabindex="0">
+      <span>Services and prices ▾</span>
+      <div class="tg-drop-menu">
+        <a href="{% url 'admin:website_servicepackage_changelist' %}">Packages and prices</a>
+        <a href="{% url 'admin:website_service_changelist' %}">Services</a>
+        <a href="{% url 'admin:website_industry_changelist' %}">Industries</a>
+        <a href="{% url 'admin:website_processstep_changelist' %}">Process steps</a>
+      </div>
+    </div>
+    <div class="tg-drop{% if '/teamprofile/' in request.path or '/sitesettings/' in request.path or '/navigationitem/' in request.path or '/legalpage/' in request.path or '/auth/' in request.path %} on{% endif %}" tabindex="0">
+      <span>Company and website ▾</span>
+      <div class="tg-drop-menu">
+        <a href="{% url 'admin:website_teamprofile_changelist' %}">Team (About page)</a>
+        <a href="{% url 'admin:website_sitesettings_changelist' %}">Site settings</a>
+        <a href="{% url 'admin:website_navigationitem_changelist' %}">Navigation</a>
+        <a href="{% url 'admin:website_legalpage_changelist' %}">Legal pages</a>
+        <a href="{% url 'admin:auth_user_changelist' %}">Users</a>
+      </div>
+    </div>
+    <a href="/" target="_blank" rel="noopener" class="tg-right">View website ↗</a>
+  </nav>
+  {% endif %}
+{% endblock %}
+
 {% block footer %}
   <div id="footer" class="tg-footer">TradeGate Consultants · Website administration · <a href="/" target="_blank" rel="noopener">View website</a></div>
 {% endblock %}

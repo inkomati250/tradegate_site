@@ -25,7 +25,7 @@ Backups: branches `backup/pre-overhaul-2026-11-14` (site before the overhaul, 04
 | Partner Hub | `partner_pool.py`: regions, countries, sectors, partner types and the rule-based matcher (`score`, `suggestions_for`: regions must fit both ways; needs same sector or ≥2 shared terms). Admin shows suggested matches on each company. Texts translated via `scripts/i18n_partner_hub.py` (country names from CLDR/Babel, script-time only) |
 | SEO | `seo.py` (Organization/ProfessionalService + WebSite schema on every page, breadcrumbs, FAQPage), `sitemaps.py` (static, services, legal, trade fairs, translated versions), robots.txt, `/favicon.ico`, `/site.webmanifest` in `tradegate/urls.py` |
 | Languages | `i18n.py` + `middleware.py` (LanguageMiddleware) + `locale/{de,fr,pt,es}.json`; picker `templates/website/partials/lang_picker.html` |
-| Admin | `admin.py` + `templates/admin/` + `static/website/admin/tradegate-admin.css` |
+| Admin | `admin.py` + `templates/admin/` + `static/website/admin/tradegate-admin.css`. Top menu bar in `base_site.html` (left nav sidebar disabled), dashboard `tradegate_index.html` (figures from `_tradegate_index`), menu badges from `_tradegate_each_context` |
 | Seeds | migrations 0013/0015/0016/0018 seed fairs, packages, founder, partner events; seed logos in `website/seed/` |
 
 ## Invariants
