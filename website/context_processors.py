@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from .models import SiteSettings
@@ -64,8 +65,14 @@ def site_settings(request) -> dict[str, Any]:
         lang_links.append({"code": code, "name": info["name"], "flag": info["flag"],
                            "url": f"{request.path}?{params.urlencode()}", "current": code == lang})
 
+    from .whatsapp import chat_link, qr_svg
+    wa_link = chat_link(site.whatsapp_url if site else "")
+
     return {
         "asset_v": _asset_version(),
+        "wa_link": wa_link,
+        "wa_qr": qr_svg(wa_link),
+        "wa_link_json": json.dumps(wa_link),
         "org_schema_json": org_schema(request, site),
         "lang": lang,
         "lang_name": i18n.LANGS[lang]["name"],

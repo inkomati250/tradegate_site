@@ -3,6 +3,37 @@ import time
 from urllib.parse import urlparse
 
 from django import forms
+from django.core import signing
+
+FORM_SALT = "tradegate-form-start"
+
+
+def new_form_stamp():
+    """Signed start time: bots cannot fake an 'old' form to get past the speed check."""
+    return signing.dumps(int(time.time()), salt=FORM_SALT)
+
+
+def check_form_stamp(raw):
+    """Raise ValidationError when the form was sent too fast, expired, or the stamp was tampered with."""
+    try:
+        started = int(signing.loads(raw or "", salt=FORM_SALT))
+    except (signing.BadSignature, TypeError, ValueError):
+        raise forms.ValidationError("This form session expired. Please refresh and try again.")
+    elapsed = time.time() - started
+    if elapsed < 3:
+        raise forms.ValidationError("Please wait a few seconds before submitting.")
+    if elapsed > 24 * 60 * 60:
+        raise forms.ValidationError("This form session expired. Please refresh and try again.")
+    return raw
+
+
+def gibberish(text):
+    """True for keyboard-mash text like 'Aaaqfjfwkdjifiefowkd'. Real words, including long German
+    compounds, never have 7 or more consonants in a row once 'sch' is counted as one sound."""
+    for word in re.findall(r"[A-Za-z]{7,}", (text or "").lower().replace("sch", "S")):
+        if re.search(r"[bcdfghjklmnpqrstvwxzS]{7,}", word):
+            return True
+    return False
 
 
 SERVICE_CHOICES = [
@@ -43,6 +74,9 @@ CONTACT_METHOD_CHOICES = [
 ]
 
 SUSPICIOUS_KEYWORDS = [
+    "followers", "instagram growth", "tiktok growth", "web design services", "website redesign",
+    "first page of google", "lead generation list", "email list", "buy traffic", "bitcoin", "forex",
+    "viagra", "payday", "adult", "betting",
     "googlesearchindex",
     "google search index",
     "searchregister",
@@ -236,7 +270,7 @@ class InquiryForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.setdefault("initial", {})
-        initial.setdefault("form_started_at", str(int(time.time())))
+        initial.setdefault("form_started_at", new_form_stamp())
         super().__init__(*args, **kwargs)
 
     def clean_website_url(self):
@@ -246,18 +280,7 @@ class InquiryForm(forms.Form):
         return val
 
     def clean_form_started_at(self):
-        raw = (self.cleaned_data.get("form_started_at") or "").strip()
-        try:
-            started = int(float(raw))
-        except (TypeError, ValueError):
-            return raw
-
-        elapsed = time.time() - started
-        if elapsed < 3:
-            raise forms.ValidationError("Please wait a few seconds before submitting.")
-        if elapsed > 24 * 60 * 60:
-            raise forms.ValidationError("This form session expired. Please refresh and try again.")
-        return raw
+        return check_form_stamp((self.cleaned_data.get("form_started_at") or "").strip())
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
@@ -318,6 +341,8 @@ class InquiryForm(forms.Form):
 
         if len(re.findall(r"https?://", compact)) >= 2:
             reasons.append("multiple_links")
+        if gibberish(cd.get("subject", "")) or gibberish(cd.get("message", "")) or gibberish(cd.get("full_name", "")):
+            reasons.append("gibberish")
 
         return reasons
 
@@ -407,7 +432,7 @@ class PartnerPoolForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.setdefault("initial", {})
-        initial.setdefault("form_started_at", str(int(time.time())))
+        initial.setdefault("form_started_at", new_form_stamp())
         super().__init__(*args, **kwargs)
 
     def clean_website_url(self):
@@ -416,16 +441,7 @@ class PartnerPoolForm(forms.Form):
         return ""
 
     def clean_form_started_at(self):
-        raw = (self.cleaned_data.get("form_started_at") or "").strip()
-        try:
-            elapsed = time.time() - int(float(raw))
-        except (TypeError, ValueError):
-            return raw
-        if elapsed < 3:
-            raise forms.ValidationError("Please wait a few seconds before submitting.")
-        if elapsed > 24 * 60 * 60:
-            raise forms.ValidationError("This form session expired. Please refresh and try again.")
-        return raw
+        return check_form_stamp((self.cleaned_data.get("form_started_at") or "").strip())
 
     def clean_email(self):
         return (self.cleaned_data.get("email") or "").strip().lower()
@@ -448,4 +464,6 @@ class PartnerPoolForm(forms.Form):
         reasons = [f"keyword:{k}" for k in SUSPICIOUS_KEYWORDS if k in text]
         if len(re.findall(r"https?://", text)) >= 3:
             reasons.append("multiple_links")
+        if any(gibberish(cd.get(k, "")) for k in ("company_name", "offering", "seeking", "contact_name")):
+            reasons.append("gibberish")
         return reasons

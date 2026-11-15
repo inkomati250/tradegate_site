@@ -4,6 +4,14 @@ from django.urls import reverse
 from .content import SERVICE_NAV, SERVICE_PAGES
 
 
+def _stamp(seconds_ago):
+    """A signed form start time, as the real form page would render it."""
+    import time
+    from django.core import signing
+    from .forms import FORM_SALT
+    return signing.dumps(int(time.time()) - seconds_ago, salt=FORM_SALT)
+
+
 class ServicePagesTests(TestCase):
     def test_every_service_page_renders_details(self):
         for slug, page in SERVICE_PAGES.items():
@@ -290,7 +298,7 @@ class ContactDeliveryTests(TestCase):
             "full_name": "Anna Example", "email": "anna@example.de", "company_name": "Example GmbH",
             "country": "Germany", "service_interest": "trade_fair", "contact_method": "email",
             "subject": "Stand at a trade fair", "message": "We would like help with a stand at a fair next year.",
-            "consent": "on", "website_url": "", "form_started_at": str(int(time.time()) - 120),
+            "consent": "on", "website_url": "", "form_started_at": _stamp(120),
         }
         data.update(extra)
         return self.client.post(reverse("contact"), data, follow=True)
@@ -416,7 +424,7 @@ class LanguageTests(TestCase):
             "full_name": "Max Muster", "email": "max@example.de", "company_name": "Muster GmbH",
             "service_interest": "trade_fair", "contact_method": "email", "subject": "Messe",
             "message": "Wir brauchen Unterstützung auf einer Messe im nächsten Jahr.", "consent": "on",
-            "website_url": "", "form_started_at": str(int(time.time()) - 120),
+            "website_url": "", "form_started_at": _stamp(120),
         }, follow=True)
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("Danke", r.content.decode())
@@ -441,7 +449,7 @@ class PartnerHubTests(TestCase):
     def _data(self, **over):
         import time
         data = {
-            "form_started_at": str(int(time.time()) - 60),
+            "form_started_at": _stamp(60),
             "company_name": "Nairobi Coffee Exporters", "website": "https://ncx.example.com", "country": "Kenya",
             "company_type": "exporter", "company_size": "10_49", "sector": "agrifood", "products": "specialty coffee beans",
             "offering": "We export washed Arabica coffee beans in container loads with organic certification.",
@@ -567,7 +575,7 @@ class PartnerHubConfirmationAndAdminTests(TestCase):
 
     def _post(self, lang=""):
         import time
-        data = {"form_started_at": str(int(time.time()) - 60), "company_name": "Lagos Agro Ltd", "country": "Nigeria",
+        data = {"form_started_at": _stamp(60), "company_name": "Lagos Agro Ltd", "country": "Nigeria",
                 "company_type": "exporter", "sector": "agrifood", "products": "cashew nuts",
                 "offering": "We process and export cashew nuts in bulk with full traceability.",
                 "seeking": "German importers and wholesalers of nuts and dried fruit.", "partner_types": ["distributor"],
@@ -673,3 +681,57 @@ class VisitorStatsTests(TestCase):
         c = LegalPage.objects.get(key="datenschutz").content
         self.assertEqual(c.count("11. Besucherstatistik"), 1)
         self.assertGreater(c.index("11. Visitor statistics"), c.index("English Version"))
+
+
+class SpamProtectionTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def _contact(self, **over):
+        data = {"full_name": "Real Person", "email": "buyer@company.example", "service_interest": "trade_fair",
+                "subject": "Representation at BAU", "message": "We would like representation at BAU in Munich next January.",
+                "consent": "on", "website_url": "", "form_started_at": _stamp(60)}
+        data.update(over)
+        return self.client.post(reverse("contact"), data, follow=True)
+
+    def test_forged_or_too_fast_timestamps_are_rejected(self):
+        import time
+        from .models import Inquiry
+        self._contact(form_started_at=str(int(time.time()) - 600))  # old-style unsigned value (what a bot would fake)
+        self._contact(form_started_at=_stamp(0))
+        self.assertEqual(Inquiry.objects.count(), 0)
+        self._contact()
+        self.assertEqual(Inquiry.objects.count(), 1)
+
+    def test_gibberish_and_promotion_spam_not_saved_or_emailed(self):
+        from django.core import mail
+        from .models import Inquiry
+        self._contact(subject="Aaaqfjfwkdjifiefowkd foekdwdeoghiejijgero jojfw")
+        self._contact(subject="Instagram Growth", message="300+ high quality followers per month for your brand page.")
+        self.assertEqual(Inquiry.objects.count(), 0)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_german_compound_words_are_not_flagged(self):
+        from .models import Inquiry
+        self._contact(message="Wir suchen Vertretung zum Thema Arbeitsschutzgesetz und Produktionsstandort in Sachsen.")
+        self.assertEqual(Inquiry.objects.count(), 1)
+
+    def test_form_pages_render_signed_stamp(self):
+        for url in (reverse("contact"), reverse("partner_pool")):
+            self.assertRegex(self.client.get(url).content.decode(), r'name="form_started_at" value="[^"]+:[^"]+"')
+
+
+class WhatsAppQrTests(TestCase):
+    def test_footer_opens_qr_dialog_instead_of_external_link(self):
+        from .models import SiteSettings
+        SiteSettings.objects.create(whatsapp_url="https://wa.me/491701234567")
+        html = self.client.get("/").content.decode()
+        self.assertIn("data-wa-open", html)
+        self.assertIn('id="wa-dialog"', html)
+        self.assertIn("<svg viewBox=", html[html.index('class="wa-qr"'):])
+        self.assertIn("https://wa.me/491701234567?text=Hello%20TradeGate", html)
+        self.assertNotIn('<a href="https://wa.me/491701234567" target="_blank"', html)
+
+    def test_no_dialog_without_number(self):
+        self.assertNotIn('id="wa-dialog"', self.client.get("/").content.decode())

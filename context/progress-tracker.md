@@ -19,6 +19,9 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 
 - **STATS-002** (2026-11-15): first hours of statistics were inflated by scanners (103 "visitors", 1 view each, 27 countries, all direct). Counting now happens only when a real browser runs a tiny script and reports the view to `/v/` (headless/automation, bot user agents, DNT/GPC, staff excluded); one person = one visitor per day. Old rows reset (0029). Inquiry list: Save button readable, company column.
 
+- **WA-001** (2026-11-15, owner request): footer WhatsApp opens a window with a QR code (scan with the phone; WhatsApp opens with a ready greeting) instead of an external link; on phones it opens WhatsApp directly. QR made with segno from Site Settings → WhatsApp URL; verified the rendered code decodes to the right link.
+- **SPAM-002** (2026-11-15): both forms: signed start time (bots can no longer fake an old form), keyboard-mash detection (German compounds safe), more spam keywords, rate limit now shared by all gunicorn workers (file cache in prod). Existing honeypot, CSRF, timing and link checks kept.
+
 ## Completed (all live)
 
 | Date | Change | Evidence |

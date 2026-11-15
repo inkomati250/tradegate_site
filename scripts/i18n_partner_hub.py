@@ -266,6 +266,15 @@ T = {
         "inscrivez votre entreprise dans notre réseau B2B privé et nous vous présentons dès qu’un partenaire adapté s’y trouve.",
         "registe a sua empresa na nossa rede B2B privada e apresentamo-lo quando houver um parceiro adequado.",
         "registre su empresa en nuestra red B2B privada y le presentamos cuando haya un socio adecuado."),
+    "Chat with us on WhatsApp": ("Schreiben Sie uns auf WhatsApp", "Écrivez-nous sur WhatsApp", "Fale connosco no WhatsApp", "Escríbanos por WhatsApp"),
+    "Scan the code with your phone's camera. WhatsApp opens with a short greeting ready to send.": (
+        "Scannen Sie den Code mit der Kamera Ihres Smartphones. WhatsApp öffnet sich mit einer kurzen Begrüßung zum Absenden.",
+        "Scannez le code avec l’appareil photo de votre téléphone. WhatsApp s’ouvre avec un court message prêt à envoyer.",
+        "Leia o código com a câmara do telemóvel. O WhatsApp abre com uma breve saudação pronta a enviar.",
+        "Escanee el código con la cámara de su teléfono. WhatsApp se abre con un breve saludo listo para enviar."),
+    "On this device instead?": ("Lieber auf diesem Gerät?", "Plutôt sur cet appareil ?", "Prefere neste dispositivo?", "¿Prefiere en este dispositivo?"),
+    "Open WhatsApp": ("WhatsApp öffnen", "Ouvrir WhatsApp", "Abrir WhatsApp", "Abrir WhatsApp"),
+    "Close": ("Schließen", "Fermer", "Fechar", "Cerrar"),
     "Business email": ("Geschäftliche E-Mail", "E-mail professionnel", "E-mail profissional", "Correo electrónico profesional"),
     "Please enter a valid email address.": ("Bitte geben Sie eine gültige E-Mail-Adresse ein.", "Veuillez saisir une adresse e-mail valide.", "Indique um endereço de e-mail válido.", "Indique una dirección de correo electrónico válida."),
 }

@@ -118,3 +118,13 @@ LOGGING = {
         },
     },
 }
+
+# Shared cache for all gunicorn workers (used by the contact/Partner Hub rate limits).
+# With the default per-process memory cache each worker counted separately.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": env("DJANGO_CACHE_DIR", "/tmp/tradegate-cache"),
+        "TIMEOUT": 3600,
+    }
+}
