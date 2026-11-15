@@ -24,6 +24,8 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 
 - **SOC-001** (2026-11-15): footer "Get in touch" now shows Facebook, Instagram and X when filled in under Site Settings (only LinkedIn was ever shown; the other fields were stored but not displayed). Direct links, no QR window (decided: QR only for WhatsApp, where the chat lives on the phone).
 
+- **MAIL-001** (2026-11-15, owner request): info@tradegateconsultants.com replaces ivan.nkomati@tradegateconsultants.com in all stored website text (privacy policy, Impressum, any settings), migration 0030. Phone number in Impressum kept (owner decision: § 5 DDG needs email plus a second fast channel).
+
 ## Completed (all live)
 
 | Date | Change | Evidence |

@@ -22,7 +22,7 @@ Sichtbarkeit und Weitergabe: Profile werden nicht veröffentlicht. Den Namen Ihr
 
 Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung) und Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen).
 
-Speicherdauer: so lange Sie Teil des Netzwerks sein möchten. Profile, die 24 Monate weder aktualisiert noch bestätigt wurden, prüfen und löschen wir. Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen; eine Nachricht an ivan.nkomati@tradegateconsultants.com genügt. Wir löschen Ihr Profil dann, soweit keine gesetzlichen Aufbewahrungspflichten bestehen."""
+Speicherdauer: so lange Sie Teil des Netzwerks sein möchten. Profile, die 24 Monate weder aktualisiert noch bestätigt wurden, prüfen und löschen wir. Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen; eine Nachricht an info@tradegateconsultants.com genügt. Wir löschen Ihr Profil dann, soweit keine gesetzlichen Aufbewahrungspflichten bestehen."""
 
 EN = """10. TradeGate Partner Hub (private company network)
 
@@ -34,7 +34,7 @@ Visibility and disclosure: profiles are not published. We pass your company name
 
 Legal basis: Art. 6(1)(a) GDPR (consent) and Art. 6(1)(b) GDPR (pre-contractual steps).
 
-Retention: for as long as you wish to be part of the network. We review and delete profiles that have not been updated or confirmed for 24 months. You can withdraw your consent at any time with effect for the future; a message to ivan.nkomati@tradegateconsultants.com is enough. We then delete your profile unless statutory retention obligations apply."""
+Retention: for as long as you wish to be part of the network. We review and delete profiles that have not been updated or confirmed for 24 months. You can withdraw your consent at any time with effect for the future; a message to info@tradegateconsultants.com is enough. We then delete your profile unless statutory retention obligations apply."""
 
 
 def add_section(apps, schema_editor):

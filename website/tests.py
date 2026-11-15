@@ -747,3 +747,15 @@ class SocialLinksTests(TestCase):
         self.assertContains(r, 'href="https://www.facebook.com/tradegateconsultants"')
         self.assertContains(r, "TradeGate on Facebook")
         self.assertNotContains(r, "TradeGate on Instagram")
+
+
+class ContactEmailMigrationTests(TestCase):
+    def test_personal_address_replaced_with_info(self):
+        import importlib
+        from django.apps import apps
+        from .models import LegalPage, SiteSettings
+        LegalPage.objects.update_or_create(key="impressum", defaults={"title": "Impressum", "content": "E-Mail: Ivan.Nkomati@tradegateconsultants.com\nmore text"})
+        SiteSettings.objects.create(primary_email="ivan.nkomati@tradegateconsultants.com")
+        importlib.import_module("website.migrations.0030_contact_email_info").replace(apps, None)
+        self.assertIn("E-Mail: info@tradegateconsultants.com", LegalPage.objects.get(key="impressum").content)
+        self.assertEqual(SiteSettings.objects.get().primary_email, "info@tradegateconsultants.com")
