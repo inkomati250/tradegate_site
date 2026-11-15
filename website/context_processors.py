@@ -73,6 +73,7 @@ def site_settings(request) -> dict[str, Any]:
         "wa_link": wa_link,
         "wa_qr": qr_svg(wa_link),
         "wa_link_json": json.dumps(wa_link),
+        "wa_link_b64": __import__("base64").b64encode(wa_link.encode()).decode(),
         "org_schema_json": org_schema(request, site),
         "lang": lang,
         "lang_name": i18n.LANGS[lang]["name"],

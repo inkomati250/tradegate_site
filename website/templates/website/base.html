@@ -307,18 +307,18 @@
         <p class="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Get in touch</p>
         <div class="space-y-3">
           {% if site and site.primary_email %}
-            <a href="mailto:{{ site.primary_email }}" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
+            <a href="mailto:{{ site.primary_email|obfuscate }}" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
               <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/45 transition shrink-0">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </span>
-              {{ site.primary_email }}
+              {{ site.primary_email|obfuscate }}
             </a>
           {% else %}
-            <a href="mailto:contact@tradegateconsultants.com" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
+            <a href="mailto:{{ "contact@tradegateconsultants.com"|obfuscate }}" class="flex items-center gap-3 text-sm text-white/60 hover:text-white transition group">
               <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-brand-accent/45 transition shrink-0">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </span>
-              contact@tradegateconsultants.com
+              {{ "contact@tradegateconsultants.com"|obfuscate }}
             </a>
           {% endif %}
           {% if site and site.whatsapp_url %}
@@ -417,12 +417,12 @@
       <p class="wa-text">Scan the code with your phone's camera. WhatsApp opens with a short greeting ready to send.</p>
       <div class="wa-qr" translate="no">{{ wa_qr|safe }}</div>
       <p class="wa-small">On this device instead?</p>
-      <a class="wa-btn" href="{{ wa_link }}" target="_blank" rel="noopener">Open WhatsApp</a>
+      <a class="wa-btn" href="/whatsapp/" data-wa-go target="_blank" rel="noopener">Open WhatsApp</a>
     </div>
   </dialog>
   <script>
     (function () {
-      var d = document.getElementById('wa-dialog'), link = {{ wa_link_json|safe }};
+      var d = document.getElementById('wa-dialog'), link = atob('{{ wa_link_b64 }}');
       if (!d) return;
       var phone = window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 768;
       document.querySelectorAll('[data-wa-open]').forEach(function (b) {
@@ -431,6 +431,7 @@
           d.showModal();
         });
       });
+      document.querySelectorAll('[data-wa-go]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); window.open(link, '_blank', 'noopener'); }); });
       d.addEventListener('click', function (e) { if (e.target === d || e.target.hasAttribute('data-wa-close')) d.close(); });
     })();
   </script>

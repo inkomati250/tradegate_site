@@ -26,6 +26,8 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 
 - **MAIL-001** (2026-11-15, owner request): info@tradegateconsultants.com replaces ivan.nkomati@tradegateconsultants.com in all stored website text (privacy policy, Impressum, any settings), migration 0030. Phone number in Impressum kept (owner decision: § 5 DDG needs email plus a second fast channel).
 
+- **PRIV-002** (2026-11-15): phone numbers and email addresses on legal pages, footer and About are written as HTML character codes (people see/copy them normally; harvesting bots don't find them); WhatsApp number no longer in page source (base64 in script, QR as image); new `/whatsapp/` page (noindex) for email signatures. Email signature images hosted at /static/website/email/.
+
 ## Completed (all live)
 
 | Date | Change | Evidence |

@@ -11,6 +11,7 @@ urlpatterns = [
     path("contact/", views.contact, name="contact"),
     path("partner-hub/", views.partner_pool, name="partner_pool"),
     path("v/", views.visit_beacon, name="visit_beacon"),
+    path("whatsapp/", views.whatsapp, name="whatsapp"),
 
     # Trade fair calendar
     path("trade-fairs/", views.trade_fairs, name="trade_fairs"),

@@ -730,8 +730,13 @@ class WhatsAppQrTests(TestCase):
         self.assertIn("data-wa-open", html)
         self.assertIn('id="wa-dialog"', html)
         self.assertIn("<svg viewBox=", html[html.index('class="wa-qr"'):])
-        self.assertIn("https://wa.me/491701234567?text=Hello%20TradeGate", html)
-        self.assertNotIn('<a href="https://wa.me/491701234567" target="_blank"', html)
+        self.assertNotIn("491701234567", html)  # number never in the page source as plain text
+        import base64
+        self.assertIn(base64.b64encode(b"https://wa.me/491701234567?text=Hello%20TradeGate").decode()[:40], html)
+        page = self.client.get("/whatsapp/").content.decode()
+        self.assertIn('class="wa-qr"', page)
+        self.assertIn("noindex", page)
+        self.assertNotIn("491701234567", page)
 
     def test_no_dialog_without_number(self):
         self.assertNotIn('id="wa-dialog"', self.client.get("/").content.decode())
@@ -759,3 +764,18 @@ class ContactEmailMigrationTests(TestCase):
         importlib.import_module("website.migrations.0030_contact_email_info").replace(apps, None)
         self.assertIn("E-Mail: info@tradegateconsultants.com", LegalPage.objects.get(key="impressum").content)
         self.assertEqual(SiteSettings.objects.get().primary_email, "info@tradegateconsultants.com")
+
+
+
+class ContactProtectionTests(TestCase):
+    def test_legal_page_hides_phone_and_email_from_page_source(self):
+        from .models import LegalPage
+        LegalPage.objects.create(key="impressum", title="Impressum",
+                                 content="Telefon: +49 (0) 178 1520866\nE-Mail: info@tradegateconsultants.com\nStand: 15.11.2026")
+        html = self.client.get("/legal/impressum/").content.decode()
+        self.assertNotIn("1520866", html)
+        self.assertNotIn("info@tradegateconsultants.com", html)
+        self.assertIn("&#49;&#53;&#50;", html)  # still there, written as character codes
+        self.assertIn("15.11.2026", html)
+        import html as h
+        self.assertIn("+49 (0) 178 1520866", h.unescape(html))

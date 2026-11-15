@@ -1,4 +1,5 @@
 {% extends "website/base.html" %}
+{% load website_extras %}
 {% block content %}
 
 <!-- HERO -->
@@ -106,22 +107,22 @@
           <p class="text-slate-600 leading-relaxed mb-5">For business inquiries, partnership discussions, or representation requests, contact us by email or WhatsApp.</p>
           <div class="space-y-3">
             {% if site.primary_email %}
-            <a href="mailto:{{ site.primary_email }}"
+            <a href="mailto:{{ site.primary_email|obfuscate }}"
                class="flex items-center gap-3 text-sm font-medium text-[#0B1220] hover:text-brand-accent transition group">
               <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-stone-100 group-hover:bg-brand-accent/10 transition">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </span>
-              {{ site.primary_email }}
+              {{ site.primary_email|obfuscate }}
             </a>
             {% endif %}
             {% if site.whatsapp_url %}
-            <a href="{{ site.whatsapp_url }}" target="_blank" rel="noopener"
-               class="flex items-center gap-3 text-sm font-medium text-[#0B1220] hover:text-brand-accent transition group">
+            <button type="button" data-wa-open
+               class="text-left flex items-center gap-3 text-sm font-medium text-[#0B1220] hover:text-brand-accent transition group">
               <span class="h-9 w-9 flex items-center justify-center rounded-xl bg-stone-100 group-hover:bg-brand-accent/10 transition">
                 <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.5 11.9a8.5 8.5 0 0 1-12.9 7.3L3.5 20.5l1.4-4A8.5 8.5 0 1 1 20.5 11.9Z"/></svg>
               </span>
               WhatsApp (fastest reply)
-            </a>
+            </button>
             {% endif %}
           </div>
         </div>

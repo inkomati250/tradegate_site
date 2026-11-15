@@ -606,3 +606,13 @@ def visit_beacon(request):
     if isinstance(data, dict):
         analytics.record_beacon(request, data)
     return HttpResponse(status=204)
+
+
+def whatsapp(request):
+    """Shareable WhatsApp page (used in email signatures): QR code on computers, straight to WhatsApp on phones.
+    The number never appears as plain text in the page or in the email."""
+    return render(request, "website/whatsapp.html", {
+        "page_meta": {"title": "WhatsApp: TradeGate Consultants",
+                      "description": "Chat with TradeGate Consultants on WhatsApp.",
+                      "canonical": request.build_absolute_uri("/whatsapp/"), "noindex": True},
+    })
