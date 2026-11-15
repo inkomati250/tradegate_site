@@ -22,6 +22,8 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 - **WA-001** (2026-11-15, owner request): footer WhatsApp opens a window with a QR code (scan with the phone; WhatsApp opens with a ready greeting) instead of an external link; on phones it opens WhatsApp directly. QR made with segno from Site Settings → WhatsApp URL; verified the rendered code decodes to the right link.
 - **SPAM-002** (2026-11-15): both forms: signed start time (bots can no longer fake an old form), keyboard-mash detection (German compounds safe), more spam keywords, rate limit now shared by all gunicorn workers (file cache in prod). Existing honeypot, CSRF, timing and link checks kept.
 
+- **SOC-001** (2026-11-15): footer "Get in touch" now shows Facebook, Instagram and X when filled in under Site Settings (only LinkedIn was ever shown; the other fields were stored but not displayed). Direct links, no QR window (decided: QR only for WhatsApp, where the chat lives on the phone).
+
 ## Completed (all live)
 
 | Date | Change | Evidence |

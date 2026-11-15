@@ -275,6 +275,9 @@ T = {
     "On this device instead?": ("Lieber auf diesem Gerät?", "Plutôt sur cet appareil ?", "Prefere neste dispositivo?", "¿Prefiere en este dispositivo?"),
     "Open WhatsApp": ("WhatsApp öffnen", "Ouvrir WhatsApp", "Abrir WhatsApp", "Abrir WhatsApp"),
     "Close": ("Schließen", "Fermer", "Fechar", "Cerrar"),
+    "TradeGate on Facebook": ('TradeGate auf Facebook', 'TradeGate sur Facebook', 'TradeGate no Facebook', 'TradeGate en Facebook'),
+    "TradeGate on Instagram": ('TradeGate auf Instagram', 'TradeGate sur Instagram', 'TradeGate no Instagram', 'TradeGate en Instagram'),
+    "TradeGate on X": ('TradeGate auf X', 'TradeGate sur X', 'TradeGate no X', 'TradeGate en X'),
     "Business email": ("Geschäftliche E-Mail", "E-mail professionnel", "E-mail profissional", "Correo electrónico profesional"),
     "Please enter a valid email address.": ("Bitte geben Sie eine gültige E-Mail-Adresse ein.", "Veuillez saisir une adresse e-mail valide.", "Indique um endereço de e-mail válido.", "Indique una dirección de correo electrónico válida."),
 }

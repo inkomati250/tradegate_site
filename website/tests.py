@@ -735,3 +735,15 @@ class WhatsAppQrTests(TestCase):
 
     def test_no_dialog_without_number(self):
         self.assertNotIn('id="wa-dialog"', self.client.get("/").content.decode())
+
+
+
+class SocialLinksTests(TestCase):
+    def test_social_links_from_site_settings_show_in_footer(self):
+        from .models import SiteSettings
+        self.assertNotContains(self.client.get("/"), "TradeGate on Facebook")
+        SiteSettings.objects.create(facebook_url="https://www.facebook.com/tradegateconsultants")
+        r = self.client.get("/")
+        self.assertContains(r, 'href="https://www.facebook.com/tradegateconsultants"')
+        self.assertContains(r, "TradeGate on Facebook")
+        self.assertNotContains(r, "TradeGate on Instagram")
