@@ -592,3 +592,23 @@ class PartnerProfile(TimeStampedModel):
         ordering = ["-created_at"]
         verbose_name = "Partner Hub company"
         verbose_name_plural = "Partner Hub"
+
+
+class PageVisit(models.Model):
+    """One counted page view (cookieless statistics, see analytics.py). No IP address is stored."""
+
+    day = models.DateField(db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    visitor = models.CharField(max_length=16, db_index=True, help_text="Anonymous code that changes every day.")
+    path = models.CharField(max_length=200, db_index=True)
+    country_code = models.CharField(max_length=2, blank=True, default="")
+    country = models.CharField(max_length=60, blank=True, default="", db_index=True)
+    source = models.CharField(max_length=40, blank=True, default="")
+    referrer_host = models.CharField(max_length=120, blank=True, default="")
+    device = models.CharField(max_length=10, blank=True, default="")
+    language = models.CharField(max_length=5, blank=True, default="")
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Visitor statistics"
+        verbose_name_plural = "Visitor statistics"

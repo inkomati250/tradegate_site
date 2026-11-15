@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'website/img/favicon-32.png' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'website/admin/tradegate-admin.css' %}">
+  <link rel="stylesheet" href="{% static 'website/admin/tradegate-admin.css' %}?v={{ asset_v }}">
 {% endblock %}
 
 {% block branding %}
@@ -34,6 +34,7 @@
     <a href="{% url 'admin:website_inquiry_changelist' %}" class="{% if '/inquiry/' in request.path %}on{% endif %}">Enquiries{% if tg_nav_enquiries %} <span class="tg-pill">{{ tg_nav_enquiries }}</span>{% endif %}</a>
     <a href="{% url 'admin:website_partnerprofile_changelist' %}" class="{% if '/partnerprofile/' in request.path %}on{% endif %}">Partner Hub{% if tg_nav_pending %} <span class="tg-pill">{{ tg_nav_pending }}</span>{% endif %}</a>
     <a href="{% url 'admin:website_tradefair_changelist' %}" class="{% if '/tradefair/' in request.path %}on{% endif %}">Trade fairs</a>
+    <a href="{% url 'admin:website_pagevisit_changelist' %}" class="{% if '/pagevisit/' in request.path %}on{% endif %}">Visitors</a>
     <div class="tg-drop{% if '/servicepackage/' in request.path or '/service/' in request.path or '/industry/' in request.path or '/processstep/' in request.path %} on{% endif %}" tabindex="0">
       <span>Services and prices ▾</span>
       <div class="tg-drop-menu">

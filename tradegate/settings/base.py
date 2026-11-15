@@ -58,6 +58,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "website.middleware.VisitStatsMiddleware",
     "website.middleware.LanguageMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -156,6 +157,9 @@ STATICFILES_FINDERS = [
 # Sites framework
 # =========================
 SITE_ID = int(env("DJANGO_SITE_ID", "1"))
+
+# Country lookup for visitor statistics (DB-IP "IP to Country Lite", CC BY 4.0; downloaded by scripts/deploy_manage.sh)
+GEOIP_COUNTRY_DB = env("DJANGO_GEOIP_COUNTRY_DB", "/srv/tradegate/geo/dbip-country-lite.mmdb")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

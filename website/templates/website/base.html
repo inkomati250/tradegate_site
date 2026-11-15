@@ -86,7 +86,7 @@
     }
   </script>
   {% else %}
-  <link rel="stylesheet" href="{% static 'website/css/site.css' %}">
+  <link rel="stylesheet" href="{% static 'website/css/site.css' %}?v={{ asset_v }}">
   {% endif %}
 
   <style>

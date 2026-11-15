@@ -1,0 +1,7 @@
+{% if rows %}
+<ul class="tg-rank">
+  {% for r in rows %}
+  <li><div class="lbl"><span>{{ r.label }}</span><b>{{ r.visitors }}</b></div><div class="track"><div style="width:{{ r.pct }}%"></div></div></li>
+  {% endfor %}
+</ul>
+{% else %}<div class="tg-empty">No data yet.</div>{% endif %}

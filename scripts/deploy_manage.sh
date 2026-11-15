@@ -50,3 +50,22 @@ ls -1t "$BACKUP_DIR"/db-* 2>/dev/null | tail -n +21 | xargs -r rm -f
 "$PY" manage.py migrate --noinput
 "$PY" manage.py collectstatic --noinput
 "$PY" manage.py shell -c "from website.models import TradeFair as T; print('Trade fairs published:', T.objects.filter(is_published=True).count())"
+
+# 3. Visitor statistics: refresh the free DB-IP country database monthly (CC BY 4.0, attribution in admin)
+#    and delete statistics older than ~13 months. Never blocks a deploy.
+GEO_DB="${DJANGO_GEOIP_COUNTRY_DB:-/srv/tradegate/geo/dbip-country-lite.mmdb}"
+(
+  set +e
+  mkdir -p "$(dirname "$GEO_DB")"
+  if [ ! -s "$GEO_DB" ] || [ -n "$(find "$GEO_DB" -mtime +30 2>/dev/null)" ]; then
+    for M in "$(date -u +%Y-%m)" "$(date -u -d '-1 month' +%Y-%m)"; do
+      if curl -fsSL --max-time 120 "https://download.db-ip.com/free/dbip-country-lite-$M.mmdb.gz" -o "$GEO_DB.gz.tmp" \
+         && gunzip -c "$GEO_DB.gz.tmp" > "$GEO_DB.tmp" && [ -s "$GEO_DB.tmp" ]; then
+        mv "$GEO_DB.tmp" "$GEO_DB"; echo "Country database updated ($M)"; break
+      fi
+    done
+    rm -f "$GEO_DB.gz.tmp" "$GEO_DB.tmp"
+  fi
+  [ -s "$GEO_DB" ] || echo "Country database not available: countries will show as Unknown"
+  "$PY" manage.py prune_visits
+) || true

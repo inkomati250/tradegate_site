@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+{% block bodyclass %}{{ block.super }} tg-stats-page{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Dashboard</a> › Visitor statistics</div>{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content %}
+<div class="tg-hello">
+  <div>
+    <h2>Visitor statistics</h2>
+    <p>Last {{ stats.days }} days · cookieless, no IP addresses stored · your own visits while logged in are not counted.</p>
+  </div>
+  <div class="tg-quick" style="padding:0">
+    {% for p in periods %}<a href="?days={{ p }}" class="{% if p == stats.days %}main{% endif %}">{% if p == 365 %}12 months{% else %}{{ p }} days{% endif %}</a>{% endfor %}
+  </div>
+</div>
+
+<div class="tg-kpis">
+  <div class="tg-kpi dark"><div class="k">Visitors</div><div class="n">{{ stats.visitors }}</div><div class="s">Daily unique visitors added up</div></div>
+  <div class="tg-kpi"><div class="k">Page views</div><div class="n">{{ stats.views }}</div><div class="s">{% if stats.visitors %}{{ stats.views|floatformat:0 }} views by {{ stats.visitors }} visitors{% else %}–{% endif %}</div></div>
+  <div class="tg-kpi"><div class="k">Countries</div><div class="n">{{ stats.country_count }}</div><div class="s">{% if not stats.has_geo %}Country database not installed yet{% else %}Where visitors come from{% endif %}</div></div>
+  <div class="tg-kpi"><div class="k">Today / last 7 days</div><div class="n">{{ stats.today }} <span style="font-size:20px;color:#94a3b8">/ {{ stats.week }}</span></div><div class="s">Visitors</div></div>
+</div>
+
+<section class="tg-panel" style="margin-bottom:20px">
+  <div class="tg-panel-h"><h3>Visitors per day</h3></div>
+  <div style="padding:16px 18px">{% include "admin/partials/stats_blocks.html" %}</div>
+</section>
+
+<div class="tg-grid3">
+  <section class="tg-panel"><div class="tg-panel-h"><h3>Countries</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.countries %}</div></section>
+  <section class="tg-panel"><div class="tg-panel-h"><h3>How they found us</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.sources %}</div></section>
+  <section class="tg-panel"><div class="tg-panel-h"><h3>Most visited pages</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.pages %}</div></section>
+</div>
+
+<div class="tg-grid3">
+  <section class="tg-panel"><div class="tg-panel-h"><h3>From visit to lead</h3></div>
+    <table>
+      <tr><td>Partner Hub page views</td><td><b>{{ stats.hub_views }}</b></td></tr>
+      <tr><td>Companies registered</td><td><b>{{ stats.hub_regs }}</b> <span style="color:#64748b">({{ stats.hub_rate }}%)</span></td></tr>
+      <tr><td>Contact page views</td><td><b>{{ stats.contact_views }}</b></td></tr>
+      <tr><td>Enquiries received</td><td><b>{{ stats.enquiries }}</b> <span style="color:#64748b">({{ stats.contact_rate }}%)</span></td></tr>
+    </table>
+  </section>
+  <section class="tg-panel"><div class="tg-panel-h"><h3>Devices</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.devices %}</div></section>
+  <section class="tg-panel"><div class="tg-panel-h"><h3>Website language used</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=stats.languages %}</div></section>
+</div>
+<p class="tg-note">Country data: IP geolocation by <a href="https://db-ip.com" target="_blank" rel="noopener">DB-IP</a> (CC BY 4.0). Statistics are kept for 13 months, as stated in the privacy policy (section 11).</p>
+{% endblock %}

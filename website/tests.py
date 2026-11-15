@@ -601,3 +601,56 @@ class PartnerHubConfirmationAndAdminTests(TestCase):
         self.assertNotContains(r, 'id="nav-sidebar"')
         r = self.client.get(reverse("admin:website_partnerprofile_changelist"))
         self.assertContains(r, 'class="tg-topnav"')
+
+
+class VisitorStatsTests(TestCase):
+    UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36"
+
+    def test_page_views_counted_without_ip_and_bots_skipped(self):
+        from .models import PageVisit
+        self.client.get("/partner-hub/?lang=de", HTTP_USER_AGENT=self.UA, HTTP_REFERER="https://www.google.com/",
+                        HTTP_X_REAL_IP="203.0.113.7")
+        self.client.get("/", HTTP_USER_AGENT="Googlebot/2.1 (+http://www.google.com/bot.html)")
+        self.client.get("/", HTTP_USER_AGENT=self.UA, HTTP_DNT="1")
+        self.client.get("/static/website/css/site.css", HTTP_USER_AGENT=self.UA)
+        self.client.get("/does-not-exist/", HTTP_USER_AGENT=self.UA)
+        self.assertEqual(PageVisit.objects.count(), 1)
+        v = PageVisit.objects.get()
+        self.assertEqual((v.path, v.source, v.language, v.device), ("/partner-hub/", "Google", "de", "Desktop"))
+        self.assertEqual(len(v.visitor), 16)
+        self.assertNotIn("203.0.113.7", str(v.__dict__))
+
+    def test_staff_visits_not_counted_and_stats_page_renders(self):
+        from django.contrib.auth.models import User
+        from .models import PageVisit
+        User.objects.create_superuser("boss", "boss@example.com", "pw-123456")
+        self.client.login(username="boss", password="pw-123456")
+        self.client.get("/", HTTP_USER_AGENT=self.UA)
+        self.assertEqual(PageVisit.objects.count(), 0)
+        r = self.client.get(reverse("admin:website_pagevisit_changelist") + "?days=7")
+        self.assertContains(r, "Visitor statistics")
+        self.assertContains(r, "DB-IP")
+        self.assertContains(self.client.get(reverse("admin:index")), "Website visitors")
+
+    def test_css_links_are_versioned(self):
+        r = self.client.get("/")
+        self.assertRegex(r.content.decode(), r"site\.css\?v=[0-9a-f]{10}")
+
+    def test_source_detection(self):
+        from .analytics import source_of
+        self.assertEqual(source_of("", "x")[0], "Direct / unknown")
+        self.assertEqual(source_of("https://www.linkedin.com/feed/", "x")[0], "LinkedIn")
+        self.assertEqual(source_of("https://www.tradegateconsultants.com/about/", "www.tradegateconsultants.com")[0], "")
+        self.assertEqual(source_of("https://chatgpt.com/", "x")[0], "AI assistants")
+
+    def test_privacy_section_11_added_once(self):
+        import importlib
+        from django.apps import apps
+        from .models import LegalPage
+        mig = importlib.import_module("website.migrations.0028_privacy_visitor_stats")
+        LegalPage.objects.update_or_create(key="datenschutz", defaults={"title": "D", "content": "Deutsch text here.\n\nEnglish Version\nEnglish text here."})
+        mig.add_section(apps, None)
+        mig.add_section(apps, None)
+        c = LegalPage.objects.get(key="datenschutz").content
+        self.assertEqual(c.count("11. Besucherstatistik"), 1)
+        self.assertGreater(c.index("11. Visitor statistics"), c.index("English Version"))

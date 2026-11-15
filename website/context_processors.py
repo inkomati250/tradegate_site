@@ -13,6 +13,27 @@ except Exception:
     NavigationItem = None  # type: ignore
 
 
+def _asset_version() -> str:
+    """Short hash of our CSS files, added as ?v=... so browsers fetch new CSS after each deploy
+    (nginx tells browsers to cache /static/ for 30 days)."""
+    global _ASSET_V
+    if _ASSET_V is None:
+        import hashlib
+        from pathlib import Path
+        base = Path(__file__).resolve().parent / "static" / "website"
+        h = hashlib.md5()
+        for rel in ("css/site.css", "admin/tradegate-admin.css"):
+            try:
+                h.update((base / rel).read_bytes())
+            except OSError:
+                pass
+        _ASSET_V = h.hexdigest()[:10]
+    return _ASSET_V
+
+
+_ASSET_V = None
+
+
 def site_settings(request) -> dict[str, Any]:
     site = SiteSettings.objects.first()
 
@@ -44,6 +65,7 @@ def site_settings(request) -> dict[str, Any]:
                            "url": f"{request.path}?{params.urlencode()}", "current": code == lang})
 
     return {
+        "asset_v": _asset_version(),
         "org_schema_json": org_schema(request, site),
         "lang": lang,
         "lang_name": i18n.LANGS[lang]["name"],

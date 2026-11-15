@@ -1,0 +1,5 @@
+{% comment %}Visitor statistics blocks. Needs: stats{% endcomment %}
+<div class="tg-chart" role="img" aria-label="Visitors per day">
+  {% for d in stats.series %}<div class="bar" style="height:{{ d.h|default:0 }}%" title="{{ d.day|date:'D j M' }}: {{ d.visitors }} visitors, {{ d.views }} page views"></div>{% endfor %}
+</div>
+<div class="tg-chart-axis"><span>{{ stats.series.0.day|date:"j M" }}</span><span>today</span></div>

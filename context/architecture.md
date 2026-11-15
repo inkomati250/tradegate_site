@@ -35,5 +35,7 @@ Backups: branches `backup/pre-overhaul-2026-11-14` (site before the overhaul, 04
 - Contact form: every valid enquiry is saved; email failure never loses the enquiry; emails stay English.
 - Translations happen on finished HTML; scripts, styles, JSON-LD and `translate="no"` elements are never touched. Admin, static, media, sitemap are never translated.
 - Partner Hub: profiles are never public; contact details are passed on only after the company agrees in each case; no automatic emails to companies; matches are suggestions for us to check. Privacy policy section 10 (DE+EN) covers it (migration 0025, append-only).
+- CSS links must keep `?v={{ asset_v }}` (nginx caches /static/ for 30 days).
+- Visitor statistics never store IP addresses; owner/staff visits, bots, DNT/GPC are excluded; retention 400 days.
 - Founder photo is a CSS background (not downloadable by right-click).
 - Migrations must not fail on a read-only media folder.

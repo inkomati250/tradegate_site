@@ -36,6 +36,20 @@
   </a>
 </div>
 
+{% if tg_stats %}
+<div class="tg-grid3">
+  <section class="tg-panel">
+    <div class="tg-panel-h"><h3>Website visitors · 30 days</h3><a href="{% url 'admin:website_pagevisit_changelist' %}">Full statistics →</a></div>
+    <div style="padding:14px 18px 16px">
+      <div class="tg-bignum"><b>{{ tg_stats.visitors }}</b> visitors · <b>{{ tg_stats.views }}</b> page views · <b>{{ tg_stats.country_count }}</b> countries</div>
+      {% include "admin/partials/stats_blocks.html" with stats=tg_stats %}
+    </div>
+  </section>
+  <section class="tg-panel"><div class="tg-panel-h"><h3>Top countries</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=tg_stats.countries|slice:":6" %}</div></section>
+  <section class="tg-panel"><div class="tg-panel-h"><h3>How they found us</h3></div><div style="padding:10px 18px">{% include "admin/partials/rank_list.html" with rows=tg_stats.sources|slice:":6" %}</div></section>
+</div>
+{% endif %}
+
 <div class="tg-grid2">
   <section class="tg-panel">
     <div class="tg-panel-h"><h3>Open enquiries</h3><a href="{% url 'admin:website_inquiry_changelist' %}">All enquiries →</a></div>

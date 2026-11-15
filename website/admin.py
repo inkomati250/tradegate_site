@@ -22,6 +22,7 @@ from .models import (
     TeamProfile,
     Inquiry,
     PartnerProfile,
+    PageVisit,
 )
 
 # -------------------------
@@ -280,6 +281,7 @@ admin.site.index_template = "admin/tradegate_index.html"
 ADMIN_SECTIONS = [
     ("Enquiries", "enquiries", ["Inquiry"]),
     ("Partner Hub", "partner-hub", ["PartnerProfile"]),
+    ("Visitors", "visitors", ["PageVisit"]),
     ("Trade fairs", "trade-fairs", ["TradeFair"]),
     ("Services and prices", "services", ["ServicePackage", "Service", "Industry", "ProcessStep"]),
     ("Team and company", "company", ["TeamProfile", "SiteSettings"]),
@@ -317,6 +319,15 @@ admin.site.get_app_list = _tradegate_app_list
 _original_index = admin.site.index
 
 
+def _stats_30():
+    try:
+        from .analytics import summary
+        return summary(30)
+    except Exception:
+        logger.exception("Visitor statistics failed")
+        return None
+
+
 def _tradegate_index(request, extra_context=None):
     from datetime import timedelta
     from django.utils import timezone
@@ -342,6 +353,7 @@ def _tradegate_index(request, extra_context=None):
             "tg_pool_newest": newest,
             "tg_partner_waiting": TradeFair.objects.filter(kind=TradeFair.KIND_REPRESENTED, is_published=False).count(),
             "tg_today": today,
+            "tg_stats": _stats_30(),
         }
     except Exception:
         logger.exception("Admin dashboard figures failed")
@@ -503,3 +515,32 @@ class PartnerProfileAdmin(admin.ModelAdmin):
     @admin.action(description="Archive")
     def archive(self, request, queryset):
         self._set(request, queryset, "archived", "archived")
+
+
+# =========================
+# Visitor statistics (read-only page)
+# =========================
+@admin.register(PageVisit)
+class PageVisitAdmin(admin.ModelAdmin):
+    change_list_template = "admin/visitor_stats.html"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        from django.template.response import TemplateResponse
+        from .analytics import summary
+        try:
+            days = int(request.GET.get("days", 30))
+        except ValueError:
+            days = 30
+        days = days if days in (7, 30, 90, 365) else 30
+        context = {**self.admin_site.each_context(request), "title": "Visitor statistics", "opts": self.model._meta,
+                   "stats": summary(days), "periods": (7, 30, 90, 365)}
+        return TemplateResponse(request, self.change_list_template, context)
