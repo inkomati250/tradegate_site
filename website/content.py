@@ -83,7 +83,7 @@ SERVICE_PAGES = {
         "subtitle": "A practical bridge into Germany and the EU: positioning, first contacts, trade fair planning, partner search, and local execution support.",
         "primary_keyword": "Germany market entry support",
         "meta_title": "Germany Market Entry Support | TradeGate Consultants",
-        "meta_description": "Practical Germany and EU market entry support for SMEs from Africa, the Middle East and Asia: strategy, partner search, trade fairs and local presence.",
+        "meta_description": "Practical Germany and EU market entry support for international SMEs: strategy, partner search, trade fairs and local presence.",
         "hero_badges": ["Market entry", "Germany + EU", "SME focused", "Lean execution"],
         "pain_points": [
             "You want to enter Europe but are not ready for a branch office.",
@@ -105,7 +105,7 @@ SERVICE_PAGES = {
         ],
         "faq": [
             ("Do we need an office in Germany first?", "Not necessarily. Many companies can begin with representation, trade fair validation or partner search before committing to a physical office."),
-            ("Which regions do you support?", "TradeGate is especially positioned for SMEs from Africa, the Middle East and Asia seeking access to Germany and the EU."),
+            ("Which regions do you support?", "We work with companies from any country that want to enter Germany and the EU, and we help German companies find partners abroad."),
             ("Can you help with sales?", "We support the path to sales through positioning, partner discovery, qualified leads and follow-up. Sales responsibility and commercial authority are agreed clearly."),
         ],
         "related": ["eu-local-representative-germany", "find-business-partners-germany", "trade-fair-representation-germany"],

@@ -10,7 +10,7 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 
 ## In review (branch `feature/partner-hub`, not live)
 
-- **HUB-001 TradeGate Partner Hub, phase 1** (2026-11-15): `/partner-hub/` registration page (5 languages), PartnerProfile model (0024), admin review + suggested matches + dashboard card, owner email per registration, menu/footer links, CTA on partner-search and distributor-search pages, sitemap entry, privacy policy section 10 DE+EN + language-cookie note (0025). Desktop nav made to fit one line at 1024px (language name shown from 1280px). Evidence: 57 tests pass; screenshots desktop/mobile/DE/admin checked. Waiting for owner approval to push.
+- **HUB-001 TradeGate Partner Hub, phase 1** (2026-11-15): `/partner-hub/` registration page (5 languages), PartnerProfile model (0024), admin review + suggested matches + dashboard card, owner email per registration, menu/footer links, CTA on partner-search and distributor-search pages, sitemap entry, privacy policy section 10 DE+EN + language-cookie note (0025). Desktop nav made to fit one line at 1024px (language name shown from 1280px). Evidence: 57 tests pass; screenshots desktop/mobile/DE/admin checked. Round 2 (owner feedback): worldwide wording (no Africa/Middle East/Asia examples: footer badge, FAQ, About chips, market-entry meta), Partner Hub vs "Partner with us" cross-links, lighter hub link on service pages. Preview artifact: https://claude.ai/artifact/SvGfRyXhbjwiLg8cigSDJ1. Owner reviewing; nothing goes to `main` until he approves.
 
 ## Completed (all live)
 

@@ -229,6 +229,43 @@ T = {
     "Your consent is needed to add your company to the Partner Hub.": ("Ihre Einwilligung ist nötig, um Ihr Unternehmen in den Partner Hub aufzunehmen.", "Votre consentement est nécessaire pour ajouter votre entreprise au Partner Hub.", "O seu consentimento é necessário para adicionar a empresa ao Partner Hub.", "Necesitamos su consentimiento para añadir su empresa al Partner Hub."),
     "This form session expired. Please refresh and try again.": ("Diese Formularsitzung ist abgelaufen. Bitte laden Sie die Seite neu und versuchen Sie es erneut.", "Cette session de formulaire a expiré. Veuillez actualiser la page et réessayer.", "Esta sessão do formulário expirou. Atualize a página e tente novamente.", "Esta sesión del formulario ha caducado. Actualice la página e inténtelo de nuevo."),
     "Please enter your email address.": ("Bitte geben Sie Ihre E-Mail-Adresse ein.", "Veuillez indiquer votre adresse e-mail.", "Indique o seu endereço de e-mail.", "Indique su dirección de correo electrónico."),
+    "Clients worldwide": ("Kunden weltweit", "Clients dans le monde entier", "Clientes em todo o mundo", "Clientes en todo el mundo"),
+    "Practical Germany and EU market entry support for international SMEs: strategy, partner search, trade fairs and local presence.": (
+        "Praxisnahe Markteintrittsberatung für Deutschland und die EU für internationale KMU: Strategie, Partnersuche, Messen und lokale Präsenz.",
+        "Accompagnement concret pour entrer sur le marché allemand et européen, pour les PME internationales : stratégie, recherche de partenaires, salons et présence locale.",
+        "Apoio prático à entrada no mercado alemão e europeu para PME internacionais: estratégia, pesquisa de parceiros, feiras e presença local.",
+        "Apoyo práctico para entrar en el mercado alemán y europeo para pymes internacionales: estrategia, búsqueda de socios, ferias y presencia local."),
+    "We work with companies from any country that want to enter Germany and the EU, and we help German companies find partners abroad.": (
+        "Wir arbeiten mit Unternehmen aus allen Ländern, die in Deutschland und der EU Fuß fassen wollen, und helfen deutschen Unternehmen, Partner im Ausland zu finden.",
+        "Nous travaillons avec des entreprises de tous pays qui veulent entrer en Allemagne et dans l’UE, et nous aidons les entreprises allemandes à trouver des partenaires à l’étranger.",
+        "Trabalhamos com empresas de qualquer país que queiram entrar na Alemanha e na UE, e ajudamos empresas alemãs a encontrar parceiros no estrangeiro.",
+        "Trabajamos con empresas de cualquier país que quieran entrar en Alemania y la UE, y ayudamos a empresas alemanas a encontrar socios en el extranjero."),
+    "Exporters": ("Exporteure", "Exportateurs", "Exportadores", "Exportadores"),
+    "Manufacturers": ("Hersteller", "Fabricants", "Fabricantes", "Fabricantes"),
+    "Trade promotion bodies": ("Außenhandelsförderer", "Organismes de promotion du commerce", "Organismos de promoção comercial", "Organismos de promoción comercial"),
+    "Tourism boards": ("Tourismusorganisationen", "Offices de tourisme", "Organismos de turismo", "Organismos de turismo"),
+    "Start-ups and scale-ups": ("Start-ups und Scale-ups", "Start-ups et scale-ups", "Startups e scale-ups", "Startups y scale-ups"),
+    "German companies going abroad": ("Deutsche Unternehmen auf dem Weg ins Ausland", "Entreprises allemandes à l’international", "Empresas alemãs a internacionalizar-se", "Empresas alemanas que salen al exterior"),
+    "We support international SMEs, exporters, manufacturers, trade promotion organizations, tourism-related institutions, and growth-oriented businesses looking to test, enter, or strengthen their position in Germany and the wider EU market, from any country.": (
+        "Wir unterstützen internationale KMU, Exporteure, Hersteller, Außenhandelsförderer, Tourismusinstitutionen und wachstumsorientierte Unternehmen aus allen Ländern, die ihre Position in Deutschland und der EU testen, aufbauen oder stärken wollen.",
+        "Nous accompagnons des PME internationales, exportateurs, fabricants, organismes de promotion du commerce, institutions touristiques et entreprises en croissance de tous pays qui veulent tester, conquérir ou renforcer leur position en Allemagne et dans l’UE.",
+        "Apoiamos PME internacionais, exportadores, fabricantes, organismos de promoção comercial, instituições de turismo e empresas em crescimento de qualquer país que queiram testar, entrar ou reforçar a sua posição na Alemanha e na UE.",
+        "Apoyamos a pymes internacionales, exportadores, fabricantes, organismos de promoción comercial, instituciones turísticas y empresas en crecimiento de cualquier país que quieran probar, entrar o reforzar su posición en Alemania y la UE."),
+    "Looking for business partners for your own company?": ("Sie suchen Geschäftspartner für Ihr eigenes Unternehmen?", "Vous cherchez des partenaires pour votre propre entreprise ?", "Procura parceiros de negócio para a sua própria empresa?", "¿Busca socios comerciales para su propia empresa?"),
+    "Register it in the TradeGate Partner Hub →": ("Registrieren Sie es im TradeGate Partner Hub →", "Inscrivez-la au TradeGate Partner Hub →", "Registe-a no TradeGate Partner Hub →", "Regístrela en el TradeGate Partner Hub →"),
+    "Consultant or agent?": ("Berater oder Handelsvertreter?", "Consultant ou agent ?", "Consultor ou agente?", "¿Consultor o agente?"),
+    "The Partner Hub is for companies looking for business partners. If you want to work with TradeGate on projects, introduce yourself here instead.": (
+        "Der Partner Hub ist für Unternehmen, die Geschäftspartner suchen. Wenn Sie mit TradeGate an Projekten arbeiten möchten, stellen Sie sich bitte hier vor.",
+        "Le Partner Hub s’adresse aux entreprises qui cherchent des partenaires commerciaux. Si vous souhaitez travailler avec TradeGate sur des projets, présentez-vous plutôt ici.",
+        "O Partner Hub destina-se a empresas que procuram parceiros de negócio. Se quer trabalhar com a TradeGate em projetos, apresente-se antes aqui.",
+        "El Partner Hub es para empresas que buscan socios comerciales. Si quiere trabajar con TradeGate en proyectos, preséntese mejor aquí."),
+    "Partner with us →": ("Partner werden →", "Devenir partenaire →", "Seja nosso parceiro →", "Colabore con nosotros →"),
+    "TradeGate Partner Hub:": ("TradeGate Partner Hub:", "TradeGate Partner Hub :", "TradeGate Partner Hub:", "TradeGate Partner Hub:"),
+    "register your company in our private B2B network and we introduce you when a fitting partner is there.": (
+        "Registrieren Sie Ihr Unternehmen in unserem privaten B2B-Netzwerk, und wir stellen Sie vor, sobald ein passender Partner da ist.",
+        "inscrivez votre entreprise dans notre réseau B2B privé et nous vous présentons dès qu’un partenaire adapté s’y trouve.",
+        "registe a sua empresa na nossa rede B2B privada e apresentamo-lo quando houver um parceiro adequado.",
+        "registre su empresa en nuestra red B2B privada y le presentamos cuando haya un socio adecuado."),
     "Business email": ("Geschäftliche E-Mail", "E-mail professionnel", "E-mail profissional", "Correo electrónico profesional"),
     "Please enter a valid email address.": ("Bitte geben Sie eine gültige E-Mail-Adresse ein.", "Veuillez saisir une adresse e-mail valide.", "Indique um endereço de e-mail válido.", "Indique una dirección de correo electrónico válida."),
 }
@@ -263,6 +300,11 @@ def country_names():
     return out
 
 
+FAQ_OLD = ("International SMEs, exporters, manufacturers, tourism boards, and startups testing EU demand — especially teams that want EU access without EU overhead (office, staff, travel). "
+           "Clients from Nigeria, South Africa, UAE, Saudi Arabia, India, Morocco, and Turkey are a particularly strong fit.")
+FAQ_NEW = "International SMEs, exporters, manufacturers, tourism boards, and startups testing EU demand — especially teams that want EU access without EU overhead (office, staff, travel)."
+
+
 def main():
     countries = country_names()
     for i, lang in enumerate(LOCALES):
@@ -274,6 +316,10 @@ def main():
             if key not in data:
                 data[key] = tr[i]
                 added += 1
+        if FAQ_NEW not in data and FAQ_OLD in data:
+            old = data[FAQ_OLD]
+            data[FAQ_NEW] = old[: old.rfind(".", 0, len(old) - 1) + 1]
+            added += 1
         for en, names in countries.items():
             if en not in data:
                 data[en] = names[lang]
