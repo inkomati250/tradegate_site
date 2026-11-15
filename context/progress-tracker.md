@@ -15,6 +15,8 @@ Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at
 - **FIX-CACHE-001** (2026-11-15): after the Partner Hub deploy the owner saw an unstyled admin and cramped menu. Cause: nginx serves /static/ with 30-day browser caching and the CSS URLs never changed, so browsers kept the old CSS. Fix: CSS links carry `?v=<hash of the CSS files>` (context processor `asset_v`), so every CSS change reaches visitors immediately. Partner Hub icons also have fixed width/height.
 - **STATS-001 Visitor statistics** (2026-11-15): cookieless first-party statistics (`analytics.py`, `PageVisit`, `VisitStatsMiddleware`): daily unique visitors, page views, countries (DB-IP Country Lite, downloaded monthly by `deploy_manage.sh` to /srv/tradegate/geo/), sources (Google, LinkedIn, AI assistants…), pages, devices, languages, visit-to-lead rates. No IP stored, daily-rotating visitor hash, staff/bots/DNT/GPC not counted, 13-month retention (`prune_visits` on every deploy). Admin: "Visitors" menu + dashboard panels. Privacy policy section 11 DE+EN (migration 0028).
 
+- **UI-HDR-001** (2026-11-15, owner request): header background made fully solid navy (#07111F). It was 95% opaque since June, so at the top of the page the cream page background showed through and the logo looked duller than when scrolled. Logo file and size unchanged (verified pixel-identical).
+
 ## Completed (all live)
 
 | Date | Change | Evidence |
