@@ -1,0 +1,201 @@
+{% extends "website/base.html" %}
+{% block content %}
+
+<section class="bg-[#07111F] text-white relative overflow-hidden grain">
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute -top-24 right-[-80px] h-[460px] w-[460px] rounded-full bg-brand-accent/12 blur-[100px]"></div>
+    <div class="absolute bottom-[-140px] left-[-140px] h-[380px] w-[380px] rounded-full bg-sky-900/25 blur-[100px]"></div>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+    <div class="grid lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-7 reveal">
+        <span class="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-bold text-white/70 mb-6">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-accent"></span>TradeGate Partner Hub
+        </span>
+        <h1 class="font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">Find business partners in Germany or abroad.</h1>
+        <p class="mt-6 text-white/62 text-lg md:text-xl leading-relaxed max-w-2xl">
+          Register your company in our private B2B network. We compare your profile with other companies, look for the right partner and introduce you personally.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#pool-form" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition shadow-glow text-sm">
+            Register your company
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
+          </a>
+          <a href="#how-it-works" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition text-sm">How it works</a>
+        </div>
+      </div>
+      <div class="lg:col-span-5 reveal d2">
+        <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 md:p-7">
+          <p class="text-xs font-bold text-brand-accent uppercase tracking-[0.2em]">Two directions, one network</p>
+          <div class="mt-5 space-y-4">
+            <div class="rounded-2xl border border-white/10 bg-[#07111F]/60 p-4">
+              <p class="font-display font-bold">International companies</p>
+              <p class="text-sm text-white/60 mt-1">looking for distributors, buyers, suppliers or agents in Germany and the EU.</p>
+            </div>
+            <div class="flex justify-center text-brand-accent" aria-hidden="true">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16m0 0l-3-3m3 3l3-3M17 20V4m0 0l-3 3m3-3l3 3"/></svg>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-[#07111F]/60 p-4">
+              <p class="font-display font-bold">German and European companies</p>
+              <p class="text-sm text-white/60 mt-1">looking for partners, suppliers and new markets abroad.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works" class="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="max-w-3xl mb-10 reveal">
+    <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">How it works</span>
+    <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight text-[#07111F]">From profile to introduction</h2>
+  </div>
+  <div class="grid md:grid-cols-4 gap-4">
+    {% for title, text in steps %}
+    <div class="rounded-3xl border bg-white p-6 shadow-soft reveal">
+      <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#07111F] text-brand-accent font-display font-bold text-sm">{{ forloop.counter }}</span>
+      <h3 class="font-display text-lg font-bold mt-4 text-[#07111F]">{{ title }}</h3>
+      <p class="text-sm text-slate-600 mt-2 leading-relaxed">{{ text }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="bg-white border-y py-14 md:py-18">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-start">
+    <div class="lg:col-span-8">
+      {% if messages %}
+      <div class="mb-8 space-y-3" id="pool-feedback">
+        {% for message in messages %}
+        <div class="rounded-2xl border p-5 {% if 'success' in message.tags %}bg-emerald-50 text-emerald-800 border-emerald-200{% elif 'error' in message.tags %}bg-red-50 text-red-800 border-red-200{% else %}bg-stone-50 text-slate-800 border-stone-200{% endif %}">
+          <p class="font-semibold text-sm">{{ message }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form id="pool-form" method="post" novalidate class="bg-white rounded-[2rem] border shadow-soft p-6 md:p-8 reveal scroll-mt-24">
+        {% csrf_token %}
+        <div class="hidden" aria-hidden="true">{{ form.website_url }}</div>
+        {{ form.form_started_at }}
+        {% if form.non_field_errors or form.form_started_at.errors %}
+        <div class="mb-6 rounded-2xl border bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors|join:" " }} {{ form.form_started_at.errors|join:" " }}</div>
+        {% endif %}
+
+        <h2 class="font-display text-2xl font-bold text-[#07111F]">Register your company</h2>
+        <p class="text-sm text-slate-500 mt-1">Takes about 5 minutes. The clearer your description, the better we can match you.</p>
+
+        <fieldset class="mt-7">
+          <legend class="text-xs font-bold text-brand-copper uppercase tracking-[0.2em] mb-4">1. Your company</legend>
+          <div class="grid md:grid-cols-2 gap-4">
+            {% include "website/partials/pool_field.html" with f=form.company_name %}
+            {% include "website/partials/pool_field.html" with f=form.website %}
+            {% include "website/partials/pool_field.html" with f=form.country %}
+            {% include "website/partials/pool_field.html" with f=form.city %}
+            {% include "website/partials/pool_field.html" with f=form.company_type %}
+            {% include "website/partials/pool_field.html" with f=form.company_size %}
+            {% include "website/partials/pool_field.html" with f=form.sector %}
+            {% include "website/partials/pool_field.html" with f=form.products %}
+          </div>
+        </fieldset>
+
+        <fieldset class="mt-8">
+          <legend class="text-xs font-bold text-brand-copper uppercase tracking-[0.2em] mb-4">2. Offer and search</legend>
+          <div class="grid gap-4">
+            {% include "website/partials/pool_field.html" with f=form.offering %}
+            {% include "website/partials/pool_field.html" with f=form.seeking %}
+          </div>
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <div class="{% if form.partner_types.errors %}err{% endif %}">
+              <p class="block text-sm font-semibold text-slate-700 mb-2"><span>{{ form.partner_types.label }}</span><span aria-hidden="true"> *</span></p>
+              <div class="pool-checks rounded-2xl border bg-[#F7F2EA] p-4 text-sm {% if form.partner_types.errors %}border-red-300{% endif %}">{{ form.partner_types }}</div>
+              {% if form.partner_types.errors %}<p class="text-xs text-red-600 mt-1">{{ form.partner_types.errors|join:", " }}</p>{% endif %}
+            </div>
+            <div>
+              <p class="block text-sm font-semibold text-slate-700 mb-2"><span>{{ form.target_regions.label }}</span><span aria-hidden="true"> *</span></p>
+              <div class="pool-checks rounded-2xl border bg-[#F7F2EA] p-4 text-sm {% if form.target_regions.errors %}border-red-300{% endif %}">{{ form.target_regions }}</div>
+              {% if form.target_regions.errors %}<p class="text-xs text-red-600 mt-1">{{ form.target_regions.errors|join:", " }}</p>{% endif %}
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="mt-8">
+          <legend class="text-xs font-bold text-brand-copper uppercase tracking-[0.2em] mb-4">3. Contact person</legend>
+          <div class="grid md:grid-cols-2 gap-4">
+            {% include "website/partials/pool_field.html" with f=form.contact_name %}
+            {% include "website/partials/pool_field.html" with f=form.contact_role %}
+            {% include "website/partials/pool_field.html" with f=form.email %}
+            {% include "website/partials/pool_field.html" with f=form.phone %}
+          </div>
+        </fieldset>
+
+        <div class="mt-6 rounded-2xl border bg-[#F7F2EA] p-4 {% if form.consent.errors %}border-red-300 bg-red-50{% endif %}">
+          <div class="flex items-start gap-3">
+            <div class="pt-0.5">{{ form.consent }}</div>
+            <div>
+              <label for="{{ form.consent.id_for_label }}" class="text-sm text-slate-600">{{ form.consent.label }}</label>
+              <p class="text-xs text-slate-500 mt-1">Details in our <a href="{% url 'legal_page' key='datenschutz' %}" class="underline hover:text-[#07111F]">privacy policy</a>.</p>
+              {% if form.consent.errors %}<p class="text-xs text-red-600 mt-1">{{ form.consent.errors|join:", " }}</p>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
+          <button id="pool-submit-btn" type="submit" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#07111F] text-white font-bold hover:bg-[#07111F]/90 transition text-sm shadow-sm">
+            Register my company
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4-4 4M3 12h18"/></svg>
+          </button>
+          <span class="text-sm text-slate-500">We review every profile within 2 working days.</span>
+        </div>
+      </form>
+    </div>
+
+    <aside class="lg:col-span-4 space-y-5 reveal d1 lg:sticky lg:top-28">
+      <div class="rounded-[2rem] bg-[#07111F] text-white p-7 shadow-soft">
+        <span class="text-xs font-bold text-brand-accent uppercase tracking-[0.22em]">Our promise</span>
+        <ul class="mt-5 space-y-3 text-sm">
+          {% for item in promises %}
+          <li class="flex items-start gap-2.5 text-white/75"><span class="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center"><svg class="h-3 w-3 text-brand-accent" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg></span>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="rounded-[2rem] border bg-[#F7F2EA] p-7">
+        <h3 class="font-display text-lg font-bold text-[#07111F]">Need a partner faster?</h3>
+        <p class="text-sm text-slate-600 mt-2 leading-relaxed">We also run active partner searches in Germany and the EU, with a shortlist and outreach.</p>
+        <a href="{% url 'service_landing' slug='find-business-partners-germany' %}" class="mt-4 inline-flex text-sm font-bold text-[#07111F] hover:text-brand-copper">Partner search service →</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="py-16 md:py-20 max-w-4xl mx-auto px-4 sm:px-6">
+  <span class="inline-block text-xs font-bold text-brand-copper uppercase tracking-[0.22em] mb-3">Questions</span>
+  <h2 class="font-display text-3xl font-bold tracking-tight text-[#07111F] mb-8">Partner Hub FAQ</h2>
+  <div class="space-y-3">
+    {% for q, a in faq %}
+    <details class="group rounded-xl border bg-white overflow-hidden">
+      <summary class="cursor-pointer flex items-center justify-between gap-4 px-5 py-4 font-semibold text-sm select-none">
+        {{ q }}
+        <svg class="chevron h-4 w-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+      </summary>
+      <div class="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-stone-100 pt-4">{{ a }}</div>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('pool-form'), btn = document.getElementById('pool-submit-btn');
+    if (form && btn) form.addEventListener('submit', function () { btn.disabled = true; btn.classList.add('opacity-75', 'cursor-not-allowed'); });
+    if (window.location.hash === '#pool-form') {
+      var el = document.getElementById('pool-feedback') || form;
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+</script>
+{% endblock %}

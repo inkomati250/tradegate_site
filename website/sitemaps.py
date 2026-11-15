@@ -31,7 +31,7 @@ class StaticViewSitemap(Sitemap):
     priority = 0.7
 
     def items(self):
-        return ["home", "trade_fairs", "about", "faq", "contact"]
+        return ["home", "trade_fairs", "partner_pool", "about", "faq", "contact"]
 
     def location(self, item):
         return reverse(item)
@@ -83,7 +83,7 @@ class TranslatedSitemap(Sitemap):
 
     def items(self):
         from . import i18n
-        paths = [reverse(n) for n in ("home", "trade_fairs", "about", "faq", "contact")]
+        paths = [reverse(n) for n in ("home", "trade_fairs", "partner_pool", "about", "faq", "contact")]
         paths += [reverse("service_landing", kwargs={"slug": s}) for s in SERVICE_PAGES]
         paths += [reverse("trade_fair_detail", kwargs={"slug": f.slug}) for f in TradeFair.objects.filter(is_published=True)]
         return [(p, code) for code in i18n.LANGS if code != i18n.DEFAULT for p in paths]

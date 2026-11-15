@@ -42,18 +42,19 @@ Owner decisions that stand:
 - **Trade fair calendar** `/trade-fairs/`: partner events block + 39 German fairs grouped by month, sector filter chips, organiser CTA, disclaimer.
 - Fair detail pages `/trade-fairs/<slug>/`: banner (official or "coming soon" placeholder), packages/prices, who should exhibit/visit, how we help, .ics download, Event schema.
 - Seven service pages, About (founder card, partners), FAQ, Contact (enquiry form → database + email), legal pages (Impressum, Datenschutz).
-- **Five languages** (EN/DE/FR/PT/ES) with flag picker in the nav.
+- **TradeGate Partner Hub** `/partner-hub/` (menu link "Partner Hub"): private B2B company network. Companies (any country → Germany/EU, and German/EU → abroad) register a profile; we approve, the system suggests matches in admin, we introduce personally. Never public, never automatic contact. Phase 1 (registration + admin matching) built 2026-11-15; later phases: company logins/profiles, anonymous public opportunity board with "I'm interested" routed through us.
+- **Five languages** (EN/DE/FR/PT/ES) with flag picker in the nav. Owner decided 2026-11-15: no further languages for now.
 - Branded Django admin (navy/gold, grouped sections, dashboard stats).
 
 ## Partner events (current state)
 
 | Event | Agreement | Website status |
 | --- | --- | --- |
-| ECOWAS Aviana West Africa International Expo 2027 (Ibadan, 22–24 June 2027) | Signed by organiser 13 Nov 2026; Ivan's review/countersignature pending | Seeded with description, USD prices, logo; **not published** |
-| Azerbaijan Mining Expo 2027 (Baku, 8–10 Sept 2027) | Agreement in redlines | Seeded with description, EUR prices, logo; **not published** |
+| ECOWAS Aviana West Africa International Expo 2027 (Ibadan, 22–24 June 2027) | Signed by organiser 13 Nov 2026; Ivan's review/countersignature pending | Published with description, USD prices, logo (migration 0022, owner request) |
+| Azerbaijan Mining Expo 2027 (Baku, 8–10 Sept 2027) | Agreement in redlines | Published with description, EUR prices, logo (migration 0022, owner request) |
 
 Partner events appear on the live site only when **both** "materials permission" and "published" are ticked in admin. Organiser websites, contact details and organiser company names are **never** shown for partner events (we are the middleman).
 
 ## Out of scope unless the owner asks
 
-Online payments, customer accounts, blog, live chat, changing the expoBridge project.
+Online payments, customer accounts (until Partner Hub phase 2 is approved), blog, live chat, changing the expoBridge project.

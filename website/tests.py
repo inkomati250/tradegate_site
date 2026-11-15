@@ -431,3 +431,130 @@ class LanguageTests(TestCase):
         r = self.client.get("/favicon.ico")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Content-Type"], "image/x-icon")
+
+
+class PartnerHubTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def _data(self, **over):
+        import time
+        data = {
+            "form_started_at": str(int(time.time()) - 60),
+            "company_name": "Nairobi Coffee Exporters", "website": "https://ncx.example.com", "country": "Kenya",
+            "company_type": "exporter", "company_size": "10_49", "sector": "agrifood", "products": "specialty coffee beans",
+            "offering": "We export washed Arabica coffee beans in container loads with organic certification.",
+            "seeking": "A German importer or distributor for specialty coffee beans and roasters.",
+            "partner_types": ["distributor"], "target_regions": ["germany", "eu"],
+            "contact_name": "Amina Otieno", "contact_role": "Export Manager", "email": "amina@ncx.example.com", "consent": "on",
+        }
+        data.update(over)
+        return data
+
+    def _profile(self, **kw):
+        from .models import PartnerProfile
+        base = dict(company_name="Hamburg Kaffee Import", country="Germany", company_type="distributor", sector="agrifood",
+                    products="green coffee import", offering="We import and distribute specialty coffee beans to roasters in Germany.",
+                    seeking="Exporters of specialty coffee beans from East Africa.", partner_types="supplier",
+                    target_regions="africa", contact_name="Jan", email="jan@hki.example.de", status="approved")
+        base.update(kw)
+        return PartnerProfile.objects.create(**base)
+
+    def test_page_renders_and_is_linked_in_menu_and_sitemap(self):
+        r = self.client.get(reverse("partner_pool"))
+        self.assertContains(r, "Find business partners in Germany or abroad.")
+        self.assertContains(r, 'id="pool-form"')
+        self.assertContains(r, '"FAQPage"')
+        home = self.client.get(reverse("home"))
+        self.assertContains(home, 'href="/partner-hub/"')
+        self.assertContains(self.client.get("/sitemap.xml"), "/partner-hub/")
+        svc = self.client.get(reverse("service_landing", kwargs={"slug": "find-business-partners-germany"}))
+        self.assertContains(svc, 'href="/partner-hub/"')
+
+    def test_registration_is_saved_pending_and_emailed_with_matches(self):
+        from django.core import mail
+        from .models import PartnerProfile
+        self._profile()
+        r = self.client.post(reverse("partner_pool"), self._data(), follow=True)
+        self.assertContains(r, "Your company is registered")
+        p = PartnerProfile.objects.get(email="amina@ncx.example.com")
+        self.assertEqual(p.status, "pending")
+        self.assertEqual(p.partner_types, "distributor")
+        self.assertEqual(p.target_regions, "germany,eu")
+        self.assertTrue(p.consent and p.consent_at)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("1 possible match", mail.outbox[0].subject)
+        self.assertIn("Hamburg Kaffee Import", mail.outbox[0].body)
+        self.assertEqual(mail.outbox[0].reply_to, ["amina@ncx.example.com"])
+
+    def test_consent_and_details_required(self):
+        from .models import PartnerProfile
+        r = self.client.post(reverse("partner_pool"), self._data(consent="", offering="short", partner_types=[]))
+        self.assertContains(r, "Your consent is needed")
+        self.assertContains(r, "at least 30 characters")
+        self.assertContains(r, "Please choose at least one partner type.")
+        self.assertFalse(PartnerProfile.objects.exists())
+
+    def test_honeypot_and_spam_are_not_saved(self):
+        from django.core import mail
+        from .models import PartnerProfile
+        self.client.post(reverse("partner_pool"), self._data(website_url="http://spam.example"))
+        self.client.post(reverse("partner_pool"), self._data(offering="We sell backlinks and guest post packages for your rank on google."))
+        self.assertFalse(PartnerProfile.objects.exists())
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_matching_needs_regions_both_ways_and_substance(self):
+        from .models import PartnerProfile
+        from .partner_pool import suggestions_for
+        importer = self._profile()
+        exporter = self._profile(company_name="Kenya Beans", country="Kenya", company_type="exporter",
+                                 offering="We export specialty coffee beans.", seeking="German importer distributor for coffee beans.",
+                                 partner_types="distributor", target_regions="germany", email="x@kb.example")
+        self.assertEqual([o for _, o, _ in suggestions_for(exporter, [importer])], [importer])
+        asia_only = self._profile(company_name="Asia only", target_regions="asia", email="y@ao.example")
+        self.assertEqual(suggestions_for(exporter, [asia_only]), [])
+        other_sector = self._profile(company_name="Machines GmbH", sector="machinery", products="CNC machines",
+                                     offering="CNC lathes", seeking="Metal workshops", email="z@m.example")
+        self.assertEqual(suggestions_for(exporter, [other_sector]), [])
+        self.assertEqual(suggestions_for(exporter, [exporter]), [])
+        self.assertTrue(PartnerProfile.objects.count() >= 3)
+
+    def test_admin_shows_suggested_matches(self):
+        from django.contrib.auth.models import User
+        importer = self._profile()
+        exporter = self._profile(company_name="Kenya Beans", country="Kenya", company_type="exporter", status="pending",
+                                 offering="We export specialty coffee beans.", seeking="German importer for coffee beans.",
+                                 partner_types="distributor", target_regions="germany", email="x@kb.example")
+        User.objects.create_superuser("boss", "boss@example.com", "pw-123456")
+        self.client.login(username="boss", password="pw-123456")
+        r = self.client.get(reverse("admin:website_partnerprofile_change", args=[exporter.pk]))
+        self.assertContains(r, importer.company_name)
+        self.assertContains(r, "same sector")
+        self.assertContains(self.client.get(reverse("admin:index")), "Partner Hub: new companies")
+
+    def test_german_version(self):
+        r = self.client.get(reverse("partner_pool") + "?lang=de")
+        html = r.content.decode()
+        self.assertIn("Geschäftspartner in Deutschland oder im Ausland finden.", html)
+        self.assertIn(">Kenia<", html)
+        self.assertIn('value="Kenya"', html)
+
+
+class PrivacyPartnerHubMigrationTests(TestCase):
+    def test_section_added_once_in_both_languages(self):
+        import importlib
+        from django.apps import apps
+        from .models import LegalPage
+        mig = importlib.import_module("website.migrations.0025_privacy_partner_hub")
+        LegalPage.objects.update_or_create(key="datenschutz", defaults={"title": "Datenschutz", "content":
+            "Stand: 06.02.2026\n6. Cookies\n(z. B. für Sicherheitsfunktionen wie CSRF-Schutz und ggf. Sitzungscookies).\n9. Datensicherheit\nText.\n\n\nEnglish Version\n"
+            "6. Cookies\n(e.g., security-related cookies such as CSRF protection and possibly session cookies).\n9. Data security\nText."})
+        mig.add_section(apps, None)
+        mig.add_section(apps, None)
+        c = LegalPage.objects.get(key="datenschutz").content
+        self.assertEqual(c.count("10. TradeGate Partner Hub"), 2)
+        self.assertLess(c.index("privates Unternehmensnetzwerk"), c.index("English Version"))
+        self.assertGreater(c.index("private company network"), c.index("English Version"))
+        self.assertIn("Stand: 15.11.2026", c)
+        self.assertIn("tg_lang", c)

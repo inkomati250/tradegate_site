@@ -1,12 +1,16 @@
 # TradeGate Website — Progress Tracker
 
-Last updated: 2026-11-14 · Owner: Ivan Nkomati
+Last updated: 2026-11-15 · Owner: Ivan Nkomati
 
 Update after every meaningful change. Record evidence; do not turn plans into completion claims.
 
 ## Current state
 
 Live on `main` (deploy 2026-11-14 08:06, commit 61fda3f). Live PostgreSQL now at migration 0022. All tests pass. Branch `feature/service-packages` mirrors `main`.
+
+## In review (branch `feature/partner-hub`, not live)
+
+- **HUB-001 TradeGate Partner Hub, phase 1** (2026-11-15): `/partner-hub/` registration page (5 languages), PartnerProfile model (0024), admin review + suggested matches + dashboard card, owner email per registration, menu/footer links, CTA on partner-search and distributor-search pages, sitemap entry, privacy policy section 10 DE+EN + language-cookie note (0025). Desktop nav made to fit one line at 1024px (language name shown from 1280px). Evidence: 57 tests pass; screenshots desktop/mobile/DE/admin checked. Waiting for owner approval to push.
 
 ## Completed (all live)
 

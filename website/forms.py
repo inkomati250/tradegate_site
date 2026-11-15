@@ -351,3 +351,101 @@ class InquiryForm(forms.Form):
         if score >= 3:
             return "Needs review"
         return "Low information"
+
+
+# --- Partner pool registration -------------------------------------------------
+from .partner_pool import (  # noqa: E402
+    COMPANY_TYPE_CHOICES, COUNTRY_CHOICES, PARTNER_TYPE_CHOICES, SECTOR_CHOICES, SIZE_CHOICES, TARGET_CHOICES,
+)
+
+
+class PartnerPoolForm(forms.Form):
+    website_url = forms.CharField(required=False, widget=forms.TextInput(attrs={"autocomplete": "off", "tabindex": "-1", "class": "sr-only"}))
+    form_started_at = forms.CharField(required=False, widget=forms.HiddenInput())
+
+    company_name = forms.CharField(label="Company name", max_length=160,
+        error_messages={"required": "Please enter your company name."},
+        widget=forms.TextInput(attrs={"autocomplete": "organization", "placeholder": "Company name"}))
+    website = forms.URLField(label="Company website", required=False, assume_scheme="https",
+        error_messages={"invalid": "Please enter a valid website, for example https://www.example.com"},
+        widget=forms.URLInput(attrs={"placeholder": "https://", "autocomplete": "url"}))
+    country = forms.ChoiceField(label="Country where you are based", choices=COUNTRY_CHOICES,
+        error_messages={"required": "Please select your country."})
+    city = forms.CharField(label="City", required=False, max_length=80, widget=forms.TextInput(attrs={"placeholder": "City"}))
+    company_type = forms.ChoiceField(label="Type of company", choices=COMPANY_TYPE_CHOICES,
+        error_messages={"required": "Please select the type of company."})
+    company_size = forms.ChoiceField(label="Company size", choices=SIZE_CHOICES, required=False)
+    sector = forms.ChoiceField(label="Sector", choices=SECTOR_CHOICES, error_messages={"required": "Please select your sector."})
+    products = forms.CharField(label="Main products or services", max_length=300,
+        error_messages={"required": "Please name your main products or services."},
+        widget=forms.TextInput(attrs={"placeholder": "e.g. roasted coffee, solar inverters, logistics software"}))
+
+    offering = forms.CharField(label="What do you offer a partner?", max_length=2000,
+        error_messages={"required": "Please describe what you offer."},
+        widget=forms.Textarea(attrs={"rows": 4, "placeholder": "Capacity, certifications, markets you already serve, what makes you a good partner"}))
+    seeking = forms.CharField(label="What kind of partner are you looking for?", max_length=2000,
+        error_messages={"required": "Please describe the partner you are looking for."},
+        widget=forms.Textarea(attrs={"rows": 4, "placeholder": "Type of company, products, size, what the partnership should achieve"}))
+    partner_types = forms.MultipleChoiceField(label="Partner types you are looking for", choices=PARTNER_TYPE_CHOICES,
+        widget=forms.CheckboxSelectMultiple, error_messages={"required": "Please choose at least one partner type."})
+    target_regions = forms.MultipleChoiceField(label="Where are you looking for partners?", choices=TARGET_CHOICES,
+        widget=forms.CheckboxSelectMultiple, error_messages={"required": "Please choose at least one region."})
+
+    contact_name = forms.CharField(label="Contact person", max_length=120,
+        error_messages={"required": "Please enter a contact person."},
+        widget=forms.TextInput(attrs={"autocomplete": "name", "placeholder": "Full name"}))
+    contact_role = forms.CharField(label="Role", required=False, max_length=100,
+        widget=forms.TextInput(attrs={"autocomplete": "organization-title", "placeholder": "Founder, Export Manager…"}))
+    email = forms.EmailField(label="Business email", error_messages={"required": "Please enter your email address.", "invalid": "Please enter a valid email address."},
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@company.com"}))
+    phone = forms.CharField(label="Phone / WhatsApp", required=False, max_length=40,
+        widget=forms.TextInput(attrs={"autocomplete": "tel", "placeholder": "+49 …"}))
+
+    consent = forms.BooleanField(required=True,
+        label="I agree that TradeGate stores this company profile in the TradeGate Partner Hub, compares it with other entries and contacts me about possible partners. Details are never published or passed on without my approval. I can withdraw at any time.",
+        error_messages={"required": "Your consent is needed to add your company to the Partner Hub."})
+
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.setdefault("initial", {})
+        initial.setdefault("form_started_at", str(int(time.time())))
+        super().__init__(*args, **kwargs)
+
+    def clean_website_url(self):
+        if (self.cleaned_data.get("website_url") or "").strip():
+            raise forms.ValidationError("Spam detected.")
+        return ""
+
+    def clean_form_started_at(self):
+        raw = (self.cleaned_data.get("form_started_at") or "").strip()
+        try:
+            elapsed = time.time() - int(float(raw))
+        except (TypeError, ValueError):
+            return raw
+        if elapsed < 3:
+            raise forms.ValidationError("Please wait a few seconds before submitting.")
+        if elapsed > 24 * 60 * 60:
+            raise forms.ValidationError("This form session expired. Please refresh and try again.")
+        return raw
+
+    def clean_email(self):
+        return (self.cleaned_data.get("email") or "").strip().lower()
+
+    def _min_text(self, field, n=30):
+        val = (self.cleaned_data.get(field) or "").strip()
+        if len(val) < n:
+            raise forms.ValidationError(f"Please add a little more detail (at least {n} characters).")
+        return val
+
+    def clean_offering(self):
+        return self._min_text("offering")
+
+    def clean_seeking(self):
+        return self._min_text("seeking")
+
+    def suspicious_reasons(self):
+        cd = self.cleaned_data
+        text = " ".join(str(cd.get(k, "")) for k in ("company_name", "products", "offering", "seeking", "website")).lower().replace("-", " ")
+        reasons = [f"keyword:{k}" for k in SUSPICIOUS_KEYWORDS if k in text]
+        if len(re.findall(r"https?://", text)) >= 3:
+            reasons.append("multiple_links")
+        return reasons

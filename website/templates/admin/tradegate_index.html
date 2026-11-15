@@ -7,6 +7,12 @@
     <p>Not yet marked as handled.</p>
     <div class="tg-actions"><a href="{% url 'admin:website_inquiry_changelist' %}?is_handled__exact=0">Open enquiries</a></div>
   </div>
+  <div class="tg-card dark">
+    <div class="tg-label">Partner Hub: new companies</div>
+    <div class="tg-num">{{ tg_pool_pending }}</div>
+    <p>{{ tg_pool_approved }} approved in the network.</p>
+    <div class="tg-actions"><a href="{% url 'admin:website_partnerprofile_changelist' %}?status__exact=pending">Review new companies</a></div>
+  </div>
   <div class="tg-card">
     <div class="tg-label">Upcoming fairs</div>
     <div class="tg-num">{{ tg_upcoming_fairs }}</div>

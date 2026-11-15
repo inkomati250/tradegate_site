@@ -17,6 +17,7 @@ from .models import (
     ServicePackage,
     TeamProfile,
     Inquiry,
+    PartnerProfile,
 )
 
 # -------------------------
@@ -273,6 +274,7 @@ admin.site.index_template = "admin/tradegate_index.html"
 
 ADMIN_SECTIONS = [
     ("Enquiries", "enquiries", ["Inquiry"]),
+    ("Partner Hub", "partner-hub", ["PartnerProfile"]),
     ("Trade fairs", "trade-fairs", ["TradeFair"]),
     ("Services and prices", "services", ["ServicePackage", "Service", "Industry", "ProcessStep"]),
     ("Team and company", "company", ["TeamProfile", "SiteSettings"]),
@@ -319,6 +321,8 @@ def _tradegate_index(request, extra_context=None):
             "tg_new_enquiries": Inquiry.objects.filter(is_handled=False).count(),
             "tg_recent_enquiries": Inquiry.objects.filter(is_handled=False).order_by("-created_at")[:5],
             "tg_upcoming_fairs": TradeFair.objects.filter(is_published=True).exclude(end_date__lt=today).count(),
+            "tg_pool_pending": PartnerProfile.objects.filter(status="pending").count(),
+            "tg_pool_approved": PartnerProfile.objects.filter(status__in=["approved", "introduced"]).count(),
             "tg_partner_waiting": TradeFair.objects.filter(kind=TradeFair.KIND_REPRESENTED, is_published=False).count(),
         }
     except Exception:
@@ -328,3 +332,100 @@ def _tradegate_index(request, extra_context=None):
 
 
 admin.site.index = _tradegate_index
+
+
+# =========================
+# Partner Hub
+# =========================
+class _RegionFilter(admin.SimpleListFilter):
+    title = "region"
+    parameter_name = "region"
+
+    def lookups(self, request, model_admin):
+        from .partner_pool import REGION_CHOICES
+        return REGION_CHOICES
+
+    def queryset(self, request, queryset):
+        from .partner_pool import COUNTRIES_BY_REGION
+        if self.value():
+            return queryset.filter(country__in=COUNTRIES_BY_REGION.get(self.value(), []))
+        return queryset
+
+
+class _AgeFilter(admin.SimpleListFilter):
+    title = "last updated"
+    parameter_name = "age"
+
+    def lookups(self, request, model_admin):
+        return [("stale", "Over 24 months ago (review or delete)")]
+
+    def queryset(self, request, queryset):
+        if self.value() == "stale":
+            from datetime import timedelta
+            from django.utils import timezone
+            return queryset.filter(updated_at__lt=timezone.now() - timedelta(days=730))
+        return queryset
+
+
+@admin.register(PartnerProfile)
+class PartnerProfileAdmin(admin.ModelAdmin):
+    list_display = ("company_name", "country", "sector", "company_type", "status", "match_count", "created_at")
+    list_filter = ("status", _RegionFilter, "sector", "company_type", _AgeFilter, "created_at")
+    search_fields = ("company_name", "products", "offering", "seeking", "contact_name", "email", "country", "city")
+    list_per_page = 50
+    date_hierarchy = "created_at"
+    actions = ["approve", "mark_introduced", "pause", "archive"]
+    readonly_fields = ("suggested_matches", "consent", "consent_at", "language", "ip_address", "user_agent", "reviewed_at", "created_at", "updated_at")
+    fieldsets = (
+        ("Review", {"fields": ("status", "suggested_matches", "internal_notes")}),
+        ("Company", {"fields": ("company_name", "website", ("country", "city"), ("company_type", "company_size"), "sector", "products")}),
+        ("Offer and search", {"fields": ("offering", "seeking", "partner_types", "target_regions"),
+                              "description": "Partner types and regions are stored as codes, separated by commas."}),
+        ("Contact person (never shared without approval)", {"fields": ("contact_name", "contact_role", "email", "phone")}),
+        ("Consent and record", {"classes": ("collapse",), "fields": ("consent", "consent_at", "language", "ip_address", "user_agent", "reviewed_at", "created_at", "updated_at")}),
+    )
+
+    def _pool(self, obj):
+        return PartnerProfile.objects.filter(status__in=["approved", "introduced"]).exclude(pk=obj.pk)
+
+    @admin.display(description="Possible matches")
+    def match_count(self, obj):
+        from .partner_pool import suggestions_for
+        n = len(suggestions_for(obj, self._pool(obj)))
+        return n or "–"
+
+    @admin.display(description="Suggested matches (approved companies only; check before introducing)")
+    def suggested_matches(self, obj):
+        from django.utils.html import format_html, format_html_join
+        from .partner_pool import suggestions_for
+        if not obj.pk:
+            return "–"
+        rows = suggestions_for(obj, self._pool(obj))
+        if not rows:
+            return "No match in the approved network yet. This one is for active search."
+        return format_html(
+            "<table><tr><th>Fit</th><th>Company</th><th>Country</th><th>Why</th></tr>{}</table>",
+            format_html_join("", "<tr><td><b>{}%</b></td><td><a href='{}'>{}</a></td><td>{}</td><td>{}</td></tr>",
+                             ((sc, reverse("admin:website_partnerprofile_change", args=[o.pk]), o.company_name, o.country, "; ".join(r)) for sc, o, r in rows)),
+        )
+
+    def _set(self, request, queryset, status, label):
+        from django.utils import timezone
+        n = queryset.update(status=status, reviewed_at=timezone.now())
+        self.message_user(request, f"{n} compan{'y' if n == 1 else 'ies'} {label}.")
+
+    @admin.action(description="Approve: add to the network")
+    def approve(self, request, queryset):
+        self._set(request, queryset, "approved", "approved")
+
+    @admin.action(description="Mark as introduced")
+    def mark_introduced(self, request, queryset):
+        self._set(request, queryset, "introduced", "marked as introduced")
+
+    @admin.action(description="Pause")
+    def pause(self, request, queryset):
+        self._set(request, queryset, "paused", "paused")
+
+    @admin.action(description="Archive")
+    def archive(self, request, queryset):
+        self._set(request, queryset, "archived", "archived")

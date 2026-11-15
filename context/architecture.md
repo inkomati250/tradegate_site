@@ -19,9 +19,10 @@ Backups: branches `backup/pre-overhaul-2026-11-14` (site before the overhaul, 04
 
 | Area | Files |
 | --- | --- |
-| Models | `models.py`: SiteSettings, NavigationItem, Inquiry, LegalPage, Service/Industry/ProcessStep, **TradeFair** (kind `germany`/`represented`, materials_permission, logo, cover_image, brochure, packages_text, packages_image, packages_note, is_published, show_in_carousel), **ServicePackage**, **TeamProfile** |
+| Models | `models.py`: SiteSettings, NavigationItem, Inquiry, LegalPage, Service/Industry/ProcessStep, **TradeFair** (kind `germany`/`represented`, materials_permission, logo, cover_image, brochure, packages_text, packages_image, packages_note, is_published, show_in_carousel), **ServicePackage**, **TeamProfile**, **PartnerProfile** (Partner Hub: status pending/approved/introduced/paused/archived; partner_types and target_regions stored as comma-separated codes) |
 | Static content | `content.py`: SERVICE_PAGES, SERVICE_NAV, ORGANISER_NAV, FOUNDER, FAIR_DISCLAIMER, FAIR_CATEGORIES (DB packages/team override these when present) |
-| Views | `views.py`: home, service_landing, trade_fairs, trade_fair_detail, trade_fair_ics, contact (saves Inquiry, emails CONTACT_RECIPIENT_EMAIL, spam/rate-limit checks), about, faq, legal_page |
+| Views | `views.py`: home, service_landing, trade_fairs, trade_fair_detail, trade_fair_ics, contact (saves Inquiry, emails CONTACT_RECIPIENT_EMAIL, spam/rate-limit checks), partner_pool (`/partner-hub/`: saves PartnerProfile as pending, emails owner with match suggestions), about, faq, legal_page |
+| Partner Hub | `partner_pool.py`: regions, countries, sectors, partner types and the rule-based matcher (`score`, `suggestions_for`: regions must fit both ways; needs same sector or ≥2 shared terms). Admin shows suggested matches on each company. Texts translated via `scripts/i18n_partner_hub.py` (country names from CLDR/Babel, script-time only) |
 | SEO | `seo.py` (Organization/ProfessionalService + WebSite schema on every page, breadcrumbs, FAQPage), `sitemaps.py` (static, services, legal, trade fairs, translated versions), robots.txt, `/favicon.ico`, `/site.webmanifest` in `tradegate/urls.py` |
 | Languages | `i18n.py` + `middleware.py` (LanguageMiddleware) + `locale/{de,fr,pt,es}.json`; picker `templates/website/partials/lang_picker.html` |
 | Admin | `admin.py` + `templates/admin/` + `static/website/admin/tradegate-admin.css` |
@@ -33,5 +34,6 @@ Backups: branches `backup/pre-overhaul-2026-11-14` (site before the overhaul, 04
 - German fairs: link to the official site only if `official_url` is set, otherwise "Official link not available".
 - Contact form: every valid enquiry is saved; email failure never loses the enquiry; emails stay English.
 - Translations happen on finished HTML; scripts, styles, JSON-LD and `translate="no"` elements are never touched. Admin, static, media, sitemap are never translated.
+- Partner Hub: profiles are never public; contact details are passed on only after the company agrees in each case; no automatic emails to companies; matches are suggestions for us to check. Privacy policy section 10 (DE+EN) covers it (migration 0025, append-only).
 - Founder photo is a CSS background (not downloadable by right-click).
 - Migrations must not fail on a read-only media folder.

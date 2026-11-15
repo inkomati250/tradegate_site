@@ -157,6 +157,9 @@
     .contact-radios li label { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer; }
     .contact-radios li input[type=radio], input[type=checkbox] { width: auto; }
 
+    .pool-checks ul, .pool-checks > div { list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
+    .pool-checks label { display: inline-flex; align-items: flex-start; gap: .55rem; cursor: pointer; color: #334155; }
+    .pool-checks input[type=checkbox] { margin-top: .2rem; accent-color: #07111F; }
     .carousel-scroll { scroll-snap-type: x mandatory; scrollbar-width: thin; }
     .carousel-card { scroll-snap-align: start; }
     /* Partner event banner placeholder (until the organiser's official banner is uploaded) */
@@ -182,9 +185,9 @@
       </a>
 
       <nav class="hidden lg:flex items-center gap-1 text-sm">
-        <a href="/" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">Home</a>
+        <a href="/" class="px-2 xl:px-3 py-2 rounded-lg whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 transition">Home</a>
         <div class="relative group">
-          <button type="button" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition inline-flex items-center gap-1">
+          <button type="button" class="px-2 xl:px-3 py-2 rounded-lg whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 transition inline-flex items-center gap-1">
             Services
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg>
           </button>
@@ -206,11 +209,12 @@
             </div>
           </div>
         </div>
-        <a href="{% url 'trade_fairs' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">Trade fair calendar</a>
-        <a href="{% url 'faq' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">FAQs</a>
-        <a href="{% url 'about' %}" class="px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition">About</a>
-        <div class="ml-2">{% include "website/partials/lang_picker.html" with compact=False %}</div>
-        <a href="{% url 'contact' %}" class="ml-3 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition text-sm shadow-glow">
+        <a href="{% url 'trade_fairs' %}" class="px-2 xl:px-3 py-2 rounded-lg whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 transition">Trade fair calendar</a>
+        <a href="{% url 'partner_pool' %}" class="px-2 xl:px-3 py-2 rounded-lg whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 transition">Partner Hub</a>
+        <a href="{% url 'faq' %}" class="px-2 xl:px-3 py-2 rounded-lg whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 transition">FAQs</a>
+        <a href="{% url 'about' %}" class="px-2 xl:px-3 py-2 rounded-lg whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 transition">About</a>
+        <div class="ml-1 xl:ml-2">{% include "website/partials/lang_picker.html" with compact=False narrow_lg=True %}</div>
+        <a href="{% url 'contact' %}" class="ml-2 xl:ml-3 inline-flex items-center justify-center text-center leading-tight px-4 xl:px-5 py-2.5 rounded-xl bg-brand-accent text-[#07111F] font-bold hover:bg-brand-accent/90 transition text-sm shadow-glow">
           Request consultation
         </a>
       </nav>
@@ -234,6 +238,7 @@
           <a href="{% url 'service_landing' slug=slug %}" class="px-3 py-2.5 rounded-lg text-white/65 hover:text-white hover:bg-white/10 transition">{{ label }}</a>
         {% endfor %}
         <a href="{% url 'trade_fairs' %}" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">Trade fair calendar</a>
+        <a href="{% url 'partner_pool' %}" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">Partner Hub</a>
         <a href="{% url 'faq' %}" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">FAQs</a>
         <a href="{% url 'about' %}" class="px-3 py-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition">About</a>
         <a href="{% url 'contact' %}" class="mt-3 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-brand-accent text-[#07111F] font-bold">Request consultation</a>
@@ -276,6 +281,7 @@
           <a href="{% url 'about' %}" class="block text-white/55 hover:text-white hover-gold transition">About</a>
           <a href="{% url 'trade_fairs' %}" class="block text-white/55 hover:text-white hover-gold transition">Trade fair calendar</a>
           <a href="{% url 'trade_fairs' %}#partner-events" class="block text-white/55 hover:text-white hover-gold transition">Partner events</a>
+          <a href="{% url 'partner_pool' %}" class="block text-white/55 hover:text-white hover-gold transition">Partner Hub: register your company</a>
           <a href="{% url 'about' %}#partners" class="block text-white/55 hover:text-white hover-gold transition">Partner with us</a>
           <a href="{% url 'faq' %}" class="block text-white/55 hover:text-white hover-gold transition">FAQs</a>
           <a href="{% url 'contact' %}" class="block text-white/55 hover:text-white hover-gold transition">Contact</a>

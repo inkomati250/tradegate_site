@@ -12,13 +12,13 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .content import DEFAULT_OPPORTUNITIES, FAIR_CATEGORIES, FAIR_DISCLAIMER, fair_categories, FOUNDER, PRICING_NOTE, SERVICE_NAV, SERVICE_PAGES
-from .forms import InquiryForm
+from .forms import InquiryForm, PartnerPoolForm
 from datetime import date, timedelta
 
 from django.http import HttpResponse
 from django.utils import timezone
 
-from .models import SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, ServicePackage, TeamProfile, TradeFair, TradeFairOpportunity
+from .models import PartnerProfile, SiteSettings, Service, Industry, ProcessStep, LegalPage, Inquiry, ServicePackage, TeamProfile, TradeFair, TradeFairOpportunity
 
 logger = logging.getLogger(__name__)
 
@@ -483,3 +483,102 @@ def faq(request):
     html = render_to_string("website/faq.html", context, request=request)
     context["faq_json"] = faq_schema(faq_pairs_from_html(html))
     return render(request, "website/faq.html", context)
+
+
+@require_http_methods(["GET", "POST"])
+def partner_pool(request):
+    """Register a company in our partner pool. Entries are private; we review and introduce."""
+    from .partner_pool import suggestions_for
+
+    site = _get_settings()
+    if request.method == "POST":
+        form = PartnerPoolForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            reasons = form.suspicious_reasons() + _is_rate_limited(request, cd.get("email", ""))
+            if reasons:
+                logger.warning("Suspicious partner-pool submission suppressed: reasons=%s email=%s ip=%s",
+                               reasons, cd.get("email"), _get_client_ip(request))
+                messages.success(request, "Thank you. Your company profile has been received.")
+                return redirect(reverse("partner_pool") + "#pool-form")
+
+            profile = PartnerProfile.objects.create(
+                company_name=cd["company_name"], website=cd.get("website") or "", country=cd["country"],
+                city=cd.get("city") or "", company_type=cd["company_type"], company_size=cd.get("company_size") or "",
+                sector=cd["sector"], products=cd["products"], offering=cd["offering"], seeking=cd["seeking"],
+                partner_types=",".join(cd["partner_types"]), target_regions=",".join(cd["target_regions"]),
+                contact_name=cd["contact_name"], contact_role=cd.get("contact_role") or "", email=cd["email"],
+                phone=cd.get("phone") or "", consent=True, consent_at=timezone.now(),
+                language=getattr(request, "LANGUAGE_CODE", "en") or "en",
+                ip_address=_get_client_ip(request) or None,
+                user_agent=(request.META.get("HTTP_USER_AGENT") or "")[:255],
+            )
+
+            pool = PartnerProfile.objects.filter(status__in=["approved", "introduced"]).exclude(pk=profile.pk)
+            matches = suggestions_for(profile, pool, limit=5)
+            admin_url = request.build_absolute_uri(reverse("admin:website_partnerprofile_change", args=[profile.pk]))
+            match_lines = "\n".join(f"  {score}%  {o.company_name} ({o.country}): {', '.join(r)}" for score, o, r in matches) or "  None yet in the approved pool: this one is for us to hunt."
+            body = (
+                "New company in the partner pool (waiting for your review)\n\n"
+                f"Company: {profile.company_name} ({profile.city + ', ' if profile.city else ''}{profile.country})\n"
+                f"Type: {profile.get_company_type_display()} | Sector: {profile.get_sector_display()}\n"
+                f"Products: {profile.products}\n"
+                f"Website: {profile.website}\n\n"
+                f"Offers:\n{profile.offering}\n\n"
+                f"Seeks:\n{profile.seeking}\n"
+                f"Partner types: {', '.join(profile.partner_type_labels())}\n"
+                f"Regions: {', '.join(profile.target_region_labels())}\n\n"
+                f"Contact: {profile.contact_name} ({profile.contact_role}) {profile.email} {profile.phone}\n\n"
+                f"Possible matches in the pool:\n{match_lines}\n\n"
+                f"Review and approve: {admin_url}\n"
+            )
+            receiver = getattr(settings, "CONTACT_RECIPIENT_EMAIL", "") or "contact@tradegateconsultants.com"
+            from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "") or "no-reply@tradegateconsultants.com"
+            try:
+                EmailMessage(
+                    subject=f"[{_site_name(site)}] Partner pool: {profile.company_name} ({profile.country}), {len(matches)} possible match(es)",
+                    body=body, from_email=from_email, to=[receiver], reply_to=[profile.email],
+                ).send(fail_silently=False)
+            except Exception:
+                logger.exception("Partner pool email failed for profile_id=%s", profile.id)
+
+            messages.success(request, "Thank you. Your company is registered. We review every profile within 2 working days and contact you when we see a fitting partner.")
+            return redirect(reverse("partner_pool") + "#pool-form")
+        messages.error(request, "Please correct the highlighted fields and try again.")
+    else:
+        form = PartnerPoolForm()
+
+    faq = [
+        ("Who can register?", "Companies from any country that look for business partners in Germany and the EU, and German or European companies that look for partners abroad."),
+        ("Is my company visible to others?", "No. The Partner Hub is private. Only we see the entries. We compare profiles and introduce companies personally, and only with the agreement of both sides."),
+        ("What does it cost?", "Registering costs nothing. If we find a fitting partner, we agree any service fee with you before we make an introduction."),
+        ("What if there is no match in the network yet?", "We look for one. Your profile tells us exactly what to search for, and we can run an active partner search for you."),
+        ("How do I update or delete my profile?", "Write to us at any time and we will update or delete it. We remove profiles that are no longer current."),
+    ]
+    steps = [
+        ("Register", "Describe your company, what you offer and the partner you are looking for."),
+        ("We review", "We check every profile before it enters the network, so it stays trustworthy."),
+        ("We match", "Our system compares your profile with the network. We check every suggestion ourselves."),
+        ("We introduce", "When both sides agree, we make the introduction and support the first steps."),
+    ]
+    promises = [
+        "Your profile is private: no public listing, no names shared",
+        "Every company is checked by us before it joins",
+        "Introductions only with the agreement of both sides",
+        "Registering costs nothing",
+        "Update or delete your profile at any time",
+    ]
+    context = {
+        "form": form,
+        "steps": steps,
+        "promises": promises,
+        "faq": faq,
+        "faq_json": faq_schema(faq),
+        "page_meta": {
+            "title": "TradeGate Partner Hub: Find Business Partners in Germany or Abroad",
+            "description": "Register your company in the TradeGate Partner Hub, our private B2B network. We match companies with business partners in Germany, the EU and abroad and make personal introductions.",
+            "canonical": request.build_absolute_uri(reverse("partner_pool")),
+        },
+        "breadcrumb_json": breadcrumbs(request, ("Partner Hub", reverse("partner_pool"))),
+    }
+    return render(request, "website/partner_pool.html", context)

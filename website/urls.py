@@ -9,6 +9,7 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("faq/", views.faq, name="faq"),
     path("contact/", views.contact, name="contact"),
+    path("partner-hub/", views.partner_pool, name="partner_pool"),
 
     # Trade fair calendar
     path("trade-fairs/", views.trade_fairs, name="trade_fairs"),

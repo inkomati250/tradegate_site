@@ -3,6 +3,8 @@ from django.core.validators import FileExtensionValidator, MinLengthValidator, U
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+from .partner_pool import COMPANY_TYPE_CHOICES, SECTOR_CHOICES
+
 
 class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -517,3 +519,68 @@ class TeamProfile(TimeStampedModel):
             except Exception:
                 pass
         return self.photo_url
+
+
+class PartnerProfile(TimeStampedModel):
+    """A company in our partner pool. Never shown publicly: only we see entries and matches."""
+
+    STATUS_CHOICES = (
+        ("pending", "New: waiting for review"),
+        ("approved", "Approved: in the pool"),
+        ("introduced", "Introduced to a partner"),
+        ("paused", "Paused"),
+        ("archived", "Archived"),
+    )
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending", db_index=True)
+
+    company_name = models.CharField(max_length=160)
+    website = models.URLField(blank=True, default="")
+    country = models.CharField(max_length=80, help_text="Where the company is based.")
+    city = models.CharField(max_length=80, blank=True, default="")
+    company_type = models.CharField(max_length=20, choices=[c for c in COMPANY_TYPE_CHOICES if c[0]])
+    company_size = models.CharField(max_length=20, blank=True, default="")
+    sector = models.CharField(max_length=20, choices=[c for c in SECTOR_CHOICES if c[0]])
+    products = models.CharField(max_length=300, help_text="Main products or services.")
+
+    offering = models.TextField(help_text="What the company offers a partner.")
+    seeking = models.TextField(help_text="What kind of partner the company is looking for.")
+    partner_types = models.CharField(max_length=200, blank=True, default="", help_text="Comma-separated partner types sought.")
+    target_regions = models.CharField(max_length=200, blank=True, default="", help_text="Comma-separated regions where they look for partners.")
+
+    contact_name = models.CharField(max_length=120)
+    contact_role = models.CharField(max_length=100, blank=True, default="")
+    email = models.EmailField()
+    phone = models.CharField(max_length=40, blank=True, default="")
+
+    consent = models.BooleanField(default=False)
+    consent_at = models.DateTimeField(null=True, blank=True)
+    language = models.CharField(max_length=5, blank=True, default="en", help_text="Site language used when registering.")
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.CharField(max_length=255, blank=True, default="")
+
+    internal_notes = models.TextField(blank=True, default="", help_text="Only visible to us.")
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.company_name} ({self.country})"
+
+    @property
+    def region(self):
+        from .partner_pool import region_of
+        return region_of(self.country)
+
+    def partner_type_labels(self):
+        from .partner_pool import PARTNER_TYPE_CHOICES, split_csv
+        d = dict(PARTNER_TYPE_CHOICES)
+        return [d.get(v, v) for v in split_csv(self.partner_types)]
+
+    def target_region_labels(self):
+        from .partner_pool import TARGET_CHOICES, split_csv
+        d = dict(TARGET_CHOICES)
+        return [d.get(v, v) for v in split_csv(self.target_regions)]
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Partner Hub company"
+        verbose_name_plural = "Partner Hub"
